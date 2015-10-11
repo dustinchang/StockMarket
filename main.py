@@ -24,12 +24,12 @@ class stock:
     StockChange = 0.0
     StockDayRange = ''
     StockVolume = 0
-    StockPreviousClose = 0.
+    StockPreviousClose = 0.0
     Stock52WKRange = ''
     Stock1YRReturn = 0.0
     StockYTDReturn = 0.0
-    StockPERatio = 0.
-    StockEarningsPS (per share) = 0.
+    StockPERatio = 0.0
+    StockEarningsPS = 0.0
     StockMarketCap = 0.0
     StockSharesOutdanding = 0.0
     StockPrice = 0.0
@@ -44,28 +44,63 @@ class broker:
     BrokerFirmID = ''
     BrokerPLReport = 0.0
     BrokerTotalBudget = 0.0
-    BrokerTotalStocks Integer
-    BrokerBudget { String : String : Float } (ClientID : StockID : Budget $)
-    BrokerCommission Float
-    BrokerLicenseType String (Select from Options)
-    BrokerShares { String: Float } (StockID and Quantity)
+    BrokerTotalStocks = 0
+    BrokerBudget = {} #{ String : String : Float } (ClientID : StockID : Budget $)
+    BrokerCommission = 0.0
+    BrokerLicenseType = ''
+    BrokerShares = {} #{ String: Float } (StockID and Quantity)
 
 class firm:
-    pass
+    FirmID = ''
+    FirmName = ''
+    FirmBudget = 0.0
+    FirmType = ''
+    FirmTotalBrokers = 0
 
 class client:
-    pass
+    ClientID = ''
+    ClientName = ''
+    ClientPhoneNumber = 0
+    ClientEmailAddress = ''
+    ClientBudget = 0.0
+    ClientShares = {} #{ String : Float : String } (StockID : Quantity : Can Exercise)
+    ClientFirmID = '' #Maybe int
+    ClientBrokerID = '' #Maybe int
+    ClientPLReport = 0.0
+    ClientIndsutry = []
+
+class exhange:
+    ExchangeID = ''
+    ExchangeName = ''
+    ExchangeHQ = ''
+    ExchangeEconomy = ''
+    ExchangeTimeZone = ''
+    ExchangeVolume = 0
+    ExchangeNetChange = 0.0
+    ExchangeChange = 0.0
+    ExchangeOpen = 0.0
+    ExchangeDayRange = ''
+    ExchangePreviousClose = 0.0
+    Exchange52WKRange = ''
+    Exchange1YRReturn = 0.0
+    ExchangeYTDReturn = 0.0
 
 class transaction:
-    pass
-
-class exchange:
-    pass
-
-
+    TransactionID = ''
+    TransactionTime = {} #{Integer:Integer} Maybe use datetime for this
+    TransactionBuyer = '' #(ClientID ­ BrokerID ­ FirmID)
+    TransactionSeller = '' #(ClientID ­ BrokerID ­ FirmID)
+    TransactionTrader = '' #(ClientID ­ BrokerID ­ FirmID)
+    TransactionType = '' #(Sell ­ Buy ­ Trade)
+    TransactionPLReport = {} #String : Float (only when it’s a sell or trade)
+    TransactionBSVolume = {} #String : Integer : Float (StockID : Volume : Price)
+    TransactionTradeVolume {} #{stock traded <­> stock gained}
+                              #{String : Integer : Float <­> String : Integer : Float }
+                              #StockID : Volume : Price <­> StockID : Volume : Price
+    TransactionExchange = ''
 
 def main():
     print 'test'
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
