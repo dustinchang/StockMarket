@@ -1,22 +1,4 @@
 import sys
-from usr/local/Cellar/pyqt/4.11.4/lib/python3.5/site-packages/PyQt4/QtGui import *
-
-# Create an PyQT4 application object.
-a = QApplication(sys.argv)
-
-# The QWidget widget is the base class of all user interface objects in PyQt4.
-w = QWidget()
-
-# Set window size.
-w.resize(500, 500)
-
-# Set window title
-w.setWindowTitle("QT Test 2")
-
-# Show window
-w.show(main)
-
-sys.exit(a.exec_())
 
 class index:
     IndexID = ''
@@ -47,7 +29,7 @@ class stock:
     Stock1YRReturn = 0.0
     StockYTDReturn = 0.0
     StockPERatio = 0.
-    StockEarningsPS = 0.0
+    StockEarningsPS (per share) = 0.
     StockMarketCap = 0.0
     StockSharesOutdanding = 0.0
     StockPrice = 0.0
@@ -55,19 +37,19 @@ class stock:
     StockSector = ''
     StockIndustry = ''
     StockSubIndustry = ''
-'''
+
 class broker:
-    BrokerID String
-    BrokerName String
-    BrokerFirmID String
-    BrokerPLReport
-    BrokerTotalBudget Float $
+    BrokerID = ''
+    BrokerName = ''
+    BrokerFirmID = ''
+    BrokerPLReport = 0.0
+    BrokerTotalBudget = 0.0
     BrokerTotalStocks Integer
     BrokerBudget { String : String : Float } (ClientID : StockID : Budget $)
     BrokerCommission Float
     BrokerLicenseType String (Select from Options)
     BrokerShares { String: Float } (StockID and Quantity)
-'''
+
 class firm:
     pass
 
