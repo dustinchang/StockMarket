@@ -88,19 +88,19 @@ class exhange:
 class transaction:
     TransactionID = ''
     TransactionTime = {} #{Integer:Integer} Maybe use datetime for this
-    TransactionBuyer = '' #(ClientID ­ BrokerID ­ FirmID)
-    TransactionSeller = '' #(ClientID ­ BrokerID ­ FirmID)
-    TransactionTrader = '' #(ClientID ­ BrokerID ­ FirmID)
-    TransactionType = '' #(Sell ­ Buy ­ Trade)
-    TransactionPLReport = {} #String : Float (only when it’s a sell or trade)
+    TransactionBuyer = '' #(ClientID BrokerID FirmID)
+    TransactionSeller = '' #(ClientID BrokerID FirmID)
+    TransactionTrader = '' #(ClientID BrokerID FirmID)
+    TransactionType = '' #(Sell Buy Trade)
+    TransactionPLReport = {} #String : Float (only when it's a sell or trade)
     TransactionBSVolume = {} #String : Integer : Float (StockID : Volume : Price)
-    TransactionTradeVolume {} #{stock traded <­> stock gained}
-                              #{String : Integer : Float <­> String : Integer : Float }
-                              #StockID : Volume : Price <­> StockID : Volume : Price
+    TransactionTradeVolume = {} #{stock traded <> stock gained}
+                              #{String : Integer : Float <> String : Integer : Float }
+                              #StockID : Volume : Price <> StockID : Volume : Price
     TransactionExchange = ''
 
 def main():
-    print 'test'
+    print 'test run'
 
 if __name__ == "__main__":
     main()
