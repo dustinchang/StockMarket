@@ -109,10 +109,10 @@ class Transaction:
                               #StockID : Volume : Price <> StockID : Volume : Price
         self.TransactionExchange = ''
 
-def current_stock_status(stk):
+def current_stock_status(stk, f):
     #threading.Timer(2.0, current_stock_status, [stk]).start()
     print '~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!~~~~~~~~~~~~~~~~~~~~~~'
-    fluctuate(stk)
+    fluctuate(stk, f)
     stat = random.randint(0, 100)
     print 'Current Stock Status:'+str(stat)
     if stat < 10:
@@ -127,46 +127,42 @@ def current_stock_status(stk):
         print 'divisible by 3 and 5'
     elif stat % 2 == 0:
         print 'divisible by 2'
-        rise(stk)
+        rise(stk, f)
     elif stat % 3 == 0:
         print 'divisible by 3'
-        drop(stk)
+        drop(stk, f)
     elif stat % 5 == 0:
         print 'divisible by 5'
     else:
         print 'prime'
         #current_stock_status(stk) #Found bug with threading
 
-def rise(stk):
+def rise(stk, f):
     percent_rise = round(random.uniform(0.01, 0.1),2)
     print 'percent_rise:'+str(percent_rise)
     print 'stk.StockPrice='+str(stk.StockPrice)
     stk.StockPrice += round(stk.StockPrice*percent_rise,2)
     print 'Stock Price Increased to:'+str(stk.StockPrice)
+    f.write('Stock Price Increased to:'+str(stk.StockPrice)+'\n')
 
-def drop(stk):
+def drop(stk, f):
     percent_drop = round(random.uniform(0.01, 0.1),2)
     print 'percent_drop:'+str(percent_drop)
     print 'stk.StockPrice='+str(stk.StockPrice)
     stk.StockPrice -= round(stk.StockPrice*percent_drop,2)
     print 'Stock Price Decreased to:'+str(stk.StockPrice)
+    f.write('Stock Price Decreased to:'+str(stk.StockPrice)+'\n')
 
-def printit():
-  threading.Timer(2.0, printit).start()
-  print "Hello, World!"
-
-def fluctuate(stk):
-    threading.Timer(2.0, current_stock_status, [stk]).start()
+def fluctuate(stk, f):
+    threading.Timer(2.0, current_stock_status, [stk, f]).start()
 
 def main():
     client1 = Stock()
-    #print vars(test_stock) #same as print test_stock.__dict__
-    #print test_stock.__dict__.keys()
-    #print test_stock.__dict__.values()
-    #printit()
+    open('client1.txt', 'a').close()    #If not there creates it for the StockPrice tracking
+    f = open('client1.txt', 'a')
     client1.StockPrice = 100.22
     #current_stock_status(client1)
-    fluctuate(client1)
+    fluctuate(client1, f)
 
 
 
