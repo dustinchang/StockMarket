@@ -110,7 +110,7 @@ class Transaction:
 
 def current_stock_status(stk):
     stat = random.randint(0, 100)
-    stat = 14
+    stat = 21
     print 'Current Stock Status:'+str(stat)
     if stat < 10:
         print 'lower than 10'
@@ -127,6 +127,7 @@ def current_stock_status(stk):
         rise(stk)
     elif stat % 3 == 0:
         print 'divisible by 3'
+        drop(stk)
     elif stat % 5 == 0:
         print 'divisible by 5'
     else:
@@ -134,15 +135,18 @@ def current_stock_status(stk):
         current_stock_status()
 
 def rise(stk):
-    percent_rise = round(random.uniform(0.1, 5.0),2)
+    percent_rise = round(random.uniform(0.01, 0.1),2)
     print 'percent_rise:'+str(percent_rise)
     print 'stk.StockPrice='+str(stk.StockPrice)
-    stk.StockPrice += percent_rise
+    stk.StockPrice += round(stk.StockPrice*percent_rise,2)
     print 'Stock Price Increased to:'+str(stk.StockPrice)
 
-def drop():
-    percent_drop = round(random.uniform(0.1, 5.0),2)
+def drop(stk):
+    percent_drop = round(random.uniform(0.01, 0.1),2)
     print 'percent_drop:'+str(percent_drop)
+    print 'stk.StockPrice='+str(stk.StockPrice)
+    stk.StockPrice -= round(stk.StockPrice*percent_drop,2)
+    print 'Stock Price Decreased to:'+str(stk.StockPrice)
 
 
 
