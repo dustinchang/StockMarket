@@ -1,5 +1,6 @@
 import sys
 import random
+from decimal import Decimal
 
 class Index:
     def __init__(self):
@@ -107,15 +108,52 @@ class Transaction:
                               #StockID : Volume : Price <> StockID : Volume : Price
         self.TransactionExchange = ''
 
+def current_stock_status(stk):
+    stat = random.randint(0, 100)
+    stat = 14
+    print 'Current Stock Status:'+str(stat)
+    if stat < 10:
+        print 'lower than 10'
+    elif stat % 2 == 0 and stat % 3 == 0 and stat % 5 == 0:
+        print 'divisible by 2 and 3 and 5'
+    elif stat % 2 == 0 and stat % 3 == 0:
+        print 'divisible by 2 and 3'
+    elif stat % 2 == 0 and stat % 5 == 0:
+        print 'divisible by 2 and 5'
+    elif stat % 3 == 0 and stat % 5 == 0:
+        print 'divisible by 3 and 5'
+    elif stat % 2 == 0:
+        print 'divisible by 2'
+        rise(stk)
+    elif stat % 3 == 0:
+        print 'divisible by 3'
+    elif stat % 5 == 0:
+        print 'divisible by 5'
+    else:
+        print 'prime'
+        current_stock_status()
+
+def rise(stk):
+    percent_rise = round(random.uniform(0.1, 5.0),2)
+    print 'percent_rise:'+str(percent_rise)
+    print 'stk.StockPrice='+str(stk.StockPrice)
+    stk.StockPrice += percent_rise
+    print 'Stock Price Increased to:'+str(stk.StockPrice)
+
+def drop():
+    percent_drop = round(random.uniform(0.1, 5.0),2)
+    print 'percent_drop:'+str(percent_drop)
+
+
+
 def main():
-    print random.randint(0, 9)
-    test_stock = Stock()
-    print vars(test_stock) #same as print test_stock.__dict__
+    client1 = Stock()
+    #print vars(test_stock) #same as print test_stock.__dict__
     #print test_stock.__dict__.keys()
     #print test_stock.__dict__.values()
-    print test_stock.StockPrice
-    test_stock.StockPrice = 100.22
-    print test_stock.StockPrice
+    client1.StockPrice = 100.22
+    current_stock_status(client1)
+    print ''
 
 
 if __name__ == "__main__":
