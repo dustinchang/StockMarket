@@ -110,8 +110,9 @@ class Transaction:
         self.TransactionExchange = ''
 
 def current_stock_status(stk):
+    #threading.Timer(2.0, current_stock_status, [stk]).start()
     print '~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!~~~~~~~~~~~~~~~~~~~~~~'
-    threading.Timer(2.0, current_stock_status, [stk]).start()
+    fluctuate(stk)
     stat = random.randint(0, 100)
     print 'Current Stock Status:'+str(stat)
     if stat < 10:
@@ -134,7 +135,7 @@ def current_stock_status(stk):
         print 'divisible by 5'
     else:
         print 'prime'
-        current_stock_status(stk)
+        #current_stock_status(stk) #Found bug with threading
 
 def rise(stk):
     percent_rise = round(random.uniform(0.01, 0.1),2)
@@ -162,11 +163,10 @@ def main():
     #print vars(test_stock) #same as print test_stock.__dict__
     #print test_stock.__dict__.keys()
     #print test_stock.__dict__.values()
-    ###printit()
+    #printit()
     client1.StockPrice = 100.22
-    current_stock_status(client1)
-    print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
-    #fluctuate(client1)
+    #current_stock_status(client1)
+    fluctuate(client1)
 
 
 
