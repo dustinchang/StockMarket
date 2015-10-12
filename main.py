@@ -1,106 +1,122 @@
 import sys
+import random
 
-class index:
-    IndexID = ''
-    IndexName = ''
-    IndexValue = 0.0
-    IndexNetChange = 0.0
-    IndexChange = 0.0
-    IndexOpen  = 0.0
-    IndexDayRange = ''
-    IndexPreviousClose = 0.0
-    Index52WKRange = ''
-    Index1YRReturn = 0.0
-    IndexYTDReturn = 0.0
-    IndexTotalMembers = 0
-    IndexMembersUp = 0
-    IndexMembersDown = 0
+class Index:
+    def __init__(self):
+        self.IndexID = ''
+        self.IndexName = ''
+        self.IndexValue = 0.0
+        self.IndexNetChange = 0.0
+        self.IndexChange = 0.0
+        self.IndexOpen  = 0.0
+        self.IndexDayRange = ''
+        self.IndexPreviousClose = 0.0
+        self.Index52WKRange = ''
+        self.Index1YRReturn = 0.0
+        self.IndexYTDReturn = 0.0
+        self.IndexTotalMembers = 0
+        self.IndexMembersUp = 0
+        self.IndexMembersDown = 0
 
-class stock:
-    StockID = ''
-    StockName = ''
-    StockOpen = 0.0
-    StockNetChange = 0.0
-    StockChange = 0.0
-    StockDayRange = ''
-    StockVolume = 0
-    StockPreviousClose = 0.0
-    Stock52WKRange = ''
-    Stock1YRReturn = 0.0
-    StockYTDReturn = 0.0
-    StockPERatio = 0.0
-    StockEarningsPS = 0.0
-    StockMarketCap = 0.0
-    StockSharesOutdanding = 0.0
-    StockPrice = 0.0
-    StockDividend = 0.0
-    StockSector = ''
-    StockIndustry = ''
-    StockSubIndustry = ''
+class Stock:
+    def __init__(self):
+        self.StockID = ''
+        self.StockName = ''
+        self.StockOpen = 0.0
+        self.StockNetChange = 0.0
+        self.StockChange = 0.0
+        self.StockDayRange = ''
+        self.StockVolume = 0
+        self.StockPreviousClose = 0.0
+        self.Stock52WKRange = ''
+        self.Stock1YRReturn = 0.0
+        self.StockYTDReturn = 0.0
+        self.StockPERatio = 0.0
+        self.StockEarningsPS = 0.0
+        self.StockMarketCap = 0.0
+        self.StockSharesOutdanding = 0.0
+        self.StockPrice = 0.0
+        self.StockDividend = 0.0
+        self.StockSector = ''
+        self.StockIndustry = ''
+        self.StockSubIndustry = ''
 
-class broker:
-    BrokerID = ''
-    BrokerName = ''
-    BrokerFirmID = ''
-    BrokerPLReport = 0.0
-    BrokerTotalBudget = 0.0
-    BrokerTotalStocks = 0
-    BrokerBudget = {} #{ String : String : Float } (ClientID : StockID : Budget $)
-    BrokerCommission = 0.0
-    BrokerLicenseType = ''
-    BrokerShares = {} #{ String: Float } (StockID and Quantity)
+class Broker:
+    def __init__(self):
+        self.BrokerID = ''
+        self.BrokerName = ''
+        self.BrokerFirmID = ''
+        self.BrokerPLReport = 0.0
+        self.BrokerTotalBudget = 0.0
+        self.BrokerTotalStocks = 0
+        self.BrokerBudget = {} #{ String : String : Float } (ClientID : StockID : Budget $)
+        self.BrokerCommission = 0.0
+        self.BrokerLicenseType = ''
+        self.BrokerShares = {} #{ String: Float } (StockID and Quantity)
 
-class firm:
-    FirmID = ''
-    FirmName = ''
-    FirmBudget = 0.0
-    FirmType = ''
-    FirmTotalBrokers = 0
+class Firm:
+    def __init__(self):
+        self.FirmID = ''
+        self.FirmName = ''
+        self.FirmBudget = 0.0
+        self.FirmType = ''
+        self.FirmTotalBrokers = 0
 
-class client:
-    ClientID = ''
-    ClientName = ''
-    ClientPhoneNumber = 0
-    ClientEmailAddress = ''
-    ClientBudget = 0.0
-    ClientShares = {} #{ String : Float : String } (StockID : Quantity : Can Exercise)
-    ClientFirmID = '' #Maybe int
-    ClientBrokerID = '' #Maybe int
-    ClientPLReport = 0.0
-    ClientIndsutry = []
+class Client:
+    def __init__(self):
+        self.ClientID = ''
+        self.ClientName = ''
+        self.ClientPhoneNumber = 0
+        self.ClientEmailAddress = ''
+        self.ClientBudget = 0.0
+        self.ClientShares = {} #{ String : Float : String } (StockID : Quantity : Can Exercise)
+        self.ClientFirmID = '' #Maybe int
+        self.ClientBrokerID = '' #Maybe int
+        self.ClientPLReport = 0.0
+        self.ClientIndsutry = []
 
-class exhange:
-    ExchangeID = ''
-    ExchangeName = ''
-    ExchangeHQ = ''
-    ExchangeEconomy = ''
-    ExchangeTimeZone = ''
-    ExchangeVolume = 0
-    ExchangeNetChange = 0.0
-    ExchangeChange = 0.0
-    ExchangeOpen = 0.0
-    ExchangeDayRange = ''
-    ExchangePreviousClose = 0.0
-    Exchange52WKRange = ''
-    Exchange1YRReturn = 0.0
-    ExchangeYTDReturn = 0.0
+class Exhange:
+    def __init__(self):
+        self.ExchangeID = ''
+        self.ExchangeName = ''
+        self.ExchangeHQ = ''
+        self.ExchangeEconomy = ''
+        self.ExchangeTimeZone = ''
+        self.ExchangeVolume = 0
+        self.ExchangeNetChange = 0.0
+        self.ExchangeChange = 0.0
+        self.ExchangeOpen = 0.0
+        self.ExchangeDayRange = ''
+        self.ExchangePreviousClose = 0.0
+        self.Exchange52WKRange = ''
+        self.Exchange1YRReturn = 0.0
+        self.ExchangeYTDReturn = 0.0
 
-class transaction:
-    TransactionID = ''
-    TransactionTime = {} #{Integer:Integer} Maybe use datetime for this
-    TransactionBuyer = '' #(ClientID BrokerID FirmID)
-    TransactionSeller = '' #(ClientID BrokerID FirmID)
-    TransactionTrader = '' #(ClientID BrokerID FirmID)
-    TransactionType = '' #(Sell Buy Trade)
-    TransactionPLReport = {} #String : Float (only when it's a sell or trade)
-    TransactionBSVolume = {} #String : Integer : Float (StockID : Volume : Price)
-    TransactionTradeVolume = {} #{stock traded <> stock gained}
+class Transaction:
+    def __init__(self):
+        self.TransactionID = ''
+        self.TransactionTime = {} #{Integer:Integer} Maybe use datetime for this
+        self.TransactionBuyer = '' #(ClientID BrokerID FirmID)
+        self.TransactionSeller = '' #(ClientID BrokerID FirmID)
+        self.TransactionTrader = '' #(ClientID BrokerID FirmID)
+        self.TransactionType = '' #(Sell Buy Trade)
+        self.TransactionPLReport = {} #String : Float (only when it's a sell or trade)
+        self.TransactionBSVolume = {} #String : Integer : Float (StockID : Volume : Price)
+        self.TransactionTradeVolume = {} #{stock traded <> stock gained}
                               #{String : Integer : Float <> String : Integer : Float }
                               #StockID : Volume : Price <> StockID : Volume : Price
-    TransactionExchange = ''
+        self.TransactionExchange = ''
 
 def main():
-    print 'test run'
+    print random.randint(0, 9)
+    test_stock = Stock()
+    print vars(test_stock) #same as print test_stock.__dict__
+    #print test_stock.__dict__.keys()
+    #print test_stock.__dict__.values()
+    print test_stock.StockPrice
+    test_stock.StockPrice = 100.22
+    print test_stock.StockPrice
+
 
 if __name__ == "__main__":
     main()
