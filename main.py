@@ -135,7 +135,6 @@ def current_stock_status(stk, f):
         print 'divisible by 5'
     else:
         print 'prime'
-        #current_stock_status(stk) #Found bug with threading
 
 def rise(stk, f):
     percent_rise = round(random.uniform(0.01, 0.1),2)
@@ -161,9 +160,8 @@ def main():
     open('client1.txt', 'a').close()    #If not there creates it for the StockPrice tracking
     f = open('client1.txt', 'a')
     client1.StockPrice = 100.22
-    #current_stock_status(client1)
+    f.write('client1\nStarting Stock Price:'+str(client1.StockPrice)+'\n')
     fluctuate(client1, f)
-
 
 
 if __name__ == "__main__":
