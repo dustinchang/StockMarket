@@ -105,10 +105,11 @@ class Transaction:
         self.TransactionPLReport = {} #String : Float (only when it's a sell or trade)
         self.TransactionBSVolume = {} #String : Integer : Float (StockID : Volume : Price)
         self.TransactionTradeVolume = {} #{stock traded <> stock gained}
-                              #{String : Integer : Float <> String : Integer : Float }
-                              #StockID : Volume : Price <> StockID : Volume : Price
+                                         #{String : Integer : Float <> String : Integer : Float }
+                                         #StockID : Volume : Price <> StockID : Volume : Price
         self.TransactionExchange = ''
 
+#Determine the status of what the stock should do at each fluctuation stage
 def current_stock_status(stk, f):
     #threading.Timer(2.0, current_stock_status, [stk]).start()
     print '~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!~~~~~~~~~~~~~~~~~~~~~~'
@@ -136,6 +137,7 @@ def current_stock_status(stk, f):
     else:
         print 'prime'
 
+#Make stock rise
 def rise(stk, f):
     percent_rise = round(random.uniform(0.01, 0.1),2)
     print 'percent_rise:'+str(percent_rise)
@@ -144,6 +146,7 @@ def rise(stk, f):
     print 'Stock Price Increased to:'+str(stk.StockPrice)
     f.write('Stock Price Increased to:'+str(stk.StockPrice)+'\n')
 
+#Make stock drop
 def drop(stk, f):
     percent_drop = round(random.uniform(0.01, 0.1),2)
     print 'percent_drop:'+str(percent_drop)
@@ -152,6 +155,7 @@ def drop(stk, f):
     print 'Stock Price Decreased to:'+str(stk.StockPrice)
     f.write('Stock Price Decreased to:'+str(stk.StockPrice)+'\n')
 
+#To calculate the frequency that the stock should fluctuate
 def fluctuate(stk, f):
     threading.Timer(2.0, current_stock_status, [stk, f]).start()
 
