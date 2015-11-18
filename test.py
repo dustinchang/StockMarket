@@ -7,7 +7,7 @@
 """
 
 import unittest 
-import main 
+import main as a
 
 ## The following is the class in which all functions will be ran by unittest
 #
@@ -32,7 +32,26 @@ class Test(unittest.TestCase):
 	## The funtion "testRise" checks the original stock price to 
 	# new raised stock price if it is incresed it passes otherwise fail.
 	def testRise(self):
+		testStock
+
+		testRiseInput = 990
+		testStock.value = testRiseInput
+		Rise(testStock);
+		testRiseOutput = testStock.value
 		print "Testing Rise"
+		try:
+			self.assertGreater(testRiseOutput,testRiseInput)
+		except:
+			print "FAIL with input of "+testRiseInput+" and output: "+ testRiseOutput
+		#print "a.main.price = %d" % a.rise.priceTemp
+		pass
+
+	## The funtion "testRise" checks the original stock price to 
+	# new raised stock price if it is incresed it passes otherwise fail.
+	def testDrop(self):
+		print "Testing Drop"
+		#self.assertGreaterEqual(rise(stk, stock_list)
+		#print "a.main.price = %d" % a.rise.priceTemp
 		pass
 
 
