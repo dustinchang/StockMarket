@@ -1,6 +1,6 @@
 #Tools to get and run program
   Git
-  Python3.4
+  Python2.7
 
 #Instructions to Run
   -Download or clone repository files from GitHub https://github.com/dustinchang/StockMarket
