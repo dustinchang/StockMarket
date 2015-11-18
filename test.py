@@ -6,8 +6,10 @@
     documentation page here: http://docs.python.org/library/unittest.html
 """
 
-import unittest 
-import main as a
+import unittest
+from main import rise
+from main import drop
+from main import Stock
 
 ## The following is the class in which all functions will be ran by unittest
 #
@@ -25,37 +27,53 @@ class Test(unittest.TestCase):
 	## The function "tearDown" will always be ran in order to cleanup the
 	# test environment after all the tests have run.
 	def tearDown(self):
-		print "" 
+		print ""
 		"""Verify environment is tore down properly""" ## Printed if test fails
 		pass
 
-	## The funtion "testRise" checks the original stock price to 
-	# new raised stock price if it is incresed it passes otherwise fail.
-	def testRise(self):
-		testStock
-
-		testRiseInput = 990
-		testStock.value = testRiseInput
-		Rise(testStock);
-		testRiseOutput = testStock.value
-		print "Testing Rise"
+	def test_init(self):
+		"""Testing the Initialization of a Stock Value"""
+		print 'Testing the Initialization of a Stock Value'
+		stk = Stock()
+		print 'in the test_init'
+		#stk.StockPrice = 1.5
+		print stk.StockPrice
+		print 'after the init'
+		#self.assertEqual(stk.StockPrice, 0.0)
 		try:
-			self.assertGreater(testRiseOutput,testRiseInput)
-		except:
-			print "FAIL with input of "+testRiseInput+" and output: "+ testRiseOutput
-		#print "a.main.price = %d" % a.rise.priceTemp
-		pass
+			self.assertEqual(stk.StockPrice, 0.0)
+		except ValueError:
+			print 'Failed: Stock Initialization not equivalent to 0.0'
 
-	## The funtion "testRise" checks the original stock price to 
+
+	## The funtion "testRise" checks the original stock price to
 	# new raised stock price if it is incresed it passes otherwise fail.
-	def testDrop(self):
-		print "Testing Drop"
-		#self.assertGreaterEqual(rise(stk, stock_list)
-		#print "a.main.price = %d" % a.rise.priceTemp
-		pass
+	def test_rise(self):
+		"""Testing the Implementation of a Stock Value Rising"""
+		stk = Stock()
+		stk.StockPrice = 120
+		orig_stk_value = stk.StockPrice
+		rise(stk)
+		print 'Testing: ' + str(stk.StockPrice) + ' > ' + str(orig_stk_value)
+		self.assertGreater(stk.StockPrice, orig_stk_value)
+		
+
+	## The funtion "testRise" checks the original stock price to
+	# new raised stock price if it is incresed it passes otherwise fail.
+	def test_drop(self):
+		"""Testing the Implementation of a Stock Value Dropping"""
+		stk = Stock()
+		stk.StockPrice = 120
+		orig_stk_value = stk.StockPrice
+		drop(stk)
+		print 'Testing: ' + str(stk.StockPrice) + ' < ' + str(orig_stk_value)
+		self.assertLess(stk.StockPrice, orig_stk_value)
+
+	def test_fluctuate(self):
+		stk = Stock()
+		for x in xrange(1,70):
+			fluctuate(stk)
 
 
 if __name__=='__main__':
     unittest.main()
-
-    
