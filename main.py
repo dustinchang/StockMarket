@@ -171,14 +171,32 @@ def main():
     try:
         f = open('client1.bin', 'rb')
         stock_list.ParseFromString(f.read())
+        f.close()
     except IOError:
         print 'Could not open file: client1.bin'
 
+    while True:
+        choice = raw_input('What would you like to do?\n\tAdd a stock (1)\n\tView stocks (2)\n\tExit (3)\nInput: ')
+        if choice == '1':
+            # Create a stock
+            print 'Adding stock...'
+            stk = stock_list.stock.add()
+            stk.StockID = raw_input('Stock ID: ')
+            stk.StockName = raw_input('Stock name: ')
+            stk.StockPrice = float(raw_input('Stock price: '))
 
-    # Create a stock
-    client1 = stock_list.stock.add()
-    client1.StockPrice = 90.01
+            f = open('client1.bin', "wb")
+            f.write(stock_list.SerializeToString())
+            f.close()
+        elif choice == '2':
+            for stock in stock_list.stock:
+                print 'Stock ID: ', stock.StockID
+                print 'Stock Name: ', stock.StockName
+                print 'Stock Price: ', str(stock.StockPrice)
+        else:
+            break
 
+    # later functionality
     # Simulate fluctuations for stock
     # for x in range(10):
     #    fluctuate(client1, stock_list)
