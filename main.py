@@ -153,7 +153,7 @@ def drop(stk):
 ##To calculate the frequency that the stock should fluctuate
 # and determine the status of what the stock should do at each fluctuation stage
 #
-def fluctuate(stk, stock_list):
+def fluctuate(stk):
     print '~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!~~~~~~~~~~~~~~~~~~~~~~'
     stat = random.randint(0, 100)
     print 'Current Stock Status: ' + str(stat)
@@ -208,7 +208,7 @@ def main():
             stk.StockPrice = float(raw_input('Stock price: '))
 
             f = open('client1.bin', "wb")
-        o    f.write(stock_list.SerializeToString())
+            f.write(stock_list.SerializeToString())
             f.close()
         elif choice == '2':
             for stock in stock_list.stock:
