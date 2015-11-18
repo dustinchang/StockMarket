@@ -2,6 +2,7 @@ import sys
 import random
 from decimal import Decimal
 import threading
+import stock_pb2
 
 class Index:
     def __init__(self):
@@ -77,7 +78,7 @@ class Client:
         self.ClientPLReport = 0.0
         self.ClientIndsutry = []
 
-class Exhange:
+class Exchange:
     def __init__(self):
         self.ExchangeID = ''
         self.ExchangeName = ''
@@ -109,13 +110,39 @@ class Transaction:
                                          #StockID : Volume : Price <> StockID : Volume : Price
         self.TransactionExchange = ''
 
-#Determine the status of what the stock should do at each fluctuation stage
-def current_stock_status(stk, f):
-    #threading.Timer(2.0, current_stock_status, [stk]).start()
+#Make stock rise
+def rise(stk, stock_list):
+    percent_rise = round(random.uniform(0.01, 0.1), 2)
+    print 'percent_rise: ' + str(percent_rise)
+    print 'Stock Price: ' + str(stk.StockPrice)
+    stk.StockPrice += round(stk.StockPrice * percent_rise, 2)
+    stk_temp = stk.StockPrice
+    del stock_list.stock[-1]
+    stock_list.stock.add().StockPrice = stk_temp
+    print 'Stock Price Increased to: ' + str(stk.StockPrice)
+    return stk
+
+
+#Make stock drop
+def drop(stk, stock_list):
+    percent_drop = round(random.uniform(0.01, 0.1), 2)
+    print 'percent_drop: ' + str(percent_drop)
+    print 'Stock Price: ' + str(stk.StockPrice)
+    stk.StockPrice -= round(stk.StockPrice * percent_drop, 2)
+    stk_temp = stk.StockPrice
+    del stock_list.stock[-1]
+    stock_list.stock.add().StockPrice = stk_temp
+    print 'Stock Price Decreased to:' + str(stk.StockPrice)
+    return stk
+    #f.write('Stock Price Decreased to:'+str(stk.StockPrice)+'\n')
+
+##
+# To calculate the frequency that the stock should fluctuate
+# and determine the status of what the stock should do at each fluctuation stage
+def fluctuate(stk, stock_list):
     print '~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!~~~~~~~~~~~~~~~~~~~~~~'
-    fluctuate(stk, f)
     stat = random.randint(0, 100)
-    print 'Current Stock Status:'+str(stat)
+    print 'Current Stock Status: ' + str(stat)
     if stat < 10:
         print 'Stock should be sold or buy more'
     elif stat % 2 == 0 and stat % 3 == 0 and stat % 5 == 0:
@@ -128,45 +155,36 @@ def current_stock_status(stk, f):
         print 'divisible by 3 and 5'
     elif stat % 2 == 0:
         print 'divisible by 2'
-        rise(stk, f)
+        rise(stk, stock_list)
     elif stat % 3 == 0:
         print 'divisible by 3'
-        drop(stk, f)
+        drop(stk, stock_list)
     elif stat % 5 == 0:
         print 'divisible by 5'
     else:
         print 'prime'
 
-#Make stock rise
-def rise(stk, f):
-    percent_rise = round(random.uniform(0.01, 0.1),2)
-    print 'percent_rise:'+str(percent_rise)
-    print 'stk.StockPrice='+str(stk.StockPrice)
-    stk.StockPrice += round(stk.StockPrice*percent_rise,2)
-    print 'Stock Price Increased to:'+str(stk.StockPrice)
-    f.write('Stock Price Increased to:'+str(stk.StockPrice)+'\n')
-
-#Make stock drop
-def drop(stk, f):
-    percent_drop = round(random.uniform(0.01, 0.1),2)
-    print 'percent_drop:'+str(percent_drop)
-    print 'stk.StockPrice='+str(stk.StockPrice)
-    stk.StockPrice -= round(stk.StockPrice*percent_drop,2)
-    print 'Stock Price Decreased to:'+str(stk.StockPrice)
-    f.write('Stock Price Decreased to:'+str(stk.StockPrice)+'\n')
-
-#To calculate the frequency that the stock should fluctuate
-def fluctuate(stk, f):
-    threading.Timer(2.0, current_stock_status, [stk, f]).start()
-
 def main():
-    client1 = Stock()
-    open('client1.txt', 'a').close()    #If not there creates it for the StockPrice tracking
-    f = open('client1.txt', 'a')
-    client1.StockPrice = 100.22
-    f.write('client1\nStarting Stock Price:'+str(client1.StockPrice)+'\n')
-    fluctuate(client1, f)
+    stock_list = stock_pb2.StockList()
+    
+    # Read existing address book
+    try:
+        f = open('client1.bin', 'rb')
+        stock_list.ParseFromString(f.read())
+    except IOError:
+        print 'Could not open file: client1.bin'
 
+
+    # Create a stock
+    client1 = stock_list.stock.add()
+    client1.StockPrice = 90.01
+
+    # Simulate fluctuations for stock
+    # for x in range(10):
+    #    fluctuate(client1, stock_list)
+
+    f = open('client1.bin', 'wb')
+    f.write(stock_list.SerializeToString())
 
 if __name__ == "__main__":
     main()

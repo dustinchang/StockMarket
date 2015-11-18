@@ -1,0 +1,7 @@
+client1
+Starting Stock Price:100.22
+Stock Price Increased to:102.22
+Stock Price Decreased to:94.04
+Stock Price Decreased to:91.22
+Stock Price Increased to:93.96
+Stock Price Decreased to:90.2
