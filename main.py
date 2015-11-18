@@ -132,23 +132,23 @@ class Transaction:
 ##Takes a stock and a stock_list as parameters and
 # implements a rise in the stock
 #
-def rise(stk, stock_list):
-    percent_rise = round(random.uniform(0.01, 0.1), 2)
-    print 'percent_rise: ' + str(percent_rise)
-    print 'Stock Price: ' + str(stk.StockPrice)
-    stk.StockPrice += round(stk.StockPrice * percent_rise, 2)
-    print 'Stock Price Increased to: ' + str(stk.StockPrice)
+def rise(stk):
+   percent_rise = round(random.uniform(0.01, 0.1), 2)
+   print 'percent_rise: ' + str(percent_rise)
+   print 'Stock Price: ' + str(stk.StockPrice)
+   stk.StockPrice += round(stk.StockPrice * percent_rise, 2)
+   print 'Stock Price Increased to: ' + str(stk.StockPrice)
 
 
 ##Takes a stock and a stock_list as parameters and
 # implements a drop in the stock
 #
 def drop(stk):
-    percent_drop = round(random.uniform(0.01, 0.1), 2)
-    print 'percent_drop: ' + str(percent_drop)
-    print 'Stock Price: ' + str(stk.StockPrice)
-    stk.StockPrice -= round(stk.StockPrice * percent_drop, 2)
-    print 'Stock Price Decreased to:' + str(stk.StockPrice)
+   percent_drop = round(random.uniform(0.01, 0.1), 2)
+   print 'percent_drop: ' + str(percent_drop)
+   print 'Stock Price: ' + str(stk.StockPrice)
+   stk.StockPrice -= round(stk.StockPrice * percent_drop, 2)
+   print 'Stock Price Decreased to:' + str(stk.StockPrice)
 
 ##To calculate the frequency that the stock should fluctuate
 # and determine the status of what the stock should do at each fluctuation stage
@@ -169,10 +169,10 @@ def fluctuate(stk, stock_list):
         print 'divisible by 3 and 5'
     elif stat % 2 == 0:
         print 'divisible by 2'
-        rise(stk, stock_list)
+        rise(stk)
     elif stat % 3 == 0:
         print 'divisible by 3'
-        drop(stk, stock_list)
+        drop(stk)
     elif stat % 5 == 0:
         print 'divisible by 5'
     else:
@@ -182,6 +182,11 @@ def fluctuate(stk, stock_list):
 #
 #
 def main():
+    s = Stock()
+    rise(s)
+    print s.StockPrice
+
+
     stock_list = stock_pb2.StockList()
 
     # Read existing address book
