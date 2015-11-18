@@ -1,0 +1,7 @@
+#Tools to get and run program
+  Git
+  Python3.4
+
+#Instructions to Run
+  -Download or clone repository files from GitHub https://github.com/dustinchang/StockMarket
+  -run bash make.sh
