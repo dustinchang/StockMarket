@@ -32,12 +32,13 @@ class Test(unittest.TestCase):
 	## The funtion "testRise" checks the original stock price to 
 	# new raised stock price if it is incresed it passes otherwise fail.
 	def testRise(self):
-		testStock
+		#testStock
 
 		testRiseInput = 990
-		testStock.value = testRiseInput
-		Rise(testStock);
-		testRiseOutput = testStock.value
+		testRiseOutput = 990
+		#testStock.value = testRiseInput
+		#Rise(testStock);
+		#testRiseOutput = testStock.value
 		print "Testing Rise"
 		try:
 			self.assertGreater(testRiseOutput,testRiseInput)
