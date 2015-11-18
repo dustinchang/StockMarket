@@ -1,6 +1,14 @@
 ## Creating a test framework for rise function & drop function
 #
 
+"""def runTest(self):
+            try:
+                self.widget.resize(-1,-1)
+            except ValueError:
+                pass
+            else:
+                fail("expected a ValueError")"""
+                
 """ This is a simple program to demonstrate how to create a unittest in
     Python. For more information and documentation, please see the official
     documentation page here: http://docs.python.org/library/unittest.html
