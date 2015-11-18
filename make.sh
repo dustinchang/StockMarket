@@ -3,4 +3,4 @@ echo "Group 4 Stock Market Exchange"
 echo "Phase3 Assignment"
 echo "Requirement to run is having Google/protobuf installed in your local machine"
 
-#python3 main.py
+python main.py
