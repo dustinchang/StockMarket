@@ -137,27 +137,18 @@ def rise(stk, stock_list):
     print 'percent_rise: ' + str(percent_rise)
     print 'Stock Price: ' + str(stk.StockPrice)
     stk.StockPrice += round(stk.StockPrice * percent_rise, 2)
-    stk_temp = stk.StockPrice
-    del stock_list.stock[-1]
-    stock_list.stock.add().StockPrice = stk_temp
     print 'Stock Price Increased to: ' + str(stk.StockPrice)
-    return stk
 
 
 ##Takes a stock and a stock_list as parameters and
 # implements a drop in the stock
 #
-def drop(stk, stock_list):
+def drop(stk):
     percent_drop = round(random.uniform(0.01, 0.1), 2)
     print 'percent_drop: ' + str(percent_drop)
     print 'Stock Price: ' + str(stk.StockPrice)
     stk.StockPrice -= round(stk.StockPrice * percent_drop, 2)
-    stk_temp = stk.StockPrice
-    del stock_list.stock[-1]
-    stock_list.stock.add().StockPrice = stk_temp
     print 'Stock Price Decreased to:' + str(stk.StockPrice)
-    return stk
-    #f.write('Stock Price Decreased to:'+str(stk.StockPrice)+'\n')
 
 ##To calculate the frequency that the stock should fluctuate
 # and determine the status of what the stock should do at each fluctuation stage
@@ -212,7 +203,7 @@ def main():
             stk.StockPrice = float(raw_input('Stock price: '))
 
             f = open('client1.bin', "wb")
-            f.write(stock_list.SerializeToString())
+        o    f.write(stock_list.SerializeToString())
             f.close()
         elif choice == '2':
             for stock in stock_list.stock:
