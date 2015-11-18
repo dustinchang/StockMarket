@@ -4,8 +4,15 @@ from decimal import Decimal
 import threading
 import stock_pb2
 
+"""
+Implementation of a stock market exchange where stocks are continually on the rise or dropping.
+This program will assist on whether you should purchase or sell stocks.
+"""
+
 class Index:
+    """Investment information about an Index, which is a portion of a stock market"""
     def __init__(self):
+        """Index Constructor"""
         self.IndexID = ''
         self.IndexName = ''
         self.IndexValue = 0.0
@@ -22,7 +29,9 @@ class Index:
         self.IndexMembersDown = 0
 
 class Stock:
+    """Details of a Stock and it's contents"""
     def __init__(self):
+        """Stock Constructor"""
         self.StockID = ''
         self.StockName = ''
         self.StockOpen = 0.0
@@ -45,7 +54,9 @@ class Stock:
         self.StockSubIndustry = ''
 
 class Broker:
+    """Details of the identification of a Broker"""
     def __init__(self):
+        """Broker Constructor"""
         self.BrokerID = ''
         self.BrokerName = ''
         self.BrokerFirmID = ''
@@ -58,7 +69,9 @@ class Broker:
         self.BrokerShares = {} #{ String: Float } (StockID and Quantity)
 
 class Firm:
+    """Organizational details of a Firm"""
     def __init__(self):
+        """Firm Constructor"""
         self.FirmID = ''
         self.FirmName = ''
         self.FirmBudget = 0.0
@@ -66,7 +79,9 @@ class Firm:
         self.FirmTotalBrokers = 0
 
 class Client:
+    """Personal details of an investing Client"""
     def __init__(self):
+        """Client Constructor"""
         self.ClientID = ''
         self.ClientName = ''
         self.ClientPhoneNumber = 0
@@ -79,7 +94,9 @@ class Client:
         self.ClientIndsutry = []
 
 class Exchange:
+    """Contains the details of wanted market exchanges"""
     def __init__(self):
+        """Exchange Constructor"""
         self.ExchangeID = ''
         self.ExchangeName = ''
         self.ExchangeHQ = ''
@@ -96,7 +113,9 @@ class Exchange:
         self.ExchangeYTDReturn = 0.0
 
 class Transaction:
+    """Specifics of a trading Transaction"""
     def __init__(self):
+        """Transaction Constructor"""
         self.TransactionID = ''
         self.TransactionTime = {} #{Integer:Integer} Maybe use datetime for this
         self.TransactionBuyer = '' #(ClientID BrokerID FirmID)
@@ -110,7 +129,9 @@ class Transaction:
                                          #StockID : Volume : Price <> StockID : Volume : Price
         self.TransactionExchange = ''
 
-#Make stock rise
+##Takes a stock and a stock_list as parameters and
+# implements a rise in the stock
+#
 def rise(stk, stock_list):
     percent_rise = round(random.uniform(0.01, 0.1), 2)
     print 'percent_rise: ' + str(percent_rise)
@@ -123,7 +144,9 @@ def rise(stk, stock_list):
     return stk
 
 
-#Make stock drop
+##Takes a stock and a stock_list as parameters and
+# implements a drop in the stock
+#
 def drop(stk, stock_list):
     percent_drop = round(random.uniform(0.01, 0.1), 2)
     print 'percent_drop: ' + str(percent_drop)
@@ -136,9 +159,9 @@ def drop(stk, stock_list):
     return stk
     #f.write('Stock Price Decreased to:'+str(stk.StockPrice)+'\n')
 
-##
-# To calculate the frequency that the stock should fluctuate
+##To calculate the frequency that the stock should fluctuate
 # and determine the status of what the stock should do at each fluctuation stage
+#
 def fluctuate(stk, stock_list):
     print '~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!~~~~~~~~~~~~~~~~~~~~~~'
     stat = random.randint(0, 100)
@@ -164,9 +187,12 @@ def fluctuate(stk, stock_list):
     else:
         print 'prime'
 
+##Execution start of program, adding to protocol buffers
+#
+#
 def main():
     stock_list = stock_pb2.StockList()
-    
+
     # Read existing address book
     try:
         f = open('client1.bin', 'rb')
