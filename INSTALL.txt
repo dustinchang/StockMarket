@@ -1,6 +1,7 @@
 #Tools to get and run program
   Git
   Python2.7
+  google/protobuf (https://github.com/google/protobuf)
 
 #Instructions to Run
   -Download or clone repository files from GitHub https://github.com/dustinchang/StockMarket
