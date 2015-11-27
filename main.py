@@ -1,8 +1,9 @@
-import sys
-import random
+import datetime, time
 from decimal import Decimal
-import threading
+import random
 import stock_pb2
+import sys
+import urllib
 
 """
 Implementation of a stock market exchange where stocks are continually on the rise or dropping.
@@ -30,15 +31,17 @@ class Index:
 
 class Stock:
     """Details of a Stock and it's contents"""
-    def __init__(self):
+    def __init__(self, symb, day, open_, high, low, close, volume):
         """Stock Constructor"""
-        self.StockID = ''
+        self.StockID = symb
         self.StockName = ''
-        self.StockOpen = 0.0
+        self.StockDate = day
+        self.StockOpen = open_
         self.StockNetChange = 0.0
         self.StockChange = 0.0
-        self.StockDayRange = ''
-        self.StockVolume = 0
+        self.StockDayRange = str(low) + ' - ' + str(high)
+        self.StockVolume = volume
+        self.StockClose = close
         self.StockPreviousClose = 0.0
         self.Stock52WKRange = ''
         self.Stock1YRReturn = 0.0
@@ -52,6 +55,12 @@ class Stock:
         self.StockSector = ''
         self.StockIndustry = ''
         self.StockSubIndustry = ''
+
+    """Test Function"""
+    def print_stock(self):
+        dt = self.StockDate.strftime('%Y-%m-%d')
+        print 'ID: ' + self.StockID + '\nDate: ' + dt + '\nOpen: ' + str(self.StockOpen)
+        print 'Day Range: ' + self.StockDayRange + '\nClose: ' + str(self.StockClose) + '\nVolume: ' + str(self.StockVolume)
 
 class Broker:
     """Details of the identification of a Broker"""
@@ -178,18 +187,40 @@ def fluctuate(stk):
     else:
         print 'prime'
 
+def get_historical(number_of_days):
+    # Get historical stock data from the last seven days
+    today = datetime.date.today()
+    start = (today - datetime.timedelta(days=number_of_days))
+    symb = "GOOG"
+    # Outputs historical data into csv format (only output available)
+    url_string = "http://www.google.com/finance/historical?q={0}".format(symb)
+    url_string += "&startdate={0}&enddate={1}&output=csv".format(
+        start.strftime('%b %d, %Y'),today.strftime('%b %d, %Y'))
+    csv = urllib.urlopen(url_string).readlines()
+    csv.reverse()
+
+    last_seven = []
+    for bar in xrange(0,len(csv)-1):
+      ds,open_,high,low,close,volume = csv[bar].rstrip().split(',')
+      open_,high,low,close = [float(x) for x in [open_,high,low,close]]
+      dt = datetime.datetime.strptime(ds,'%d-%b-%y')
+      stock = Stock(symb, dt, open_, high, low, close, volume)
+      last_seven.append(stock)
+    
+    # Testing... print stocks in list
+    for s in last_seven:
+        s.print_stock()
+
 ##Execution start of program, adding to protocol buffers
 #
 #
 def main():
-    s = Stock()
-    rise(s)
-    print s.StockPrice
-
-
     stock_list = stock_pb2.StockList()
 
-    # Read existing address book
+    last_seven = get_historical(30)
+
+    """
+    # Read existing stock list
     try:
         f = open('client1.bin', 'rb')
         stock_list.ParseFromString(f.read())
@@ -225,6 +256,7 @@ def main():
 
     f = open('client1.bin', 'wb')
     f.write(stock_list.SerializeToString())
+    """
 
 if __name__ == "__main__":
     main()
