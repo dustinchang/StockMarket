@@ -1,7 +1,7 @@
 import datetime, time
 from decimal import Decimal
+import cPickle as pickle
 import random
-import stock_pb2
 import sys
 import urllib
 
@@ -215,8 +215,6 @@ def get_historical(number_of_days):
 #
 #
 def main():
-    stock_list = stock_pb2.StockList()
-
     last_seven = get_historical(30)
 
     """
