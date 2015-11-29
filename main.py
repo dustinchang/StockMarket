@@ -4,7 +4,6 @@ from googlefinance import getQuotes
 import cPickle as pickle
 import random
 import sys
-import time
 import urllib
 
 """
@@ -59,7 +58,7 @@ class Stock:
         #self.StockSubIndustry = ''
 
     def print_hist_stock(self):
-        dt = self.StockDate.strftime('%Y-%m-%d')
+        dt = self.StockDate.strftime('%Y-%m-%d T: %H:%M:%S')
         print 'ID: ' + self.StockID + '\nDate: ' + dt + '\nOpen: ' + str(self.StockOpen)
         print 'Day Range: ' + self.StockDayRange + '\nClose: ' + str(self.StockClose) + '\nVolume: ' + str(self.StockVolume)
 
@@ -213,20 +212,32 @@ def get_historical(symb, number_of_days):
       ds,open_,high,low,close,volume = csv[day].rstrip().split(',')
       open_,high,low,close = [float(x) for x in [open_,high,low,close]]
       dt = datetime.datetime.strptime(ds, '%d-%b-%y')
-      stock = Stock(symb, dt, open_, open_, high, low, close, volume)
-      histo.append(stock)
-    
-    # Testing... print stocks in list
-    for s in histo:
-        s.print_hist_stock()
+      histo.append(Stock(symb, dt, open_, open_, high, low, close, volume))
 
     return histo
 
 def get_day(symb):
     today = datetime.date.today().strftime('%Y%m%d')
-    today = int(time.mktime(datetime.strptime(stringTime, '%Y%m%d').timetuple()))
+    today = int(time.mktime(datetime.datetime.strptime(today, '%Y%m%d').timetuple()))
     interval = 16
-    url_string = "http://www.googe.com/finance/getprices?q={0}&i={1}&p=1d&ts={2}".format(symb, interval, today)
+    url_string = "http://www.google.com/finance/getprices?q={0}&i={1}&p=1d&ts={2}".format(symb, interval, today)
+
+    ticks = urllib.urlopen(url_string).readlines()[7:]
+    values = [tick.split(',') for tick in ticks]
+
+    data = []
+    for value in values:
+        dt = datetime.datetime.fromtimestamp(float(value[0][1:].strip())) # time in unix epoch format convert to datetime
+        data.append(Stock(symb,
+                          dt,
+                          value[4].strip(),
+                          value[4].strip(), # open; repeat cause python classes suck
+                          value[2].strip(), # high
+                          value[3].strip(), # low
+                          value[1].strip(), # close
+                          value[5].strip())) # volume
+    return data
+
 
 ## Get current stock data
 #  example:
@@ -272,10 +283,15 @@ def main():
     # read from stock list file
     # stock_list = pickle.load(open('stocklist.p', 'rb'))
 
-    #histo = get_historical('GOOG', 365)
-    day = get_day('GOOG')
-    for tick in day:
-        tick.print_hist_stock
+    #histo = get_historical('GOOG', 30)
+    #for s in histo:
+    #    s.print_hist_stock()
+
+    #day = get_day('GOOG')
+    #for tick in day:
+    #    tick.print_hist_stock()
+
+
     #stock_list = {'GOOG':histo}
     #stock = get_current('GOOG')
     #stock.print_stock()
