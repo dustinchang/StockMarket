@@ -1,7 +1,8 @@
 import datetime, time
 from decimal import Decimal
+from googlefinance import getQuotes
+import cPickle as pickle
 import random
-import stock_pb2
 import sys
 import urllib
 
@@ -31,36 +32,40 @@ class Index:
 
 class Stock:
     """Details of a Stock and it's contents"""
-    def __init__(self, symb, day, open_, high, low, close, volume):
+    def __init__(self, symb, day, price, open_ = 0.0, high = 0.0, low = 0.0, close = 0.0, volume = 0.0):
         """Stock Constructor"""
         self.StockID = symb
-        self.StockName = ''
+        #self.StockName = ''
         self.StockDate = day
         self.StockOpen = open_
-        self.StockNetChange = 0.0
-        self.StockChange = 0.0
+        #self.StockNetChange = 0.0
+        #self.StockChange = 0.0
         self.StockDayRange = str(low) + ' - ' + str(high)
         self.StockVolume = volume
         self.StockClose = close
-        self.StockPreviousClose = 0.0
-        self.Stock52WKRange = ''
-        self.Stock1YRReturn = 0.0
-        self.StockYTDReturn = 0.0
-        self.StockPERatio = 0.0
-        self.StockEarningsPS = 0.0
-        self.StockMarketCap = 0.0
-        self.StockSharesOutdanding = 0.0
-        self.StockPrice = 0.0
-        self.StockDividend = 0.0
-        self.StockSector = ''
-        self.StockIndustry = ''
-        self.StockSubIndustry = ''
+        #self.StockPreviousClose = 0.0
+        #self.Stock52WKRange = ''
+        #self.Stock1YRReturn = 0.0
+        #self.StockYTDReturn = 0.0
+        #self.StockPERatio = 0.0
+        #self.StockEarningsPS = 0.0
+        #self.StockMarketCap = 0.0
+        #self.StockSharesOutdanding = 0.0
+        self.StockPrice = price
+        #self.StockDividend = 0.0
+        #self.StockSector = ''
+        #self.StockIndustry = ''
+        #self.StockSubIndustry = ''
 
-    """Test Function"""
-    def print_stock(self):
-        dt = self.StockDate.strftime('%Y-%m-%d')
+    def print_hist_stock(self):
+        dt = self.StockDate.strftime('%Y-%m-%d T: %H:%M:%S')
         print 'ID: ' + self.StockID + '\nDate: ' + dt + '\nOpen: ' + str(self.StockOpen)
         print 'Day Range: ' + self.StockDayRange + '\nClose: ' + str(self.StockClose) + '\nVolume: ' + str(self.StockVolume)
+
+    def print_stock(self):
+        dt = self.StockDate.strftime('%Y-%m-%d T: %H:%M:%S')
+        print 'ID: ' + self.StockID + '\nDate: ' + dt
+        print 'Last Trade Price: ' + self.StockPrice
 
 class Broker:
     """Details of the identification of a Broker"""
@@ -187,76 +192,122 @@ def fluctuate(stk):
     else:
         print 'prime'
 
-def get_historical(number_of_days):
-    # Get historical stock data from the last seven days
+"""
+## Get historical stock data
+#  - retrieves one quote a day
+#  Use for last 30 days?
+def get_historical(symb, number_of_days):
     today = datetime.date.today()
     start = (today - datetime.timedelta(days=number_of_days))
-    symb = "GOOG"
     # Outputs historical data into csv format (only output available)
     url_string = "http://www.google.com/finance/historical?q={0}".format(symb)
     url_string += "&startdate={0}&enddate={1}&output=csv".format(
         start.strftime('%b %d, %Y'),today.strftime('%b %d, %Y'))
     csv = urllib.urlopen(url_string).readlines()
+    # Put header information at end; dont need it
     csv.reverse()
 
-    last_seven = []
-    for bar in xrange(0,len(csv)-1):
-      ds,open_,high,low,close,volume = csv[bar].rstrip().split(',')
+    # Put stocks into a list called 'histo'
+    histo = []
+    for day in xrange(0, len(csv) - 1): # -1 because last element is header
+      ds,open_,high,low,close,volume = csv[day].rstrip().split(',')
       open_,high,low,close = [float(x) for x in [open_,high,low,close]]
-      dt = datetime.datetime.strptime(ds,'%d-%b-%y')
-      stock = Stock(symb, dt, open_, high, low, close, volume)
-      last_seven.append(stock)
-    
-    # Testing... print stocks in list
-    for s in last_seven:
-        s.print_stock()
+      dt = datetime.datetime.strptime(ds, '%d-%b-%y')
+      histo.append(Stock(symb, dt, open_, open_, high, low, close, volume))
+
+    return histo
+"""
+
+def get_historical(symb, number_of_days):
+    today = datetime.date.today()
+    start = (today - datetime.timedelta(days=number_of_days)).strftime('%Y%m%d')
+    today = int(time.mktime(datetime.datetime.strptime(start, '%Y%m%d').timetuple()))
+    period = number_of_days
+    interval = 61
+    url_string = "http://www.google.com/finance/getprices?q={0}&i={1}&p={2}d&ts={3}".format(symb, interval, period, today)
+
+    ticks = urllib.urlopen(url_string).readlines()[7:]
+    values = [tick.split(',') for tick in ticks]
+
+    data = []
+    for value in values:
+        dt = datetime.datetime.fromtimestamp(float(value[0][1:].strip())) # time in unix epoch format convert to datetime
+        data.append(Stock(symb,
+                          dt,
+                          value[4].strip(),
+                          value[4].strip(), # open; repeat cause python classes suck
+                          value[2].strip(), # high
+                          value[3].strip(), # low
+                          value[1].strip(), # close
+                          value[5].strip())) # volume
+    return data
+
+
+## Get current stock data
+#  example:
+#    quotes = getQuotes('AAPL')
+#    return:
+#    [{u'Index': u'NASDAQ',
+#      u'LastTradeWithCurrency': u'129.09', 
+#      u'LastTradeDateTime': u'2015-03-02T16:04:29Z', 
+#      u'LastTradePrice': u'129.09', 
+#      u'Yield': u'1.46', 
+#      u'LastTradeTime': u'4:04PM EST', 
+#      u'LastTradeDateTimeLong': u'Mar 2, 4:04PM EST', 
+#      u'Dividend': u'0.47', 
+#      u'StockSymbol': u'AAPL', 
+#      u'ID': u'22144'}]
+#
+#   multiple quotes use getQuotes(['AAPL', 'GOOG'])
+def get_current(symb):
+    quote = getQuotes(symb)
+    # Date
+    dt = datetime.datetime.strptime(quote[0][u'LastTradeDateTime'], '%Y-%m-%dT%H:%M:%SZ')
+    stock = Stock(quote[0][u'StockSymbol'], dt, quote[0][u'LastTradePrice'])
+    return stock
+
+## 
+#
+#
+def transaction(user, stock):
+    pass
+
 
 ##Execution start of program, adding to protocol buffers
 #
 #
 def main():
-    stock_list = stock_pb2.StockList()
-
-    last_seven = get_historical(30)
-
     """
-    # Read existing stock list
-    try:
-        f = open('client1.bin', 'rb')
-        stock_list.ParseFromString(f.read())
-        f.close()
-    except IOError:
-        print 'Could not open file: client1.bin'
-
-    while True:
-        choice = raw_input('What would you like to do?\n\tAdd a stock (1)\n\tView stocks (2)\n\tExit (3)\nInput: ')
-        if choice == '1':
-            # Create a stock
-            print 'Adding stock...'
-            stk = stock_list.stock.add()
-            stk.StockID = raw_input('Stock ID: ')
-            stk.StockName = raw_input('Stock name: ')
-            stk.StockPrice = float(raw_input('Stock price: '))
-
-            f = open('client1.bin', "wb")
-            f.write(stock_list.SerializeToString())
-            f.close()
-        elif choice == '2':
-            for stock in stock_list.stock:
-                print 'Stock ID: ', stock.StockID
-                print 'Stock Name: ', stock.StockName
-                print 'Stock Price: ', str(stock.StockPrice)
-        else:
-            break
-
-    # later functionality
-    # Simulate fluctuations for stock
-    # for x in range(10):
-    #    fluctuate(client1, stock_list)
-
-    f = open('client1.bin', 'wb')
-    f.write(stock_list.SerializeToString())
+    # create initial stocklist file with 7 day sample
+    histo = get_historical('GOOG', 30)
+    stock_list = {'GOOG':histo}
+    pickle.dump(stock_list, open("stocklist.p", "wb"))
     """
+
+    symblist = {'GOOG' : 'Alphabet Inc.', 'AAPL' : 'Apple Inc.', 'NFLX' : 'Netflix, Inc.', 'AMZN' : 'Amazon.com, Inc.', 'TSLA' : 'Tesla Motors Inc'}
+
+    # read from stock list file
+    # stock_list = pickle.load(open('stocklist.p', 'rb'))
+
+    #histo = get_historical('GOOG', 30)
+    #for s in histo:
+    #    s.print_hist_stock()
+
+    # get historical data on all stocks indicated in symbol list
+    quotelist = []
+    for key in symblist:
+        quotelist.append(get_historical(key, 1))
+
+    #day = get_historical('GOOG', 5)
+    for symb in quotelist:
+        for quote in symb:
+            quote.print_hist_stock()
+
+    #stock = get_current('GOOG')
+    #stock.print_stock()
+
+    # save state of stock list into file
+    #pickle.dump(stock_list, open("stocklist.p", "wb"))
 
 if __name__ == "__main__":
     main()
