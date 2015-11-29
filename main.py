@@ -192,6 +192,7 @@ def fluctuate(stk):
     else:
         print 'prime'
 
+"""
 ## Get historical stock data
 #  - retrieves one quote a day
 #  Use for last 30 days?
@@ -215,12 +216,15 @@ def get_historical(symb, number_of_days):
       histo.append(Stock(symb, dt, open_, open_, high, low, close, volume))
 
     return histo
+"""
 
-def get_day(symb):
-    today = datetime.date.today().strftime('%Y%m%d')
-    today = int(time.mktime(datetime.datetime.strptime(today, '%Y%m%d').timetuple()))
-    interval = 16
-    url_string = "http://www.google.com/finance/getprices?q={0}&i={1}&p=1d&ts={2}".format(symb, interval, today)
+def get_historical(symb, number_of_days):
+    today = datetime.date.today()
+    start = (today - datetime.timedelta(days=number_of_days)).strftime('%Y%m%d')
+    today = int(time.mktime(datetime.datetime.strptime(start, '%Y%m%d').timetuple()))
+    period = number_of_days
+    interval = 61
+    url_string = "http://www.google.com/finance/getprices?q={0}&i={1}&p={2}d&ts={3}".format(symb, interval, period, today)
 
     ticks = urllib.urlopen(url_string).readlines()[7:]
     values = [tick.split(',') for tick in ticks]
@@ -267,6 +271,8 @@ def get_current(symb):
 #
 def transaction(user, stock):
     pass
+
+
 ##Execution start of program, adding to protocol buffers
 #
 #
@@ -278,8 +284,8 @@ def main():
     pickle.dump(stock_list, open("stocklist.p", "wb"))
     """
 
-    symblist = {'GOOG' : 'Alphabet Inc.'}
-    
+    symblist = {'GOOG' : 'Alphabet Inc.', 'AAPL' : 'Apple Inc.', 'NFLX' : 'Netflix, Inc.', 'AMZN' : 'Amazon.com, Inc.', 'TSLA' : 'Tesla Motors Inc'}
+
     # read from stock list file
     # stock_list = pickle.load(open('stocklist.p', 'rb'))
 
@@ -287,12 +293,16 @@ def main():
     #for s in histo:
     #    s.print_hist_stock()
 
-    #day = get_day('GOOG')
-    #for tick in day:
-    #    tick.print_hist_stock()
+    # get historical data on all stocks indicated in symbol list
+    quotelist = []
+    for key in symblist:
+        quotelist.append(get_historical(key, 1))
 
+    #day = get_historical('GOOG', 5)
+    for symb in quotelist:
+        for quote in symb:
+            quote.print_hist_stock()
 
-    #stock_list = {'GOOG':histo}
     #stock = get_current('GOOG')
     #stock.print_stock()
 
