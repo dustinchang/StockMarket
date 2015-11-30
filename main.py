@@ -248,14 +248,14 @@ def get_historical(symb, number_of_days):
 #    quotes = getQuotes('AAPL')
 #    return:
 #    [{u'Index': u'NASDAQ',
-#      u'LastTradeWithCurrency': u'129.09', 
-#      u'LastTradeDateTime': u'2015-03-02T16:04:29Z', 
-#      u'LastTradePrice': u'129.09', 
-#      u'Yield': u'1.46', 
-#      u'LastTradeTime': u'4:04PM EST', 
-#      u'LastTradeDateTimeLong': u'Mar 2, 4:04PM EST', 
-#      u'Dividend': u'0.47', 
-#      u'StockSymbol': u'AAPL', 
+#      u'LastTradeWithCurrency': u'129.09',
+#      u'LastTradeDateTime': u'2015-03-02T16:04:29Z',
+#      u'LastTradePrice': u'129.09',
+#      u'Yield': u'1.46',
+#      u'LastTradeTime': u'4:04PM EST',
+#      u'LastTradeDateTimeLong': u'Mar 2, 4:04PM EST',
+#      u'Dividend': u'0.47',
+#      u'StockSymbol': u'AAPL',
 #      u'ID': u'22144'}]
 #
 #   multiple quotes use getQuotes(['AAPL', 'GOOG'])
@@ -266,12 +266,27 @@ def get_current(symb):
     stock = Stock(quote[0][u'StockSymbol'], dt, quote[0][u'LastTradePrice'])
     return stock
 
-## 
+##
 #
 #
 def transaction(user, stock):
     pass
 
+
+def close_prices(symblist):
+    stock_objs = []
+    close_list = []
+    stk_tracker = 0
+    for ticker in symblist:
+        stock_objs.append(get_historical(ticker, 1))
+    for stk_list in stock_objs:
+        close_list.append([stk_list[0].StockID])
+        for stk in stk_list:
+            close_list[stk_tracker].append(stk.StockClose)
+        stk_tracker += 1
+    close_list[0].append('hellow')
+    #print close_list
+    return close_list
 
 ##Execution start of program, adding to protocol buffers
 #
@@ -285,6 +300,7 @@ def main():
     """
 
     symblist = {'GOOG' : 'Alphabet Inc.', 'AAPL' : 'Apple Inc.', 'NFLX' : 'Netflix, Inc.', 'AMZN' : 'Amazon.com, Inc.', 'TSLA' : 'Tesla Motors Inc'}
+    ticker_list = {'Alphabet Inc.' : 'GOOG', 'Apple Inc.' : 'AAPL', 'Netflix, Inc.' : 'NFLX', 'Amazon.com, Inc.' : 'AMZN', 'Tesla Motors Inc' : 'TSLA'}
 
     # read from stock list file
     # stock_list = pickle.load(open('stocklist.p', 'rb'))
@@ -293,15 +309,19 @@ def main():
     #for s in histo:
     #    s.print_hist_stock()
 
+    #Get all the closing prices
+    close_prices(symblist)
+
     # get historical data on all stocks indicated in symbol list
     quotelist = []
     for key in symblist:
         quotelist.append(get_historical(key, 1))
 
+    #Prints out the historical data that was grabbed from above for loop
     #day = get_historical('GOOG', 5)
-    for symb in quotelist:
-        for quote in symb:
-            quote.print_hist_stock()
+    ###for symb in quotelist:
+    ###    for quote in symb:
+    ###        quote.print_hist_stock()
 
     #stock = get_current('GOOG')
     #stock.print_stock()
