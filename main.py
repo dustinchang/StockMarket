@@ -310,7 +310,8 @@ def main():
     #    s.print_hist_stock()
 
     #Get all the closing prices
-    close_prices(symblist)
+    close_prices_list = close_prices(symblist)
+    #print close_prices_list
 
     # get historical data on all stocks indicated in symbol list
     quotelist = []
