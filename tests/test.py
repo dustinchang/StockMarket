@@ -4,6 +4,8 @@
 """
 
 import unittest
+import sys
+sys.path.insert(0, '..')
 from main import fluctuate
 from main import rise
 from main import drop
@@ -20,7 +22,7 @@ class Test(unittest.TestCase):
 		"""Verify environment is setup properly""" ## Printed if test fails
 		pass
 
-	
+
 	def tearDown(self):
 		"""The function "tearDown" will always be ran in order to cleanup the
 			test environment after all the tests have run.
@@ -31,7 +33,7 @@ class Test(unittest.TestCase):
 
 	def test_init(self):
 		"""Testing the Initialization of a Stock Value"""
-		stk = Stock()
+		stk = Stock(None, None, None, None, None, None, None)
 		print stk.StockPrice
 		try:
 			self.assertEqual(stk.StockPrice, 0.0)
@@ -43,19 +45,19 @@ class Test(unittest.TestCase):
 			The funtion test_rise checks the original stock price to
 			new raised stock price if it is incresed it passes otherwise fail.
 		"""
-		stk = Stock()
+		stk = Stock(None, None, None, None, None, None, None)
 		stk.StockPrice = 120
 		orig_stk_value = stk.StockPrice
 		rise(stk)
 		print 'Testing: ' + str(stk.StockPrice) + ' > ' + str(orig_stk_value)
 		self.assertGreater(stk.StockPrice, orig_stk_value)
-		
+
 	def test_drop(self):
 		"""Testing the Implementation of a Stock Value Dropping
 			The funtion test_drop checks the original stock price to
 			new raised stock price if it is incresed it passes otherwise fail.
 		"""
-		stk = Stock()
+		stk = Stock(None, None, None, None, None, None, None)
 		stk.StockPrice = 120
 		orig_stk_value = stk.StockPrice
 		drop(stk)
@@ -67,11 +69,11 @@ class Test(unittest.TestCase):
 			The function test_fluctuate implements a change in the stock value
 			by either rising, dropping, or even remaining consistent.
 		"""
-		stk = Stock()
+		stk = Stock(None, None, None, None, None, None, None)
 		stk.StockPrice = 120
 		orig_stk_value = stk.StockPrice
 		for x in xrange(1,70):
-			orig_stk_value = stk.StockPrice
+			#orig_stk_value = stk.StockPrice can't have or else if it goes in prime or other it does actually test correctly
 			fluctuate(stk)
 		self.assertNotEqual(stk.StockPrice, orig_stk_value)
 
