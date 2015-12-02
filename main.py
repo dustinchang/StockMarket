@@ -1,8 +1,8 @@
 import datetime, time
-from decimal import Decimal
+#from decimal import Decimal
 from googlefinance import getQuotes
 import cPickle as pickle
-import random
+#import random
 import sys
 import urllib
 
@@ -143,6 +143,7 @@ class Transaction:
                                          #StockID : Volume : Price <> StockID : Volume : Price
         self.TransactionExchange = ''
 
+"""
 ##Takes a stock and a stock_list as parameters and
 # implements a rise in the stock
 #
@@ -191,7 +192,7 @@ def fluctuate(stk):
         print 'divisible by 5'
     else:
         print 'prime'
-
+"""
 """
 ## Get historical stock data
 #  - retrieves one quote a day
