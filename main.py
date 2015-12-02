@@ -36,7 +36,7 @@ class Stock:
         """Stock Constructor"""
         self.StockID = symb
         #self.StockName = ''
-        self.StockDate = day
+        self.StockDate = day    # 
         self.StockOpen = open_
         #self.StockNetChange = 0.0
         #self.StockChange = 0.0
@@ -58,13 +58,13 @@ class Stock:
         #self.StockSubIndustry = ''
 
     # Testing functions
-    # used for data gained from historical function
+    # Used for data gained from historical function
     def print_hist_stock(self):
         dt = self.StockDate.strftime('%Y-%m-%d T: %H:%M:%S')
         print 'ID: ' + self.StockID + '\nDate: ' + dt + '\nOpen: ' + str(self.StockOpen)
         print 'Day Range: ' + self.StockDayRange + '\nClose: ' + str(self.StockClose) + '\nVolume: ' + str(self.StockVolume)
 
-    # used for data gained for current price function
+    # Used for data gained for current price function
     def print_stock(self):
         dt = self.StockDate.strftime('%Y-%m-%d T: %H:%M:%S')
         print 'ID: ' + self.StockID + '\nDate: ' + dt
@@ -134,6 +134,7 @@ class Transaction:
     def __init__(self):
         """Transaction Constructor"""
         self.TransactionID = ''
+        self.TransactionStock = ''
         self.TransactionTime = {} #{Integer:Integer} Maybe use datetime for this
         self.TransactionBuyer = '' #(ClientID BrokerID FirmID)
         self.TransactionSeller = '' #(ClientID BrokerID FirmID)
@@ -221,6 +222,7 @@ def get_historical(symb, number_of_days):
 
     return histo
 """
+
 ## Get historical data from indicated symb
 # maximum 15 days from today
 # usage:
@@ -229,23 +231,29 @@ def get_historical(symb, number_of_days):
 #       interval = 900
 #           900 seconds = 15 minutes
 #       number_of_Days = 1
-def get_historical(symb, interval = 900, number_of_days = 1):
+def get_historical(symb, number_of_days = 1, interval = 900):
     today = datetime.date.today()
     start = (today - datetime.timedelta(days=number_of_days)).strftime('%Y%m%d')
     today = int(time.mktime(datetime.datetime.strptime(start, '%Y%m%d').timetuple()))
     period = number_of_days
     url_string = "http://www.google.com/finance/getprices?q={0}&i={1}&p={2}d&ts={3}".format(symb, interval + 1, period, today)
 
+    # First seven lines are parameter information for the url request. Not needed.
     ticks = urllib.urlopen(url_string).readlines()[7:]
+    # Sample output line
+    #   a1448980200,747.52,747.52,747.11,747.11,15534
+    # Separate each line into values split by ','
     values = [tick.split(',') for tick in ticks]
+    # values = [[a1448980200, 747.52, 747.52, 747.11, 747.11, 15534][...]]
 
     data = []
     for value in values:
+        # epoch time = a1448980200
         dt = datetime.datetime.fromtimestamp(float(value[0][1:].strip())) # time in unix epoch format convert to datetime
         data.append(Stock(symb,
                           dt,
-                          value[4].strip(),
-                          value[4].strip(), # open; repeat cause python classes suck
+                          value[4].strip(), # open
+                          value[4].strip(), # open; repeat cause python classes suck. will fix later
                           value[2].strip(), # high
                           value[3].strip(), # low
                           value[1].strip(), # close
@@ -268,7 +276,6 @@ def get_historical(symb, interval = 900, number_of_days = 1):
 #      u'StockSymbol': u'AAPL',
 #      u'ID': u'22144'}]
 #
-#   multiple quotes use getQuotes(['AAPL', 'GOOG'])
 def get_current(symb):
     quote = getQuotes(symb)
     # Date
@@ -282,20 +289,14 @@ def get_current(symb):
 def transaction(user, stock):
     pass
 
-
-def close_prices(symblist):
-    stock_objs = []
-    close_list = []
-    stk_tracker = 0
-    for ticker in symblist:
-        stock_objs.append(get_historical(ticker, 1))
-    for stk_list in stock_objs:
-        close_list.append([stk_list[0].StockID])
-        for stk in stk_list:
-            close_list[stk_tracker].append(stk.StockClose)
-        stk_tracker += 1
-    close_list[0].append('hellow')
-    #print close_list
+## Get close prices 
+#
+#
+def get_close_prices(symb, number_of_days):
+    close_list
+    stock_objs = get_historical(ticker, number_of_days)
+    for stk in stock_objs:
+        close_list.append(stk.StockClose)
     return close_list
 
 ##Execution start of program, adding to protocol buffers
@@ -313,7 +314,7 @@ def main():
     #    s.print_hist_stock()
 
     #Get all the closing prices
-    close_prices_list = close_prices(symblist)
+    close_prices_list = get_close_prices('GOOG')
     #print close_prices_list
 
     # get historical data on all stocks indicated in symbol list
