@@ -6,3 +6,10 @@ Calling data
 Threading?
 Design Patterns
 Portfolios
+
+
+
+Teamwork
+Conflicts
+Objects
+future funct
