@@ -105,7 +105,7 @@ class Client:
         self.ClientName = ''
         self.ClientPhoneNumber = 0
         self.ClientEmailAddress = ''
-        self.password = ''
+        self.ClientPassword = ''
         self.ClientBudget = 0.0
         self.ClientFirmID = '' #Maybe int
         self.ClientBrokerID = '' #Maybe int
