@@ -9,6 +9,9 @@ from main import *
 import sys
 from sys import *
 
+import scrapper
+from scrapper import *
+
 from googlefinance import getQuotes
 import json
 
