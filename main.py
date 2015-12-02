@@ -286,8 +286,6 @@ def close_prices(symblist):
         for stk in stk_list:
             close_list[stk_tracker].append(stk.StockClose)
         stk_tracker += 1
-    close_list[0].append('hellow')
-    #print close_list
     return close_list
 
 ##Execution start of program, adding to protocol buffers
