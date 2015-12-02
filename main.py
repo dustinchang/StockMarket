@@ -147,6 +147,9 @@ class Transaction:
 # implements a rise in the stock
 #
 def rise(stk):
+	# if the stock rise buy otherwise not buy or sell
+	currentPrice = stk.StockPrice
+	lastPrice = 
    percent_rise = round(random.uniform(0.01, 0.1), 2)
    print 'percent_rise: ' + str(percent_rise)
    print 'Stock Price: ' + str(stk.StockPrice)
