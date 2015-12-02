@@ -75,11 +75,16 @@ class Broker:
         self.BrokerName = ''
         self.BrokerFirmID = ''
         self.BrokerPLReport = 0.0
+        self.BrokerPhoneNumber = 0
+        self.BrokerEmailAddress = ''
+        self.BrokerPassword = ''
         self.BrokerTotalBudget = 0.0
         self.BrokerTotalStocks = 0
-        self.BrokerBudget = {} #{ String : String : Float } (ClientID : StockID : Budget $)
-        self.BrokerCommission = 0.0
+        self.BrokerBudget = 0 #{ String : String : Float } (ClientID : StockID : Budget $)
+        self.BrokerAuthority = ''
+        self.BrokerIndustry = ''
         self.BrokerLicenseType = ''
+        self.BrokerLicenseIssue = 0
         self.BrokerShares = {} #{ String: Float } (StockID and Quantity)
 
 class Firm:
@@ -100,12 +105,12 @@ class Client:
         self.ClientName = ''
         self.ClientPhoneNumber = 0
         self.ClientEmailAddress = ''
+        self.password = ''
         self.ClientBudget = 0.0
-        self.ClientShares = {} #{ String : Float : String } (StockID : Quantity : Can Exercise)
         self.ClientFirmID = '' #Maybe int
         self.ClientBrokerID = '' #Maybe int
         self.ClientPLReport = 0.0
-        self.ClientIndsutry = []
+        self.ClientIndsutry = ''
 
 class Exchange:
     """Contains the details of wanted market exchanges"""
