@@ -26,10 +26,11 @@ tempClient = Client()
 tempBroker = Broker()
 tempFirm = Firm()
 
-tempStock = get_historical('goog',15)
-print tempStock.StockID
-print tempStock.StockPrice
-print tempStock.StockClose
+tempStock = get_historical('GOOG',14)
+print(tempStock[0].StockID)
+#print()
+'''print tempStock.StockPrice
+print tempStock.StockClose'''
 
 loggedin = False
 
