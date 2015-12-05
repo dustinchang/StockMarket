@@ -150,6 +150,8 @@ class Transaction:
 # implements a rise in the stock
 #
 def rise(stk):
+	currentPrice = stk.StockPrice
+	lastPrice = 
    percent_rise = round(random.uniform(0.01, 0.1), 2)
    print 'percent_rise: ' + str(percent_rise)
    print 'Stock Price: ' + str(stk.StockPrice)
@@ -295,11 +297,10 @@ def transaction(user, stock):
 #
 #
 def get_close_prices(symb, number_of_days):
-    close_list
+    close_list = []
     stock_objs = get_historical(ticker, number_of_days)
     for stk in stock_objs:
         close_list.append(stk.StockClose)
-    return close_list
 
 ##Execution start of program, adding to protocol buffers
 #
