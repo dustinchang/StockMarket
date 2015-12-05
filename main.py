@@ -1,8 +1,6 @@
 import datetime, time
-#from decimal import Decimal
 from googlefinance import getQuotes
 import cPickle as pickle
-#import random
 import sys
 import urllib
 
@@ -32,11 +30,11 @@ class Index:
 
 class Stock:
     """Details of a Stock and it's contents"""
-    def __init__(self, symb, day, price, open_ = 0.0, high = 0.0, low = 0.0, close = 0.0, volume = 0.0):
+    def __init__(self, symb, day, close, open_ = 0.0, high = 0.0, low = 0.0, volume = 0.0):
         """Stock Constructor"""
         self.StockID = symb
         #self.StockName = ''
-        self.StockDate = day    # 
+        self.StockDate = day
         self.StockOpen = open_
         #self.StockNetChange = 0.0
         #self.StockChange = 0.0
@@ -252,7 +250,7 @@ def get_historical(symb, number_of_days = 1, interval = 900):
         dt = datetime.datetime.fromtimestamp(float(value[0][1:].strip())) # time in unix epoch format convert to datetime
         data.append(Stock(symb,
                           dt,
-                          value[4].strip(), # open
+                          value[1].strip(), # close
                           value[4].strip(), # open; repeat cause python classes suck. will fix later
                           value[2].strip(), # high
                           value[3].strip(), # low
@@ -287,7 +285,11 @@ def get_current(symb):
 #
 #
 def transaction(user, stock):
-    pass
+    # load user portfolio
+    # load transaction file
+    # modify stock stuff into portfolio
+    # save user portfolio
+    # save transaction file
 
 ## Get close prices 
 #
