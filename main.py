@@ -49,7 +49,7 @@ class Stock:
         #self.StockEarningsPS = 0.0
         #self.StockMarketCap = 0.0
         #self.StockSharesOutdanding = 0.0
-        self.StockPrice = price
+        self.StockPrice = close
         #self.StockDividend = 0.0
         #self.StockSector = ''
         #self.StockIndustry = ''
@@ -72,7 +72,7 @@ class Broker:
     """Details of the identification of a Broker"""
     def __init__(self):
         """Broker Constructor"""
-        self.BrokerID = ''
+        self.ID = ''
         self.BrokerName = ''
         self.BrokerFirmID = ''
         self.BrokerPLReport = 0.0
@@ -87,7 +87,7 @@ class Firm:
     """Organizational details of a Firm"""
     def __init__(self):
         """Firm Constructor"""
-        self.FirmID = ''
+        self.ID = ''
         self.FirmName = ''
         self.FirmBudget = 0.0
         self.FirmType = ''
@@ -97,7 +97,7 @@ class Client:
     """Personal details of an investing Client"""
     def __init__(self):
         """Client Constructor"""
-        self.ClientID = ''
+        self.ID = ''
         self.ClientName = ''
         self.ClientPhoneNumber = 0
         self.ClientEmailAddress = ''
@@ -105,8 +105,9 @@ class Client:
         self.ClientShares = {} #{ String : Float : String } (StockID : Quantity : Can Exercise)
         self.ClientFirmID = '' #Maybe int
         self.ClientBrokerID = '' #Maybe int
-        self.ClientPLReport = 0.0
-        self.ClientIndsutry = []
+        self.ClientProfit = 0.0
+        self.ClientPLReport = 0.0 # percentage
+        self.ClientIndustry = []
 
 class Exchange:
     """Contains the details of wanted market exchanges"""
@@ -129,21 +130,44 @@ class Exchange:
 
 class Transaction:
     """Specifics of a trading Transaction"""
-    def __init__(self):
+    def __init__(self, user, t_type, investment):
         """Transaction Constructor"""
         self.TransactionID = ''
-        self.TransactionStock = ''
-        self.TransactionTime = {} #{Integer:Integer} Maybe use datetime for this
+        self.TransactionStock = investment
+        self.TransactionTime = investment.TradeDate #{Integer:Integer} Maybe use datetime for this
         self.TransactionBuyer = '' #(ClientID BrokerID FirmID)
         self.TransactionSeller = '' #(ClientID BrokerID FirmID)
-        self.TransactionTrader = '' #(ClientID BrokerID FirmID)
-        self.TransactionType = '' #(Sell Buy Trade)
+        self.TransactionTrader = [] #(ClientID BrokerID FirmID)
+        self.TransactionType = t_type #(Sell Buy Trade)
         self.TransactionPLReport = {} #String : Float (only when it's a sell or trade)
         self.TransactionBSVolume = {} #String : Integer : Float (StockID : Volume : Price)
         self.TransactionTradeVolume = {} #{stock traded <> stock gained}
                                          #{String : Integer : Float <> String : Integer : Float }
                                          #StockID : Volume : Price <> StockID : Volume : Price
         self.TransactionExchange = ''
+        check_transaction_type(user, t_type)
+
+    # Function to assign ID values into Transaction{Buyer/Seller/Trader}
+    # TransactionTrade will be a list of two user IDs
+    def check_transaction_type(self, user, t_type):
+        # Transaction type is 'buy'
+        if t_type == "buy":
+            self.TransactionBuyer = user.ID
+        # Transaction type is 'sell'
+        elif t_type == "sell":
+            self.TransactionSeller = user.ID
+        # Transaction type is 'trade'
+        else:
+            self.TransactionTrader = [user[0].ID, user[1].ID]
+
+class Investment:
+    """ """
+    def __init__(self, stock):
+        """ """
+        self.StockID = stock.StockID
+        self.TradeDate = stock.StockDate
+        self.StockVolume = stock.StockVolume
+        self.PriceTraded = stock.StockPrice
 
 """
 ##Takes a stock and a stock_list as parameters and
@@ -256,7 +280,6 @@ def get_historical(symb, number_of_days = 1, interval = 900):
                           value[4].strip(), # open; repeat cause python classes suck. will fix later
                           value[2].strip(), # high
                           value[3].strip(), # low
-                          value[1].strip(), # close
                           value[5].strip())) # volume
     return data
 
@@ -286,19 +309,47 @@ def get_current(symb):
 ##
 #
 #
-def transaction(user, stock):
-    # load user portfolio
+def buy(user, symb):
+    # load user
+    user = pickle.load( open("./SMfiles/users/{}/".format(user), "rb"))
+    portfolio = user.Portfolio
     # load transaction file
+    transactions = []
+        #pickle.load( open("", "rb"))
     # modify stock stuff into portfolio
+    inv = Investment(get_current(symb))
+    portfolios.append(inv)
+
+    # check user type to subtract from their budget
+    # subtract from client's budget
+    if isinstance(user, Client):
+        user.ClientBudget -= inv.PriceTraded
+    # subtract from broker's budget
+    elif isinstance(user, Broker):
+        user.BrokerTotalBudget -= inv.PriceTraded # ---------------- this might be wrong
+    # subtract from the buyer of the firm's budget
+    else:
+        user.FirmBudget -= inv.PriceTraded
+
+    trans = Transaction(user, 'buy', inv)
+    transactions.append(trans)
     # save user portfolio
+    pickle.dump(portfolio, open("{}".format(user), "wb"))
     # save transaction file
+    pickle.dump(transactions, open("", "wb"))
+
+def sell():
+    pass
+
+def trade():
+    pass
 
 ## Get close prices 
 #
 #
-def get_close_prices(symb, number_of_days):
+def get_close_prices(symb, number_of_days = 15):
     close_list = []
-    stock_objs = get_historical(ticker, number_of_days)
+    stock_objs = get_historical(symb, number_of_days)
     for stk in stock_objs:
         close_list.append(stk.StockClose)
 
@@ -309,9 +360,6 @@ def main():
     symblist = {'GOOG' : 'Alphabet Inc.', 'AAPL' : 'Apple Inc.', 'NFLX' : 'Netflix, Inc.', 'AMZN' : 'Amazon.com, Inc.', 'TSLA' : 'Tesla Motors Inc'}
     ticker_list = {'Alphabet Inc.' : 'GOOG', 'Apple Inc.' : 'AAPL', 'Netflix, Inc.' : 'NFLX', 'Amazon.com, Inc.' : 'AMZN', 'Tesla Motors Inc' : 'TSLA'}
 
-    # read from stock list file
-    # stock_list = pickle.load(open('stocklist.p', 'rb'))
-
     #histo = get_historical('GOOG', 30)
     #for s in histo:
     #    s.print_hist_stock()
@@ -321,13 +369,13 @@ def main():
     #print close_prices_list
 
     # get historical data on all stocks indicated in symbol list
-    quotelist = []
-    for key in symblist:
-        quotelist.append(get_historical(key, 10))    # max 15 days
+    #quotelist = []
+    #for key in symblist:
+    #    quotelist.append(get_historical(key, 10))    # max 15 days
 
-    for symb in quotelist:
-        for quote in symb:
-            quote.print_hist_stock()
+    #for symb in quotelist:
+    #    for quote in symb:
+    #        quote.print_hist_stock()
 
     #stock = get_current('GOOG')
     #stock.print_stock()

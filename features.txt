@@ -1,15 +1,8 @@
-Historical data
-Real time quote
-Transactions
-Storing data
-Calling data
-Threading?
-Design Patterns
-Portfolios
-
-
-
-Teamwork
-Conflicts
-Objects
-future funct
+Historical data :D
+Real time quote :D
+Transactions	:\
+Storing data	:)
+Calling data	:)
+Threading?	:(
+Design Patterns	:|
+Portfolios	:?
