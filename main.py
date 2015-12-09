@@ -436,6 +436,7 @@ def get_close_prices(symb, number_of_days = 15):
     stock_objs = get_historical(symb, number_of_days)
     for stk in stock_objs:
         close_list.append(stk.StockClose)
+    return close_list
 
 ## Execution start of program, adding to protocol buffers
 #
@@ -449,7 +450,7 @@ def main():
     #    s.print_hist_stock()
 
     #Get all the closing prices
-    close_prices_list = get_close_prices('GOOG')
+    #close_prices_list = get_close_prices('GOOG')
     #print close_prices_list
 
     # get historical data on all stocks indicated in symbol list
