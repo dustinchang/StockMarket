@@ -27,6 +27,8 @@ def stock_patterns(stk_hist):
         else:
             pass
     print avg_prices
+    print len(avg_prices)
+    #work on separation into phases and determine if buy or sell
 
         #curr = price
         #if curr/prev_curr < .95:
@@ -69,7 +71,7 @@ def main():
     print client1.Portfolio[0].StockVolume
     print client1.Portfolio[0].PriceTraded
 
-    stock_estimate(client1.Portfolio, 'AAPL')
+    stock_estimate(client1.Portfolio, 'GOOGL')
 
 if __name__ == "__main__":
     main()
