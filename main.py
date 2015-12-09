@@ -206,7 +206,6 @@ class Investment:
         """ """
         self.StockID = stock.StockID
         self.TradeDate = stock.StockDate
-        self.StockVolume = stock.StockVolume
         self.PriceTraded = stock.StockPrice
 
 """ Ended up sticking with real time data only
@@ -338,7 +337,6 @@ def get_historical(symb, number_of_days = 1, interval = 900):
 #      u'Dividend': u'0.47',
 #      u'StockSymbol': u'AAPL',
 #      u'ID': u'22144'}]
-#
 def get_current(symb):
     quote = getQuotes(symb)
     # Date
@@ -438,12 +436,12 @@ def get_close_prices(symb, number_of_days = 15):
         close_list.append(stk.StockClose)
     return close_list
 
-## Execution start of program, adding to protocol buffers
+## Testing functions
 #
 #
 def main():
-    symblist = {'GOOG' : 'Alphabet Inc.', 'AAPL' : 'Apple Inc.', 'NFLX' : 'Netflix, Inc.', 'AMZN' : 'Amazon.com, Inc.', 'TSLA' : 'Tesla Motors Inc'}
-    ticker_list = {'Alphabet Inc.' : 'GOOG', 'Apple Inc.' : 'AAPL', 'Netflix, Inc.' : 'NFLX', 'Amazon.com, Inc.' : 'AMZN', 'Tesla Motors Inc' : 'TSLA'}
+    #symblist = {'GOOG' : 'Alphabet Inc.', 'AAPL' : 'Apple Inc.', 'NFLX' : 'Netflix, Inc.', 'AMZN' : 'Amazon.com, Inc.', 'TSLA' : 'Tesla Motors Inc'}
+    #ticker_list = {'Alphabet Inc.' : 'GOOG', 'Apple Inc.' : 'AAPL', 'Netflix, Inc.' : 'NFLX', 'Amazon.com, Inc.' : 'AMZN', 'Tesla Motors Inc' : 'TSLA'}
 
     #histo = get_historical('GOOG', 30)
     #for s in histo:
@@ -464,6 +462,8 @@ def main():
 
     #stock = get_current('GOOG')
     #stock.print_stock()
+
+
 
 if __name__ == "__main__":
     main()
