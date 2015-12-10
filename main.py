@@ -76,6 +76,7 @@ class Broker:
         """Broker Constructor"""
         self.ID = ''
         self.BrokerName = ''
+        self.BrokerPassword = ''
         self.BrokerFirmID = ''
         self.BrokerPLReport = 0.0
         self.BrokerTotalBudget = 0.0
@@ -85,6 +86,7 @@ class Broker:
         self.BrokerCommission = 0.0
         self.BrokerLicenseType = ''
         self.BrokerShares = {} #{ String: Float } (StockID and Quantity)
+        self.BrokerIndustry = ''
         self.Portfolio = [] # list of Investments
         self.InvestmentHistory = [] # list of Investments bought and sold. used for profit loss report
         self.InvestmentExpense = '' # sum of all investments bought
@@ -124,6 +126,7 @@ class Client:
         """Client Constructor"""
         self.ID = ''
         self.ClientName = ''
+        self.ClientPassword = ''
         self.ClientPhoneNumber = 0
         self.ClientEmailAddress = ''
         self.ClientBudget = 0.0
@@ -132,7 +135,7 @@ class Client:
         self.ClientBrokerID = '' # Maybe int
         self.ClientProfit = 0.0
         self.ClientPLReport = 0.0 # percentage
-        self.ClientIndustry = []
+        self.ClientIndustry = ''
         self.Portfolio = [] # list of Investments
         self.InvestmentHistory = [] # list of Investments bought and sold. in case we want to use this later?
         self.InvestmentExpense = '' # sum of all investments bought
