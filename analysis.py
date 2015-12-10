@@ -53,7 +53,9 @@ def stock_patterns(stk_hist):
     print "len_patter:{}\npattern\n{}".format(len(pattern),pattern)
     return pattern
 
-
+##Determines the choice to advice the trader on what to do with the stock
+# whether they own the stock or are currently just tracking the stock
+#
 def choices(estimates, portfolio, symb):
     #estimates = []
     for stock in portfolio:
@@ -65,9 +67,9 @@ def choices(estimates, portfolio, symb):
                 return 'Buy, as stocks are at a low point'
             elif all(est > 0 for est in estimates[2:]) and all(est < 0 for est in estimates[:2]):
                 return 'Hold, stocks may continue to rise'
-            elif all(est > 0 for est in estimates[-1]) and all(est <= 0 for est in estimates[:-1]):
+            elif estimates[-1] > 0 and all(est <= 0 for est in estimates[:-1]):
                 return 'Buy, stocks rising from a low'
-            elif all(est < 0 for est in estimates[-1]) and all(est >= 0 for est in estimates[:-1]):
+            elif estimates[-1] < 0 and all(est >= 0 for est in estimates[:-1]):
                 return 'Sell, stocks dropping from a high'
             else:
                 return 'Hold, stable fluctuation'
@@ -82,10 +84,10 @@ def choices(estimates, portfolio, symb):
         return 'Buy, stocks may continue to rise'
     elif all(est > 0 for est in estimates[2:]) and all(est <= 0 for est in estimates[:2]):
         return 'Wait, may just be a temporary rise'
-    #elif all(est > 0 for est in estimates[-1]) and all(est <= 0 for est in estimates[:-1]):
-    #    return 'Buy, stocks rising from a low'
-    #elif all(est < 0 for est in estimates[-1]) and all(est >= 0 for est in estimates[:-1]):
-    #    return 'Watch closely for any sudden drops'
+    elif estimates[-1] > 0 and all(est <= 0 for est in estimates[:-1]):
+        return 'Buy, stocks rising from a low'
+    elif estimates[-1] < 0 and all(est >= 0 for est in estimates[:-1]):
+        return 'Watch closely for any sudden drops'
     else:
         return 'Wait, stable fluctuation'
 
