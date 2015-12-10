@@ -28,14 +28,26 @@ def stock_patterns(stk_hist):
             pass
     print avg_prices
     print len(avg_prices)
-    #work on separation into phases and determine if buy or sell
+    lower_bound = 0
+    high_bound = 9
+    pattern = []
 
-        #curr = price
-        #if curr/prev_curr < .95:
-        #    pass
+    while high_bound < len(avg_prices):
+        avg = sum(avg_prices[lower_bound:high_bound])/len(avg_prices[lower_bound:high_bound])
+        print avg_prices[lower_bound:high_bound]
+        print "len={}".format(len(avg_prices[lower_bound:high_bound]))
+        print avg
+        diff = avg-1.0
+        pattern.append(avg-1.0)
 
-
-
+        lower_bound = high_bound
+        high_bound += 9
+    avg =  sum(avg_prices[lower_bound:])/len(avg_prices[lower_bound:])
+    pattern.append(avg-1.0)
+    return pattern
+    #print "low:{} high:{}".format(lower_bound, high_bound)
+    #print "excess:\n{}".format(avg_prices[lower_bound:])
+    #print "pattern\n{}".format(pattern)
 
 ##Evaluate the past 2 weeks of a stocks trading prices
 # Determine the appropriate response for stock trader
