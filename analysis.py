@@ -11,9 +11,13 @@ def change(curr_price, prev_price, avg_prices):
 #
 def stock_patterns(stk_hist):
     close_prices = []
+    #dates = []
     for stock in stk_hist:
          close_prices.append(stock.StockClose)
     print close_prices
+    #for date in stk_hist:
+    #    dates.append(date.StockDate)
+    #print "dates\n{}".format(dates)
 
     prev_curr = close_prices[0]
     curr = 0
@@ -44,18 +48,74 @@ def stock_patterns(stk_hist):
         high_bound += 9
     avg =  sum(avg_prices[lower_bound:])/len(avg_prices[lower_bound:])
     pattern.append(avg-1.0)
+    print "low:{} high:{}".format(lower_bound, high_bound)
+    print "excess:\n{}".format(avg_prices[lower_bound:])
+    print "len_patter:{}\npattern\n{}".format(len(pattern),pattern)
     return pattern
-    #print "low:{} high:{}".format(lower_bound, high_bound)
-    #print "excess:\n{}".format(avg_prices[lower_bound:])
-    #print "pattern\n{}".format(pattern)
+
+
+def choices(estimates, portfolio, symb):
+    #estimates = []
+    for stock in portfolio:
+        if stock.StockID == symb:
+            print 'yes'
+            if all(est > 0 for est in estimates):
+                return 'Sell, as stocks may be reaching peak'
+            elif all(est < 0 for est in estimates):
+                return 'Buy, as stocks are at a low point'
+            elif all(est > 0 for est in estimates[2:]) and all(est < 0 for est in estimates[:2]):
+                return 'Hold, stocks may continue to rise'
+            elif all(est > 0 for est in estimates[-1]) and all(est <= 0 for est in estimates[:-1]):
+                return 'Buy, stocks rising from a low'
+            elif all(est < 0 for est in estimates[-1]) and all(est >= 0 for est in estimates[:-1]):
+                return 'Sell, stocks dropping from a high'
+            else:
+                return 'Hold, stable fluctuation'
+        else:
+            print 'no'
+    #If reaches out of for loop, then the stock is not owned by trader
+    if all(est > 0 for est in estimates):
+        return "Don't buy, as stocks are at high"
+    elif all(est < 0 for est in estimates):
+        return 'Buy, as stocks are at a low point'
+    elif all(est > 0 for est in estimates[2:]) and all(est < 0 for est in estimates[:2]):
+        return 'Buy, stocks may continue to rise'
+    elif all(est > 0 for est in estimates[2:]) and all(est <= 0 for est in estimates[:2]):
+        return 'Wait, may just be a temporary rise'
+    #elif all(est > 0 for est in estimates[-1]) and all(est <= 0 for est in estimates[:-1]):
+    #    return 'Buy, stocks rising from a low'
+    #elif all(est < 0 for est in estimates[-1]) and all(est >= 0 for est in estimates[:-1]):
+    #    return 'Watch closely for any sudden drops'
+    else:
+        return 'Wait, stable fluctuation'
 
 ##Evaluate the past 2 weeks of a stocks trading prices
 # Determine the appropriate response for stock trader
 #
 def stock_estimate(portfolio, symb):
     stk_hist = get_historical(symb, 15)
-    stock_patterns(stk_hist)
-    #determine the stock_patterns
+    stk_pattern = stock_patterns(stk_hist)
+    estimates = []
+    for avg in stk_pattern:
+        if avg >= .003:
+            estimates.append(2)
+        elif avg >= .002:
+            estimates.append(1)
+        elif avg < .002 and avg >= -.002:
+            estimates.append(0)
+        elif avg < -.002:
+            estimates.append(-1)
+        elif avg < -.003:
+            estimates.append(-2)
+    print estimates
+
+    if all(x < 0 for x in estimates[3:]):
+        print 'all negs'
+    else:
+        print 'wrong'
+    return choices(estimates, portfolio, symb)
+
+
     print stk_hist
     print len(stk_hist)
     z = 1
@@ -64,12 +124,7 @@ def stock_estimate(portfolio, symb):
     #    z+=1
 
 
-    for stock in portfolio:
-        if stock.StockID == symb:
-            print 'yes'
-            #Code about if this client has the ticker
-        else:
-            print 'no'
+
 
 
 #Main for testing
@@ -83,7 +138,8 @@ def main():
     print client1.Portfolio[0].StockVolume
     print client1.Portfolio[0].PriceTraded
 
-    stock_estimate(client1.Portfolio, 'GOOGL')
+    test = stock_estimate(client1.Portfolio, 'GOOG')
+    print test
 
 if __name__ == "__main__":
     main()
