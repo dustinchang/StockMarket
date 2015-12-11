@@ -59,8 +59,7 @@ def retrieveFirm(firmName, code):
 			if code == firm.FirmCode:
 				print('Code Confirmed')
 				createPopup('confirmFirmCode',firmName)
-				tempBroker.BrokerID = firm.ID
-				os.makedirs('SMfiles/users/'+tempBroker.ID)
+				tempBroker.BrokerFirmID = firm.ID
 				strfile = 'SMfiles/users/'+tempBroker.ID+'/'+tempBroker.ID+'.txt'
 				with open(strfile, 'wb') as f:
 					pickle.dump(tempBroker,f)
@@ -136,6 +135,16 @@ def validateFirm(name, ID, firmType, code, budget):
 		strfile = 'SMfiles/firms/'+ID+'/'+ID+'.txt'
 		with open(strfile, 'wb') as f:
 			pickle.dump(tempFirm,f)
+			if not tempBroker == '':
+				clearprint('=========================================================')
+				print('tempbroker is Okay. adding firm info')
+				print('=========================================================')
+				tempBroker.BrokerFirmID = tempFirm.ID
+
+				strfile = 'SMfiles/users/'+tempBroker.ID+'/'+tempBroker.ID+'.txt'
+				with open(strfile, 'wb') as f:
+					pickle.dump(tempBroker,f)
+
 	
 def validateClient(name, number, email, username, password, password2, budget, industry, broker, firm):
 	print('___________________________________________________________')
@@ -386,6 +395,7 @@ def validateBrokerEdit(name, number, email, username, password, password2, budge
 	budget = re.sub('[,$]', '', budget)
 	errorMessage = ''
 	global tempBroker
+	global loggedInAccount
 
 	'''
 		VALIDATE Name
@@ -497,6 +507,7 @@ def validateBrokerEdit(name, number, email, username, password, password2, budge
 		strfile = 'SMfiles/users/'+username+'/'+username+'.txt'
 		with open(strfile, 'wb') as f:
 			pickle.dump(tempBroker,f)
+		loggedInAccount = tempBroker
 		
 
 	print('==========================================================')
@@ -874,7 +885,7 @@ def validateClientEdit(name, number, email, username, password, password2, budge
 	global tempClient
 	budget = re.sub('[,$]', '', budget)
 	number = re.sub('-', '', number)
-
+	global loggedInAccount
 	'''
 		VALIDATE Name
 	'''
@@ -975,6 +986,7 @@ def validateClientEdit(name, number, email, username, password, password2, budge
 		strfile = 'SMfiles/users/'+username+'/'+username+'.txt'
 		with open(strfile, 'wb') as f:
 			pickle.dump(tempClient,f)
+		loggedInAccount = tempClient
 
 		
 
@@ -984,15 +996,210 @@ def clear(yourwindow):
 	for widget in yourwindow.winfo_children():
 		widget.destroy()
 	windowMenus(yourwindow)
-'''
-	stock homepage should include:
-	welcome message
-	nsadaq + nyse + LON index activities
-	3 trending stock graphed and projected
-	refer to notes in the meeting log
 
-'''
+def buyWindow(stock1,duration, quantity, priceVal):
+	clear(root)
 
+	root.wm_title("Stock Market App - Buy Stock")
+	root.geometry("654x800")
+	
+	if stock1 == '':
+		stockOption1 = StringVar()
+	else:
+		print('else '+str(stock1))
+		stockOption1 = StringVar()
+		stockOption1.set(stock1)
+		
+	
+	'''
+		use Figure attribute figsize=(int, int) to determine size of plot
+	'''
+	fig = plt.Figure(facecolor='w', edgecolor='w',figsize=(8, 5))
+	
+	plotTitle = ''
+	stockVar1 = StringVar()
+	
+	Frame(root, height=10).grid(row=0, column=0, columnspan = 2)	
+	Button(root ,text='View Stock Info', command = lambda: buyWindow(stockOption1.get(),durationVar.get(),0,0)).grid(row=1,column=0, sticky=E)
+	stock1Entry = Spinbox(root, fg="blue",width = 15,textvariable=stockOption1,values=availableStocks).grid(row=1, column=1, sticky=W)	
+	
+	xList = []
+	
+	xLabel = ''
+	
+
+	durationVar = IntVar()
+	quantityVar = IntVar()
+
+
+
+	canvas = FigureCanvasTkAgg(fig, master=root)
+	canvas.get_tk_widget().grid(column=0,row=3, columnspan=2)
+	quantityAvailable = quantity
+	
+	
+	Label(root, text='Select Duration in Day(s):').grid(row=2, column=0, sticky=E)	
+	stock3Entry = Spinbox(root, width = 15,textvariable=durationVar,values=(1,2,5,7,14)).grid(row=2, column=1, sticky=W)	
+	Frame(root, height=10, width=10).grid(row=3,columnspan=2, column=0)
+	ax = fig.add_subplot(111)
+
+	if stock1 == '' or stock1 =='Select Stock':
+		stockOption1.set('Select Stock')
+		'''
+		for quote in quotelist:
+			for stockQuote in quote:
+				#googleprice.append(thea.StockPrice)
+				#print('COMPARISON '+str(stockQuote.StockID)+' at '+str(stockQuote.StockDate)+' is at $'+str(stockQuote.StockPrice))
+	
+		print(availableStocks)
+		'''
+	else:
+		stockOption1.set(stock1)
+		plotTitle += stockOption1.get()+'| '
+		
+		for key,value in ticker_list.iteritems():
+			if key == stockOption1.get():
+				print('Stock '+key+ ' code is '+ value)
+				xLabel = value
+
+		xTestList = get_historical(xLabel, duration)
+		for element in xTestList:
+			xList.append(element.StockPrice)
+		#print(xList)
+		ax.plot(xList, label=xLabel)
+
+		#print(xList)
+		#print(testList)
+
+
+		
+		Label(root, fg="blue",text=stockOption1.get()).grid(row=5, column=1)
+		Label(root, fg="blue",text=xTestList[-1].StockDate).grid(row=6, column=1)
+		Label(root, fg="blue",text=xTestList[-1].StockPrice).grid(row=7, column=1)
+		Label(root, fg="blue",text=xTestList[-1].StockOpen).grid(row=8, column=1)
+		Label(root, fg="blue",text=xTestList[-1].StockDayRange).grid(row=9, column=1)
+		Label(root, fg="blue",text=xTestList[-1].StockVolume).grid(row=10, column=1)
+		Label(root, fg="blue",text=xTestList[-1].StockClose).grid(row=11, column=1)
+		Label(root, font = "Helvetica 14 bold",fg="blue",text="Buy").grid(row=13, column=1)
+
+		quantityAvailable = int(xTestList[-1].StockVolume)
+		price = float(xTestList[-1].StockPrice)
+		print('in loop, price is: '+str(price))
+		print('in loop, quantity is: '+str(quantityAvailable))
+
+
+	
+	#plt.plot(x, x)
+	if duration == 1:
+		ax.set_xlabel("Fluctuation over the past day")
+	elif duration == 2:
+		ax.set_xlabel("Fluctuation over the past 2 days")
+	elif duration == 5:
+		ax.set_xlabel("Fluctuation over the past 5 days")
+	elif duration == 7:
+		ax.set_xlabel("Fluctuation over the past week")
+	elif duration == 14:	
+		ax.set_xlabel("Fluctuation over the past 2 weeks")
+	ax.set_ylabel("Price $")
+	ax.get_xaxis().set_ticks([])
+	fig.suptitle(plotTitle)
+	
+	#ax.plot(z, label='COOP')
+	#ax.plot(a, label='HOOP')
+	ax.legend(prop={'size':12})
+
+	if not duration == '':
+		durationVar.set(duration)
+
+	Frame(root, height=10).grid(row=4, column=0, columnspan = 2)
+	Label(root, text="Stocks compared are: ").grid(row=5, column=0)
+	Label(root, text="Current as of: ").grid(row=6, column=0)
+	Label(root, text="Price: ").grid(row=7, column=0)
+	Label(root, text="Open: ").grid(row=8, column=0)
+	Label(root, text="Day Range: ").grid(row=9, column=0)
+	Label(root, text="Volume: ").grid(row=10, column=0)
+	Label(root, text="Close: ").grid(row=11, column=0)
+
+	Label(root,text="________________________________________________________________________________________________").grid(row = 12, columnspan=2, column=0)
+
+	Label(root, width = 20, text="Analysis Recommends: ").grid(row=13, column=0)
+	
+	Label(root,text="________________________________________________________________________________________________").grid(row = 14, columnspan=2, column=0)
+	
+
+
+	if quantityAvailable == 0:
+		print('Quantity 0')
+		root.geometry("654x750")
+		Label(root, text='Purchase Unavailable. Please Select a Stock to view').grid(row = 16, column=0, columnspan=2)
+
+	else:
+		print('Quantity something')
+		root.geometry("654x840")
+
+
+		Label(root, text="Select Quantity: ").grid(row=16, column=0)
+		quantityEntry = Spinbox(root, width = 15,textvariable=quantityVar,from_=1, to=quantityAvailable).grid(row=16, column=1)	
+		Label(root, text="Price Estimate for "+str(quantity)+' Stocks:').grid(row=17, column=0)
+		totalPrice = price * quantity
+
+		totalPrice = float(totalPrice)
+		displayTotalPrice = format(float(totalPrice), ",.2f")
+		Label(root, text='$'+str(displayTotalPrice)).grid(row=17, column=1)
+
+
+		Frame(root, height=10).grid(row=20, column=0, columnspan = 2)
+		Button(root ,text='Estimate', command = lambda: buyWindow(stockOption1.get(),durationVar.get(),quantityVar.get(),price)).grid(row=20,column=0, sticky=E)
+		
+
+		if isinstance(loggedInAccount,Broker) == True:
+			budget = float(loggedInAccount.BrokerTotalBudget)
+			displayBudget = format(float(budget), ",.2f")
+			print(str(budget))
+			print(str(totalPrice))
+			Label(root, text="Current Budget: ").grid(row=18, column=0)
+			
+			if float(budget) < float(totalPrice):
+				
+				Label(root, fg='red',text='$'+str(displayBudget)).grid(row=18, column=1)
+				buyButton = Button(root ,text='Buy', state ='disabled').grid(row=20,column=1, sticky=W)
+			
+			else:
+				Label(root, fg='#006400',text='$'+displayBudget).grid(row=18, column=1)
+				buyButton = Button(root ,text='Buy').grid(row=20,column=1, sticky=W)
+
+				Label(root,text='Budget after purchase:').grid(row=19, column=0)
+				newBudget = float(budget) - float(totalPrice)
+				newBudget = format(float(newBudget), ",.2f")
+				Label(root,text='$'+str(newBudget)).grid(row=19, column=1)
+				
+
+		elif isinstance(loggedInAccount, Client) ==True:
+			budget = float(loggedInAccount.ClientBudget)
+			displayBudget = format(float(budget), ",.2f")
+			print(str(budget))
+			print(str(totalPrice))
+			Label(root, text="Current Budget: ").grid(row=18, column=0)
+			
+			if float(budget) < float(totalPrice):
+				
+				Label(root, fg='red',text='$'+str(displayBudget)).grid(row=18, column=1)
+				buyButton = Button(root ,text='Buy', state ='disabled').grid(row=20,column=1, sticky=W)
+			
+			else:
+				Label(root, fg='#006400',text='$'+displayBudget).grid(row=18, column=1)
+				buyButton = Button(root ,text='Buy').grid(row=20,column=1, sticky=W)
+
+				Label(root,text='Budget after purchase:').grid(row=19, column=0)
+				newBudget = float(budget) - float(totalPrice)
+				newBudget = format(float(newBudget), ",.2f")
+				Label(root,text='$'+str(newBudget)).grid(row=19, column=1)
+
+
+		
+
+
+		quantityVar.set(quantity)
 def portfolioWindow():
 	'''
 		retrieve and list all investments in a user's portfolio
@@ -1151,9 +1358,9 @@ def home():
 		Label(root, text="as to what happened while you were gone!").grid(row=3,column=0, columnspan=4)
 		Frame(root, height=10, width=10).grid(row=4,column=0)
 		Label(root, text="_________________________ Currently Trending Stocks ________________________").grid(row=5,column=0, columnspan=4)
-		Label(root, fg="#006400",text="Netflix, Inc. NFLX").grid(row=6,column=0, columnspan=4)
-		Label(root, fg="#006400",text="Tesla Motors Inc TSLA").grid(row=7,column=0, columnspan=4)
-		Label(root, fg ="red" , text="Alphabet Inc. GOOG").grid(row=8,column=0, columnspan=4)
+		Label(root, text="Netflix, Inc. NFLX").grid(row=6,column=0, columnspan=4)
+		Label(root, text="Tesla Motors Inc TSLA").grid(row=7,column=0, columnspan=4)
+		Label(root, text="Alphabet Inc. GOOG").grid(row=8,column=0, columnspan=4)
 		Frame(root, height=10, width=10).grid(row=9,column=0)
 		Label(root, text="__________________________ Trending Stocks Graph _________________________").grid(row=10,column=0, columnspan=4)
 
@@ -1235,9 +1442,9 @@ def home():
 		Label(root, text="as to what happened while you were gone!").grid(row=3,column=0, columnspan=4)
 		Frame(root, height=10, width=10).grid(row=4,column=0)
 		Label(root, text="_________________________ Currently Trending Stocks ________________________").grid(row=5,column=0, columnspan=4)
-		Label(root, fg="#006400",text="Netflix, Inc. NFLX").grid(row=6,column=0, columnspan=4)
-		Label(root, fg="#006400",text="Tesla Motors Inc TSLA").grid(row=7,column=0, columnspan=4)
-		Label(root, fg ="red" , text="Alphabet Inc. GOOG").grid(row=8,column=0, columnspan=4)
+		Label(root, text="Netflix, Inc. NFLX").grid(row=6,column=0, columnspan=4)
+		Label(root, text="Tesla Motors Inc TSLA").grid(row=7,column=0, columnspan=4)
+		Label(root, text="Alphabet Inc. GOOG").grid(row=8,column=0, columnspan=4)
 		Frame(root, height=10, width=10).grid(row=9,column=0)
 		Label(root, text="__________________________ Trending Stocks Graph _________________________").grid(row=10,column=0, columnspan=4)
 
@@ -1312,15 +1519,16 @@ def home():
 		ax3.legend(prop={'size':12})
 	else:
 		print('NAWT LOGGED IN FOOL')
-		Frame(root, height=10, width=10).grid(row=0,column=0)
+		
+
 		Label(root, text="Welcome to our Stock Market App").grid(row=1,column=0, columnspan=4)
 		Label(root, text="Please Login or Register to use the App's full functionality").grid(row=2,column=0, columnspan=4)
 		Label(root, text="The following dashboard displays notable changes in the stock market").grid(row=3,column=0, columnspan=4)
 		Frame(root, height=10, width=10).grid(row=4,column=0)
 		Label(root, text="_________________________ Currently Trending Stocks ________________________").grid(row=5,column=0, columnspan=4)
-		Label(root, fg="#006400",text="Netflix, Inc. NFLX").grid(row=6,column=0, columnspan=4)
-		Label(root, fg="#006400",text="Tesla Motors Inc TSLA").grid(row=7,column=0, columnspan=4)
-		Label(root, fg ="red" , text="Alphabet Inc. GOOG").grid(row=8,column=0, columnspan=4)
+		Label(root, text="Netflix, Inc. NFLX").grid(row=6,column=0, columnspan=4)
+		Label(root, text="Tesla Motors Inc TSLA").grid(row=7,column=0, columnspan=4)
+		Label(root, text="Alphabet Inc. GOOG").grid(row=8,column=0, columnspan=4)
 		Frame(root, height=10, width=10).grid(row=9,column=0)
 		Label(root, text="__________________________ Trending Stocks Graph _________________________").grid(row=10,column=0, columnspan=4)
 
@@ -2015,26 +2223,6 @@ def createPopup(popupType, message):
 		Frame(errorPopup, height=10, width=10).grid(row=4, column=0, columnspan = 3)
 
 
-def forceLogin():
-	print("IN forceLogin")
-	global loggedin
-	print("loggedin before: "+str(loggedin))
-	loggedin = True
-	print("loggedin after: "+str(loggedin))
-	windowMenus(root)
-
-def forceLogout():
-	print("IN forceLogout")
-	global loggedin
-	print("loggedin before: "+str(loggedin))
-	loggedin = False
-	print("loggedin after: "+str(loggedin))
-	windowMenus(root)
-	home()
-
-def checkLogin():
-	print("loggedin in check: "+str(loggedin))	
-
 
 def windowMenus(root):
 	menubar = Menu(root)
@@ -2077,11 +2265,6 @@ def windowMenus(root):
 	menubar.add_cascade(menu=helpMenu, label="Help")
 	
 
-	omarMenu.add_command(label="Force Login", command= lambda: forceLogin())
-	omarMenu.add_command(label="Check Login", command= lambda: checkLogin())
-	omarMenu.add_command(label="Force Logout", command= lambda: forceLogout())
-	omarMenu.add_separator()
-
 	accountMenu.add_command(label="Login", accelerator='cmd-l', command= lambda: createPopup('login', ''))
 	registerMenu=accountMenu.add_command(label="Register", accelerator = 'cmd-r',command=lambda :createPopup('register',''))
 	accountMenu.add_separator()
@@ -2097,8 +2280,7 @@ def windowMenus(root):
 	stocksMenu.add_command(label="Compare Stocks", accelerator="cmd-c", command=lambda: compareStocks('','','',''))
 	stocksMenu.add_separator()
 	stocksMenu.add_command(label="Sell", accelerator="cmd-s",command="")
-	stocksMenu.add_command(label="Buy", accelerator="cmd-b",command="")
-	stocksMenu.add_command(label="Trade", accelerator="cmd-t",command="")
+	stocksMenu.add_command(label="Buy", accelerator="cmd-b",command= lambda: buyWindow('','',0,0))
 
 	firmMenu.add_command(label="Register Firm",accelerator="cmd-f",command= lambda: firmRegisterForm(3))
 	firmMenu.add_separator()
@@ -2116,6 +2298,7 @@ def windowMenus(root):
 	root.bind('<Command-k>', lambda e: hotkeyWindow(root))
 	root.bind('<Command-f>', lambda e: firmRegisterForm(3))
 	root.bind('<Command-p>', lambda e: portfolioWindow()) 
+	root.bind('<Command-b>', lambda e: buyWindow('','',0,0)) 
 
 	if not loggedInAccount == '':
 		'''
@@ -2128,8 +2311,6 @@ def windowMenus(root):
 		accountMenu.entryconfig("Login", label="Log Out", command=lambda: logout())
 		stocksMenu.entryconfig("Sell", state="normal")
 		stocksMenu.entryconfig("Buy", state="normal")
-		stocksMenu.entryconfig("Trade", state="normal")
-		stocksMenu.entryconfig("Sell", state="normal")
 		stocksMenu.entryconfig("View Portfolio", state="normal")
 
 		accountMenu.entryconfig("Edit Info", state="normal")
@@ -2142,8 +2323,6 @@ def windowMenus(root):
 		'''
 		stocksMenu.entryconfig("Sell", state="disabled")
 		stocksMenu.entryconfig("Buy", state="disabled")
-		stocksMenu.entryconfig("Trade", state="disabled")
-		stocksMenu.entryconfig("Sell", state="disabled")
 		stocksMenu.entryconfig("View Portfolio", state="disabled")
 
 		root.bind('<Command-l>', lambda e: createPopup('login', ''))
@@ -2284,6 +2463,17 @@ def editInfo():
 		authorityVar = StringVar()
 		yearVar = StringVar()
 
+		if not loggedInAccount.BrokerFirmID =='':
+			with open('SMfiles/firms/'+loggedInAccount.BrokerFirmID+'/'+loggedInAccount.BrokerFirmID+'.txt','rb') as f:
+				tempFirm = pickle.load(f)
+				firmVar = tempFirm.FirmName
+		else:
+			firmVar = 'No firm affiliation found'
+
+		
+
+		
+
 		nameVar.set(loggedInAccount.BrokerName)
 		numberVar.set(loggedInAccount.BrokerPhoneNumber)
 		emailVar.set(loggedInAccount.BrokerEmailAddress)
@@ -2328,12 +2518,16 @@ def editInfo():
 		
 		Label(root, width=20, text="Year Issued: ").grid(row=14, column=0, sticky=W)
 		budgetEntry = Spinbox(root, width = 33, textvariable = yearVar,from_=1980, to=2015).grid(row=14, column=1, sticky=W)		
+
+		Label(root,height=2,text="Firm Affiliation _____________________________________________________").grid(row=15, column=0, sticky=E, columnspan=2)
+		Label(root, width=20, text=firmVar).grid(row=16, column=0, columnspan=2)
 				
 		Frame(root, height=10).grid(row=17, column=0)
 		licenseVar.set(loggedInAccount.BrokerLicenseType)
 		budgetVar.set(str('$'+budget))
 		yearVar.set(loggedInAccount.BrokerLicenseIssue)
 		
+		Frame(root, height=10).grid(row=16, column=0)
 		Button(root, text="Clear", command=lambda: editInfo()).grid(row=18, column=1, sticky=W)		
 		Button(root, text="Submit", command=lambda: validateBrokerEdit(nameVar.get(), numberVar.get(), emailVar.get(), loggedInAccount.ID, passVar1.get(), passVar2.get(), budgetVar.get(), industryVar.get(), licenseVar.get(), authorityVar.get(), yearVar.get())).grid(row=18, column=1, sticky=E)		
 
