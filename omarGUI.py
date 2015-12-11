@@ -1140,7 +1140,7 @@ def buyWindow(stock1,duration, quantity, priceVal):
 
 		Label(root, text="Select Quantity: ").grid(row=16, column=0)
 		quantityEntry = Spinbox(root, width = 15,textvariable=quantityVar,from_=1, to=quantityAvailable).grid(row=16, column=1)	
-		Label(root, text="Price Estimate for "+str(quantity)+' Stocks:').grid(row=17, column=0)
+		Label(root, text="Price Estimate for "+str(quantity)+' Stocks at $'+str(price)+' per stock:').grid(row=17, column=0)
 		totalPrice = price * quantity
 
 		totalPrice = float(totalPrice)
