@@ -1434,6 +1434,45 @@ def buy(user, symb, quantity, total):
 
     
 
+def sell(user, inv_index): # user: Client, Broker, or Firm object
+	# load transaction file
+	userpath = 'SMfiles/users/'+user.ID+'/'+user.ID+'.txt'
+	transpath = 'SMfiles/users/'+user.ID+'/transactions.txt'
+
+	if not os.path.exists(transpath):
+		print("No portfolio found for user '"+user.ID+"' not found. Creating File")
+
+	else:
+		print("Transactions Log FOUND")
+		transactions = pickle.load(open(transpath,"rb"))        
+		# get investment from user portfolio
+		inv_bought = user.Portfolio[inv_index]
+		symb = inv_bought.StockID
+		inv_now = Investment(get_current(symb),1)
+
+		# add investment to investment history
+		user.InvestmentHistory.append([inv_bought, inv_now])
+
+		# calculate profit lost report
+		# and adds to user profit
+		inves = [inv_bought, inv_now]
+		user.calculate_profit_loss(inves)
+
+		# add investment in transaction file
+		trans = Transaction(user, 'sell', inv_now)
+		trans.calculate_profit_loss(inves)
+		transactions.append(trans)
+
+		# save transaction file
+		pickle.dump(transactions, open(transpath, "wb"))
+
+
+
+def sellWindow():
+	clear(root)
+	root.wm_title('Stock Market App - Sell')
+	Button(root, text="sell", command=lambda: sell(loggedInAccount, 0)).grid(row=0, column=0)
+
 def home():
 	clear(root)
 	root.wm_title("Stock Market App - Home")
@@ -2178,17 +2217,7 @@ def createPopup(popupType, message):
 			Button(buyPopup, text="Okay", command= lambda: buyPopup.destroy()).grid(row=3, columnspan=3, column=0)
 			Frame(buyPopup, height=10, width=10).grid(row=4, column=0, columnspan = 2)
 
-		else:
-			validationPopup = Toplevel(root)
-			validationPopup.title("Validation")
-			#validationPopup.geometry('250x80')
-			validationPopup.transient(root)
-			validationPopup.resizable(width=FALSE, height=FALSE)
-
-			Frame(validationPopup, height=10, width=10).grid(row=0, column=0, columnspan = 2)
-			Label(validationPopup, width=30, text=message).grid(row=1,columnspan = 2, column=1, sticky=W)
-			Button(validationPopup, text="Okay", command= lambda: validationPopup.destroy()).grid(row=3, columnspan=3, column=0)
-			Frame(validationPopup, height=10, width=10).grid(row=4, column=0, columnspan = 2)
+		
 	elif popupType=='validateBroker':
 		if message == 'Registration Successful!':
 			validationPopup = Toplevel(root)
@@ -2391,7 +2420,7 @@ def windowMenus(root):
 	stocksMenu.add_command(label="View Stock Market", accelerator="cmd-v", command="")
 	stocksMenu.add_command(label="Compare Stocks", accelerator="cmd-c", command=lambda: compareStocks('','','',''))
 	stocksMenu.add_separator()
-	stocksMenu.add_command(label="Sell", accelerator="cmd-s",command="")
+	stocksMenu.add_command(label="Sell", accelerator="cmd-s",command= lambda: sellWindow())
 	stocksMenu.add_command(label="Buy", accelerator="cmd-b",command= lambda: buyWindow('','',0,0))
 
 	firmMenu.add_command(label="Register Firm",accelerator="cmd-f",command= lambda: firmRegisterForm(3))
@@ -2419,6 +2448,7 @@ def windowMenus(root):
 		
 		root.bind('<Command-e>', lambda e: editInfo()) 
 		root.bind('<Command-l>', lambda e: logout())
+		root.bind('<Command-s>', lambda e: sellWindow())
 
 		accountMenu.entryconfig("Login", label="Log Out", command=lambda: logout())
 		stocksMenu.entryconfig("Sell", state="normal")

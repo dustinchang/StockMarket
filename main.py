@@ -116,8 +116,8 @@ class Broker:
         self.BrokerIndustry = ''
         self.Portfolio = [] # list of Investments
         self.InvestmentHistory = [] # list of Investments bought and sold. used for profit loss report
-        self.InvestmentExpense = '' # sum of all investments bought
-        self.InvestmentRevenue = '' # sum of all investments sold
+        self.InvestmentExpense = 0.0 # sum of all investments bought
+        self.InvestmentRevenue = 0.0 # sum of all investments sold
 
         def calculate_profit_loss(self, investment): # investment: [inv_bought, inv_sold]
             self.InvestmentHistory.append(investment)
@@ -139,8 +139,8 @@ class Firm:
         self.FirmTotalBrokers = 0
         self.Portfolio = [] # list of Investments
         self.InvestmentHistory = [] # list of Investments bought and sold. used for profit loss report
-        self.InvestmentExpense = '' # sum of all investments bought
-        self.InvestmentRevenue = '' # sum of all investments sold
+        self.InvestmentExpense = 0.0 # sum of all investments bought
+        self.InvestmentRevenue = 0.0 # sum of all investments sold
 
     def calculate_profit_loss(self, investment): # investment: [inv_bought, inv_sold]
         self.InvestmentHistory.append(investment)
@@ -168,15 +168,22 @@ class Client:
         self.ClientPLReport = 0.0 # percentage
         self.Portfolio = [] # list of Investments
         self.InvestmentHistory = [] # list of Investments bought and sold. in case we want to use this later?
-        self.InvestmentExpense = '' # sum of all investments bought
-        self.InvestmentRevenue = '' # sum of all investments sold
+        self.InvestmentExpense = 0.0 # sum of all investments bought
+        self.InvestmentRevenue = 0.0 # sum of all investments sold
 
-    def calculate_profit_loss(self):
+    def calculate_profit_loss(self, investment):
         self.InvestmentHistory.append(investment)
-        self.InvestmentExpense += investment[0].PriceTraded
-        self.InvestmentRevenue += investment[1].PriceTraded
-        self.ClientProfit = self.InvestmentRevenue - self.InvestmentExpense
-        self.ClientPLReport = (self.ClientProfit / self.InvestmentRevenue) * 100
+        #originalExp = float(self.InvestmentExpense)
+        #originalExp += float(investment[0].PriceTraded)
+        print(self.InvestmentExpense)
+        print(str(investment[0].PriceTraded))
+        print(self.InvestmentRevenue)
+        print(str(investment[1].PriceTraded))
+        #originalRev = float(self.InvestmentRevenue)
+        #originalRev +=  float(investment[1].PriceTraded)
+
+        #self.ClientProfit = originalRev - originalExp
+        #self.ClientPLReport = (self.ClientProfit / originalRev) * 100
 
 class Exchange:
     """Contains the details of wanted market exchanges"""
@@ -202,7 +209,7 @@ class Transaction:
     def __init__(self, user, t_type, investment): 
         """Transaction Constructor"""
         self.TransactionID = investment.StockID+str(investment.TradeDate)
-        self.TransactionStock = investment # if selling [inv_bought, inv_sold]
+        self.TransactionStock = [] # if selling [inv_bought, inv_sold]
         self.TransactionTime = investment.TradeDate #{Integer:Integer} Maybe use datetime for this
         self.TransactionBuyer = '' #(ClientID BrokerID FirmID)
         self.TransactionSeller = '' #(ClientID BrokerID FirmID)
@@ -230,8 +237,11 @@ class Transaction:
         #   self.TransactionTrader = [user[0].ID, user[1].ID]
 
     # Used only when t_type is 'sell'
-def calculate_profit_loss(self):
-        self.TransactionPLReport = ((self.TransactionStock[1].PriceTraded - self.TransactionStock[0].PriceTraded) / self.TransactionStock[1].PriceTraded) * 100
+    def calculate_profit_loss(self, inves):
+        one = float(inves[1].PriceTraded)
+        two = float(inves[0].PriceTraded)
+        three = float(inves[1].PriceTraded)
+        self.TransactionPLReport = ((one - two) / three) * 100
 
 class Investment:
     """ """
@@ -370,6 +380,7 @@ def get_current(symb):
 ## Process selling an investment
 # user: Client, Broker, or Firm object
 # inv will be index number of the investment in user portfolio maybe?
+'''
 def sell(user, inv_index): # user: Client, Broker, or Firm object
     # load transaction file
     transactions = pickle.load(open("<transactionfilepath>","rb"))
@@ -394,7 +405,7 @@ def sell(user, inv_index): # user: Client, Broker, or Firm object
     pickle.dump(transactions, open("<transactionfilepath>", "wb"))
 
     return user
-
+'''
 def get_close_prices(symb, number_of_days = 15):
     close_list = []
     stock_objs = get_historical(symb, number_of_days)
