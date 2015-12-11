@@ -1055,7 +1055,7 @@ def buyWindow(stock1,duration, quantity, priceVal):
 		'''
 	else:
 		stockOption1.set(stock1)
-		plotTitle += stockOption1.get()+'| '
+		plotTitle += stockOption1.get()
 		
 		for key,value in ticker_list.iteritems():
 			if key == stockOption1.get():
@@ -1073,14 +1073,14 @@ def buyWindow(stock1,duration, quantity, priceVal):
 
 
 		
-		Label(root, fg="blue",text=stockOption1.get()).grid(row=5, column=1)
-		Label(root, fg="blue",text=xTestList[-1].StockDate).grid(row=6, column=1)
-		Label(root, fg="blue",text=xTestList[-1].StockPrice).grid(row=7, column=1)
-		Label(root, fg="blue",text=xTestList[-1].StockOpen).grid(row=8, column=1)
-		Label(root, fg="blue",text=xTestList[-1].StockDayRange).grid(row=9, column=1)
-		Label(root, fg="blue",text=xTestList[-1].StockVolume).grid(row=10, column=1)
-		Label(root, fg="blue",text=xTestList[-1].StockClose).grid(row=11, column=1)
-		Label(root, font = "Helvetica 14 bold",fg="blue",text="Buy").grid(row=13, column=1)
+		Label(root, fg="blue",text=stockOption1.get()).grid(row=5, column=1,sticky=W)
+		Label(root, fg="blue",text=xTestList[-1].StockDate).grid(row=6, column=1,sticky=W)
+		Label(root, fg="blue",text=xTestList[-1].StockPrice).grid(row=7, column=1,sticky=W)
+		Label(root, fg="blue",text=xTestList[-1].StockOpen).grid(row=8, column=1,sticky=W)
+		Label(root, fg="blue",text=xTestList[-1].StockDayRange).grid(row=9, column=1,sticky=W)
+		Label(root, fg="blue",text=xTestList[-1].StockVolume).grid(row=10, column=1,sticky=W)
+		Label(root, fg="blue",text=xTestList[-1].StockClose).grid(row=11, column=1,sticky=W)
+		Label(root, font = "Helvetica 14 bold",fg="blue",text="Buy").grid(row=13, column=1,sticky=W)
 
 		quantityAvailable = int(xTestList[-1].StockVolume)
 		price = float(xTestList[-1].StockPrice)
@@ -1112,17 +1112,17 @@ def buyWindow(stock1,duration, quantity, priceVal):
 		durationVar.set(duration)
 
 	Frame(root, height=10).grid(row=4, column=0, columnspan = 2)
-	Label(root, text="Stocks compared are: ").grid(row=5, column=0)
-	Label(root, text="Current as of: ").grid(row=6, column=0)
-	Label(root, text="Price: ").grid(row=7, column=0)
-	Label(root, text="Open: ").grid(row=8, column=0)
-	Label(root, text="Day Range: ").grid(row=9, column=0)
-	Label(root, text="Volume: ").grid(row=10, column=0)
-	Label(root, text="Close: ").grid(row=11, column=0)
+	Label(root, text="Stocks compared are: ").grid(row=5, column=0, sticky=E)
+	Label(root, text="Current as of: ").grid(row=6, column=0, sticky=E)
+	Label(root, text="Price: ").grid(row=7, column=0, sticky=E)
+	Label(root, text="Open: ").grid(row=8, column=0, sticky=E)
+	Label(root, text="Day Range: ").grid(row=9, column=0, sticky=E)
+	Label(root, text="Volume: ").grid(row=10, column=0, sticky=E)
+	Label(root, text="Close: ").grid(row=11, column=0, sticky=E)
 
 	Label(root,text="________________________________________________________________________________________________").grid(row = 12, columnspan=2, column=0)
 
-	Label(root, width = 20, text="Analysis Recommends: ").grid(row=13, column=0)
+	Label(root, text="Analysis Recommends: ").grid(row=13, column=0,sticky=E)
 	
 	Label(root,text="________________________________________________________________________________________________").grid(row = 14, columnspan=2, column=0)
 	
@@ -1138,14 +1138,17 @@ def buyWindow(stock1,duration, quantity, priceVal):
 		root.geometry("654x840")
 
 
-		Label(root, text="Select Quantity: ").grid(row=16, column=0)
-		quantityEntry = Spinbox(root, width = 15,textvariable=quantityVar,from_=1, to=quantityAvailable).grid(row=16, column=1)	
-		Label(root, text="Price Estimate for "+str(quantity)+' Stocks at $'+str(price)+' per stock:').grid(row=17, column=0)
-		totalPrice = price * quantity
+		Label(root, text="Select Quantity: ").grid(row=16, column=0, sticky=E)
+		quantityEntry = Spinbox(root, width = 15,textvariable=quantityVar,from_=1, to=quantityAvailable).grid(row=16, column=1, sticky=W)	
+		price = float(price)
+		price = format(float(price), ",.2f")
+
+		Label(root, text="Price Estimate for "+str(quantity)+' Stocks:').grid(row=17, column=0, sticky=E)
+		totalPrice = float(price) * quantity
 
 		totalPrice = float(totalPrice)
 		displayTotalPrice = format(float(totalPrice), ",.2f")
-		Label(root, text='$'+str(displayTotalPrice)).grid(row=17, column=1)
+		Label(root, text='$'+str(displayTotalPrice)).grid(row=17, column=1, sticky=W)
 
 
 		Frame(root, height=10).grid(row=20, column=0, columnspan = 2)
@@ -1155,45 +1158,55 @@ def buyWindow(stock1,duration, quantity, priceVal):
 		if isinstance(loggedInAccount,Broker) == True:
 			budget = float(loggedInAccount.BrokerTotalBudget)
 			displayBudget = format(float(budget), ",.2f")
-			print(str(budget))
-			print(str(totalPrice))
-			Label(root, text="Current Budget: ").grid(row=18, column=0)
 			
+			Label(root, text="Current Budget: ").grid(row=18, column=0, sticky=E)
+			
+			if  float(totalPrice)==0.0:
+				buyButton = Button(root ,text='Buy', state ='disabled').grid(row=20,column=1, sticky=W)
+				Label(root, fg='#006400',text='$'+displayBudget).grid(row=18, column=1, sticky=W)
+
 			if float(budget) < float(totalPrice):
 				
-				Label(root, fg='red',text='$'+str(displayBudget)).grid(row=18, column=1)
+				Label(root, fg='red',text='$'+str(displayBudget)).grid(row=18, column=1, sticky=W)
 				buyButton = Button(root ,text='Buy', state ='disabled').grid(row=20,column=1, sticky=W)
 			
-			else:
-				Label(root, fg='#006400',text='$'+displayBudget).grid(row=18, column=1)
-				buyButton = Button(root ,text='Buy').grid(row=20,column=1, sticky=W)
+			elif not float(totalPrice) == 0.0:
+				Label(root, fg='#006400',text='$'+displayBudget).grid(row=18, column=1, sticky=W)
+				
 
-				Label(root,text='Budget after purchase:').grid(row=19, column=0)
+				Label(root,text='Budget after purchase:').grid(row=19, column=0, sticky=E)
 				newBudget = float(budget) - float(totalPrice)
 				newBudget = format(float(newBudget), ",.2f")
-				Label(root,text='$'+str(newBudget)).grid(row=19, column=1)
+				Label(root,text='$'+str(newBudget)).grid(row=19, column=1, sticky=W)
+
+				buyButton = Button(root ,text='Buy', command=lambda: buy(loggedInAccount,xLabel,quantityVar.get(),totalPrice)).grid(row=20,column=1, sticky=W)
+
+
 				
 
 		elif isinstance(loggedInAccount, Client) ==True:
 			budget = float(loggedInAccount.ClientBudget)
 			displayBudget = format(float(budget), ",.2f")
-			print(str(budget))
-			print(str(totalPrice))
-			Label(root, text="Current Budget: ").grid(row=18, column=0)
 			
+			Label(root, text="Current Budget: ").grid(row=18, column=0, sticky=E)
+			
+			if  float(totalPrice)==0.0:
+				buyButton = Button(root ,text='Buy', state ='disabled').grid(row=20,column=1, sticky=W)
+				Label(root, fg='#006400',text='$'+displayBudget).grid(row=18, column=1, sticky=W)
+
 			if float(budget) < float(totalPrice):
 				
-				Label(root, fg='red',text='$'+str(displayBudget)).grid(row=18, column=1)
+				Label(root, fg='red',text='$'+str(displayBudget)).grid(row=18, column=1, sticky=W)
 				buyButton = Button(root ,text='Buy', state ='disabled').grid(row=20,column=1, sticky=W)
 			
-			else:
-				Label(root, fg='#006400',text='$'+displayBudget).grid(row=18, column=1)
+			elif not float(totalPrice) == 0.0:
+				Label(root, fg='#006400',text='$'+displayBudget).grid(row=18, column=1, sticky=W)
 				buyButton = Button(root ,text='Buy').grid(row=20,column=1, sticky=W)
 
-				Label(root,text='Budget after purchase:').grid(row=19, column=0)
+				Label(root,text='Budget after purchase:').grid(row=19, column=0, sticky=E)
 				newBudget = float(budget) - float(totalPrice)
 				newBudget = format(float(newBudget), ",.2f")
-				Label(root,text='$'+str(newBudget)).grid(row=19, column=1)
+				Label(root,text='$'+str(newBudget)).grid(row=19, column=1, sticky=W)
 
 
 		
@@ -1343,6 +1356,52 @@ def portfolioWindow():
 	listbox.config(yscrollcommand=scrollbar.set)
 	scrollbar.config(command=listbox.yview)
 	'''
+
+def buy(user, symb, quantity, total):
+    # load transaction file
+    userpath = 'SMfiles/users/'+user.ID+'/'+user.ID+'.txt'
+    transpath = 'SMfiles/users/'+user.ID+'/transactions.txt'
+    #transactions = pickle.load(open(transpath,"rb"))
+
+
+    if not os.path.exists(transpath):
+        print("Transactions Log for user '"+user.ID+"' not found. Creating File")
+        transactions = []       
+    else:
+        print("Transactions Log FOUND")
+        transactions = pickle.load(open(transpath,"rb"))        
+        
+        
+
+    # add investment into user portfolio
+    inv = Investment(get_current(symb),quantity)
+    user.Portfolio.append(inv)
+
+    # check user type to subtract from their budget
+    # subtract from client's budget
+    if isinstance(user, Client):
+        user.ClientBudget -= total
+    # subtract from broker's budget
+    elif isinstance(user, Broker):
+        originalBudget = float(user.BrokerTotalBudget)
+        originalBudget -= total # ---------------- this is fixed
+        user.BrokerTotalBudget = originalBudget
+    # subtract from the buyer of the firm's budget
+    else:
+        user.FirmBudget -= total
+
+    # add investment into transaction file
+    trans = Transaction(user, 'buy', inv)
+    transactions.append(trans)
+
+    # save transaction file
+    pickle.dump(transactions, open(transpath, "wb"))
+    pickle.dump(user, open(userpath,"wb"))
+
+    createPopup('BuyPopup','Congratulations!\n You have successfully purchased '
+        +str(quantity)+' of the stock: '+symb+' for $'+str(total))
+
+    
 
 def home():
 	clear(root)
@@ -2076,7 +2135,29 @@ def createPopup(popupType, message):
 			Button(validationPopup, text="Okay", command= lambda: validationPopup.destroy()).grid(row=3, columnspan=3, column=0)
 			Frame(validationPopup, height=10, width=10).grid(row=4, column=0, columnspan = 2)
 
+	elif popupType=='BuyPopup':
+		if not message == '':
+			validationPopup = Toplevel(root)
+			validationPopup.title("Success")
+			validationPopup.transient(root)
+			validationPopup.resizable(width=FALSE, height=FALSE)
 
+			Frame(validationPopup, height=10, width=10).grid(row=0, column=0, columnspan = 2)
+			Label(validationPopup, width=30, text=message+'\n').grid(row=1,columnspan = 2, column=1, sticky=W)
+			Button(validationPopup, text="Okay", command= lambda: home()).grid(row=3, columnspan=3, column=0)
+			Frame(validationPopup, height=10, width=10).grid(row=4, column=0, columnspan = 2)
+
+		else:
+			validationPopup = Toplevel(root)
+			validationPopup.title("Validation")
+			#validationPopup.geometry('250x80')
+			validationPopup.transient(root)
+			validationPopup.resizable(width=FALSE, height=FALSE)
+
+			Frame(validationPopup, height=10, width=10).grid(row=0, column=0, columnspan = 2)
+			Label(validationPopup, width=30, text=message).grid(row=1,columnspan = 2, column=1, sticky=W)
+			Button(validationPopup, text="Okay", command= lambda: validationPopup.destroy()).grid(row=3, columnspan=3, column=0)
+			Frame(validationPopup, height=10, width=10).grid(row=4, column=0, columnspan = 2)
 	elif popupType=='validateBroker':
 		if message == 'Registration Successful!':
 			validationPopup = Toplevel(root)
@@ -2271,7 +2352,7 @@ def windowMenus(root):
 	accountMenu.add_command(label="Edit Info",accelerator="cmd-e", command= lambda: editInfo())
 	accountMenu.add_command(label="View History", command="")
 	accountMenu.add_separator()
-	accountMenu.add_command(label="Bleh", command="")
+	accountMenu.add_command(label="Home", command= lambda: home())
 
 
 	stocksMenu.add_command(label="View Portfolio", accelerator="cmd-p",command= lambda: portfolioWindow())

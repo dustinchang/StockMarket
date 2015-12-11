@@ -1,10 +1,34 @@
 import datetime, time
+
 from decimal import Decimal
+
 from googlefinance import getQuotes
+
 import cPickle as pickle
+
 import random
+
 import sys
+from sys import *
+
+import re
+
 import urllib
+
+import Tkinter
+from Tkinter import *
+
+import locale
+
+import json
+
+import matplotlib.pyplot as plt
+import matplotlib, sys
+from matplotlib import *
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from numpy import *
+
 
 """
 Implementation of a stock market exchange where stocks are continually on the rise or dropping.
@@ -177,12 +201,12 @@ class Transaction:
     """Specifics of a trading Transaction"""
     def __init__(self, user, t_type, investment): 
         """Transaction Constructor"""
-        self.TransactionID = ''
+        self.TransactionID = investment.StockID+str(investment.TradeDate)
         self.TransactionStock = investment # if selling [inv_bought, inv_sold]
         self.TransactionTime = investment.TradeDate #{Integer:Integer} Maybe use datetime for this
         self.TransactionBuyer = '' #(ClientID BrokerID FirmID)
         self.TransactionSeller = '' #(ClientID BrokerID FirmID)
-        self.TransactionTrader = [] #(ClientID BrokerID FirmID)
+        #self.TransactionTrader = [] #(ClientID BrokerID FirmID)
         self.TransactionType = t_type #(Sell Buy Trade)
         self.TransactionPLReport = 0 #String : Float (only when it's a sell or trade)
         self.TransactionBSVolume = {} #String : Integer : Float (StockID : Volume : Price)
@@ -190,7 +214,7 @@ class Transaction:
                                          #{String : Integer : Float <> String : Integer : Float }
                                          #StockID : Volume : Price <> StockID : Volume : Price
         self.TransactionExchange = ''
-        check_transaction_type(user, t_type)
+        self.check_transaction_type(user, t_type)
 
     # Function to assign ID values into Transaction{Buyer/Seller/Trader}
     # TransactionTrade will be a list of two user IDs
@@ -206,16 +230,17 @@ class Transaction:
         #   self.TransactionTrader = [user[0].ID, user[1].ID]
 
     # Used only when t_type is 'sell'
-    def calculate_profit_loss(self):
+def calculate_profit_loss(self):
         self.TransactionPLReport = ((self.TransactionStock[1].PriceTraded - self.TransactionStock[0].PriceTraded) / self.TransactionStock[1].PriceTraded) * 100
 
 class Investment:
     """ """
-    def __init__(self, stock):
+    def __init__(self, stock, quantity):
         """ """
         self.StockID = stock.StockID
         self.TradeDate = stock.StockDate
         self.PriceTraded = stock.StockPrice
+        self.Volume = quantity
 
 """ Ended up sticking with real time data only
 ##Takes a stock and a stock_list as parameters and
@@ -341,36 +366,6 @@ def get_current(symb):
     stock = Stock(quote[0][u'StockSymbol'], dt, quote[0][u'LastTradePrice'])
     return stock
 
-##
-#
-#
-def buy(user, symb):
-    # load transaction file
-    transactions = pickle.load(open("<transactionfilepath>","rb"))
-
-    # add investment into user portfolio
-    inv = Investment(get_current(symb))
-    user.Portfolio.append(inv)
-
-    # check user type to subtract from their budget
-    # subtract from client's budget
-    if isinstance(user, Client):
-        user.ClientBudget -= inv.PriceTraded
-    # subtract from broker's budget
-    elif isinstance(user, Broker):
-        user.BrokerTotalBudget -= inv.PriceTraded # ---------------- this might be wrong
-    # subtract from the buyer of the firm's budget
-    else:
-        user.FirmBudget -= inv.PriceTraded
-
-    # add investment into transaction file
-    trans = Transaction(user, 'buy', inv)
-    transactions.append(trans)
-
-    # save transaction file
-    pickle.dump(transactions, open("<transactionfilepath>", "wb"))
-
-    return user
 
 ## Process selling an investment
 # user: Client, Broker, or Firm object
