@@ -1224,141 +1224,167 @@ def portfolioWindow():
 	root.geometry("500x500")
 	root.wm_title('Stock Market App - Portfolio')
 
-	#Frame(root, height=10, width=10).grid(row = 0, column = 0, )
 	frame=Frame(root,width=500,height=500)
 	frame.grid(row=0,column=0)
 	canvas=Canvas(frame,width=478,height=491)
-	'''	
-	for x in range(100):
-		label = Label(canvas, text='line #'+str(x))
-		label.pack()
-	'''
 
-	'''
-		ID
-		TradeDate
-		Volume
-		pricetraded
-
-
-	'''
 	y = 10
-	for x in xrange(1,3):
+
+
+	if isinstance(loggedInAccount,Client) ==True:
 		
-		canvas_id = canvas.create_text(10, y, anchor="nw")
-		canvas.itemconfig(canvas_id, fill='blue',text="[STCK #"+str(x)+']')
-		line = canvas.create_line(10, y, 490, y)
+		if len(loggedInAccount.Portfolio) == 0:
+			canvas_id = canvas.create_text(239, 245, anchor="center")
+			canvas.itemconfig(canvas_id, text='You have no investment(s) in your current portfolio')
+			canvas.config(width=478,height=491)
+			canvas.pack(side=LEFT,expand=True,fill=BOTH)	
+		else:
+			'''for element in loggedInAccount.Portfolio:
+				print(element.StockID)
+				print(str(element.TradeDate))
+				print(str(element.PriceTraded))
+				print(str(element.Volume))
+				'''
+			x = len(loggedInAccount.Portfolio)
 
-		y+=20
-		canvas_id = canvas.create_text(10, y, anchor="nw")
-		canvas.itemconfig(canvas_id, text="Stock:")
+			canvas_id = canvas.create_text(10, y, anchor="nw")
+			canvas.itemconfig(canvas_id, text='The following is a list of current investment(s):')	
+
+			y += 30
+			for element in loggedInAccount.Portfolio:
+				
+				
+				line = canvas.create_line(10, y, 490, y)
+				y+=3
+
+				canvas_id = canvas.create_text(10, y, anchor="nw")
+				canvas.itemconfig(canvas_id, fill='blue',text=str(element.StockID))
+
+				y+=20
+				line = canvas.create_line(10, y, 490, y)
+
+				y+=3
+				canvas_id = canvas.create_text(10, y, anchor="nw")
+				canvas.itemconfig(canvas_id, text="Trade Date & Time:")
 
 
-		canvas_id = canvas.create_text(50, y, anchor="nw")
-		canvas.itemconfig(canvas_id, fill='blue',text="[Stock name]")
+				canvas_id = canvas.create_text(135, y, anchor="nw")
+				canvas.itemconfig(canvas_id,text=str(element.TradeDate))
 
-		y+=20
-		canvas_id = canvas.create_text(10, y, anchor="nw")
-		canvas.itemconfig(canvas_id, text="Current Date of info: ")
-		
+				priceT = format(float(element.PriceTraded), ",.2f")
 
-		canvas_id = canvas.create_text(145, y, anchor="nw")
-		canvas.itemconfig(canvas_id, fill='blue', text="[the StockDate]")
+				y+=20
+				canvas_id = canvas.create_text(10, y, anchor="nw")
+				canvas.itemconfig(canvas_id, text="Trade Price: ")
+				
 
-		y+=20
-		canvas_id = canvas.create_text(10, y, anchor="nw")
-		canvas.itemconfig(canvas_id, text="Date Traded: ")
+				canvas_id = canvas.create_text(85, y, anchor="nw")
+				canvas.itemconfig(canvas_id, text='$'+str(priceT))
 
-		canvas_id = canvas.create_text(95, y, anchor="nw")
-		canvas.itemconfig(canvas_id, fill='blue',text="[the TradeDate]")
+				y+=20
+				canvas_id = canvas.create_text(10, y, anchor="nw")
+				canvas.itemconfig(canvas_id, text="Volume Owned:")
 
-		y+=20
-		canvas_id = canvas.create_text(10, y, anchor="nw")
-		canvas.itemconfig(canvas_id, text="Price Traded $: ")
+				canvas_id = canvas.create_text(115, y, anchor="nw")
+				canvas.itemconfig(canvas_id,text=str(element.Volume))
 
-		canvas_id = canvas.create_text(110, y, anchor="nw")
-		canvas.itemconfig(canvas_id, fill='blue',text="[the TradedPrice]")
+				
+				y+=40
+			print(str(x))
+			if x*100 <500:
+				print('less than 5')
+				canvas.config(scrollregion=(0,0,478,0))
+				canvas.config(width=478,height=491)
+				canvas.pack(side=LEFT,expand=True,fill=BOTH)
+			else:
+				print('more than 5')
+				scrollh = (x*106)
+				scrollh += 30
+				canvas.config(scrollregion=(0,0,478,scrollh))
+				vbar=Scrollbar(frame,orient=VERTICAL)
+				vbar.pack(side=RIGHT,fill=Y)
+				vbar.config(command=canvas.yview)
+				canvas.config(width=478,height=491)
+				canvas.config( yscrollcommand=vbar.set)
+				canvas.pack(side=LEFT,expand=True,fill=BOTH)
+			
+	elif isinstance(loggedInAccount,Broker) ==True:
+		print('broker port')
+		if len(loggedInAccount.Portfolio) == 0:
+			canvas_id = canvas.create_text(239, 245, anchor="center")
+			canvas.itemconfig(canvas_id, text='You have no investment(s) in your current portfolio')
+			canvas.config(width=478,height=491)
+			canvas.pack(side=LEFT,expand=True,fill=BOTH)	
+		else:
+			'''for element in loggedInAccount.Portfolio:
+				print(element.StockID)
+				print(str(element.TradeDate))
+				print(str(element.PriceTraded))
+				print(str(element.Volume))
+				'''
+			x = len(loggedInAccount.Portfolio)
 
-		y+=20
-		canvas_id = canvas.create_text(10, y, anchor="nw")
-		canvas.itemconfig(canvas_id, text="Current Price $: ")
+			canvas_id = canvas.create_text(10, y, anchor="nw")
+			canvas.itemconfig(canvas_id, text='The following is a list of current investment(s):')	
 
-		canvas_id = canvas.create_text(115, y, anchor="nw")
-		canvas.itemconfig(canvas_id, fill='blue',text="[the StockPrice]")
+			y += 30
+			for element in loggedInAccount.Portfolio:
+				
+				
+				line = canvas.create_line(10, y, 490, y)
+				y+=3
 
-		y+=20
-		canvas_id = canvas.create_text(10, y, anchor="nw")
-		canvas.itemconfig(canvas_id, text="Open Price $: ")
+				canvas_id = canvas.create_text(10, y, anchor="nw")
+				canvas.itemconfig(canvas_id, fill='blue',text=str(element.StockID))
 
-		canvas_id = canvas.create_text(100, y, anchor="nw")
-		canvas.itemconfig(canvas_id, fill='blue',text="[the StockOpen]")
+				y+=20
+				line = canvas.create_line(10, y, 490, y)
 
-		y+=20
-		canvas_id = canvas.create_text(10, y, anchor="nw")
-		canvas.itemconfig(canvas_id, text="Day Range: ")
+				y+=3
+				canvas_id = canvas.create_text(10, y, anchor="nw")
+				canvas.itemconfig(canvas_id, text="Trade Date & Time:")
 
-		canvas_id = canvas.create_text(90, y, anchor="nw")
-		canvas.itemconfig(canvas_id, fill='blue',text="[the StockDayRange]")
 
-		y+=20
-		canvas_id = canvas.create_text(10, y, anchor="nw")
-		canvas.itemconfig(canvas_id, text="Volume: ")
+				canvas_id = canvas.create_text(135, y, anchor="nw")
+				canvas.itemconfig(canvas_id,text=str(element.TradeDate))
 
-		canvas_id = canvas.create_text(65, y, anchor="nw")
-		canvas.itemconfig(canvas_id, fill='blue',text="[the StockVolume]")
+				priceT = format(float(element.PriceTraded), ",.2f")
 
-		y+=20
-		canvas_id = canvas.create_text(10, y, anchor="nw")
-		canvas.itemconfig(canvas_id, text="Close Price $: ")
+				y+=20
+				canvas_id = canvas.create_text(10, y, anchor="nw")
+				canvas.itemconfig(canvas_id, text="Trade Price: ")
+				
 
-		canvas_id = canvas.create_text(100, y, anchor="nw")
-		canvas.itemconfig(canvas_id, fill='blue',text="[the StockVolume]")
-		
-		y+=40
-		canvas_id = canvas.create_text(10, y, anchor="nw")
-		canvas.itemconfig(canvas_id, text="Profit/Loss: ")
+				canvas_id = canvas.create_text(85, y, anchor="nw")
+				canvas.itemconfig(canvas_id, text='$'+str(priceT))
 
-		canvas_id = canvas.create_text(85, y, anchor="nw")
-		canvas.itemconfig(canvas_id, fill='red',text="[Loss]")
+				y+=20
+				canvas_id = canvas.create_text(10, y, anchor="nw")
+				canvas.itemconfig(canvas_id, text="Volume Owned:")
 
-		canvas_id = canvas.create_text(120, y, anchor="nw")
-		canvas.itemconfig(canvas_id, fill='#006400',text="[Profit]")
-		y+=20
-		line = canvas.create_line(10, y, 490, y)
-		y+=20
-	if x*260 <500:
+				canvas_id = canvas.create_text(115, y, anchor="nw")
+				canvas.itemconfig(canvas_id,text=str(element.Volume))
 
-		canvas.config(scrollregion=(0,0,478,0))
-		canvas.config(width=478,height=491)
-		canvas.pack(side=LEFT,expand=True,fill=BOTH)
-	else:
-		canvas.config(scrollregion=(0,0,478,x*260))
-		vbar=Scrollbar(frame,orient=VERTICAL)
-		vbar.pack(side=RIGHT,fill=Y)
-		vbar.config(command=canvas.yview)
-		canvas.config(width=478,height=491)
-		canvas.config( yscrollcommand=vbar.set)
-		canvas.pack(side=LEFT,expand=True,fill=BOTH)
-	#Label(canvas, text="Rodney Test").grid(row=0, column=0)
+				
+				y+=40
+			print(str(x))
+			if x*100 <500:
+				print('less than 5')
+				canvas.config(scrollregion=(0,0,478,0))
+				canvas.config(width=478,height=491)
+				canvas.pack(side=LEFT,expand=True,fill=BOTH)
+			else:
+				print('more than 5')
+				scrollh = (x*106)
+				scrollh += 30
+				canvas.config(scrollregion=(0,0,478,scrollh))
+				vbar=Scrollbar(frame,orient=VERTICAL)
+				vbar.pack(side=RIGHT,fill=Y)
+				vbar.config(command=canvas.yview)
+				canvas.config(width=478,height=491)
+				canvas.config( yscrollcommand=vbar.set)
+				canvas.pack(side=LEFT,expand=True,fill=BOTH)
 	
-
-
-
-	'''
-	scrollbar = Scrollbar(root)
-	scrollbar.pack(side=RIGHT, fill=Y)
-	
-	listbox = Listbox(root)
-
-	listbox.pack()
-
-	for i in range(500):
-		listbox.insert(END, i)
-
-# attach listbox to scrollbar
-	listbox.config(yscrollcommand=scrollbar.set)
-	scrollbar.config(command=listbox.yview)
-	'''
 
 def buy(user, symb, quantity, total):
     # load transaction file
@@ -2142,15 +2168,15 @@ def createPopup(popupType, message):
 
 	elif popupType=='BuyPopup':
 		if not message == '':
-			validationPopup = Toplevel(root)
-			validationPopup.title("Success")
-			validationPopup.transient(root)
-			validationPopup.resizable(width=FALSE, height=FALSE)
+			buyPopup = Toplevel(root)
+			buyPopup.title("Success")
+			buyPopup.transient(root)
+			buyPopup.resizable(width=FALSE, height=FALSE)
 
-			Frame(validationPopup, height=10, width=10).grid(row=0, column=0, columnspan = 2)
-			Label(validationPopup,  text=message+'\n').grid(row=1,columnspan = 2, column=1, sticky=W)
-			Button(validationPopup, text="Okay", command= lambda: home()).grid(row=3, columnspan=3, column=0)
-			Frame(validationPopup, height=10, width=10).grid(row=4, column=0, columnspan = 2)
+			Frame(buyPopup, height=10, width=10).grid(row=0, column=0, columnspan = 2)
+			Label(buyPopup,  text=message+'\n').grid(row=1,columnspan = 2, column=1, sticky=W)
+			Button(buyPopup, text="Okay", command= lambda: buyPopup.destroy()).grid(row=3, columnspan=3, column=0)
+			Frame(buyPopup, height=10, width=10).grid(row=4, column=0, columnspan = 2)
 
 		else:
 			validationPopup = Toplevel(root)
