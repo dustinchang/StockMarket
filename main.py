@@ -76,6 +76,7 @@ class Broker:
         """Broker Constructor"""
         self.ID = ''
         self.BrokerName = ''
+        self.BrokerPassword = ''
         self.BrokerFirmID = ''
         self.BrokerPLReport = 0.0
         self.BrokerTotalBudget = 0.0
@@ -85,6 +86,7 @@ class Broker:
         self.BrokerCommission = 0.0
         self.BrokerLicenseType = ''
         self.BrokerShares = {} #{ String: Float } (StockID and Quantity)
+        self.BrokerIndustry = ''
         self.Portfolio = [] # list of Investments
         self.InvestmentHistory = [] # list of Investments bought and sold. used for profit loss report
         self.InvestmentExpense = '' # sum of all investments bought
@@ -124,6 +126,7 @@ class Client:
         """Client Constructor"""
         self.ID = ''
         self.ClientName = ''
+        self.ClientPassword = ''
         self.ClientPhoneNumber = 0
         self.ClientEmailAddress = ''
         self.ClientBudget = 0.0
@@ -132,7 +135,7 @@ class Client:
         self.ClientBrokerID = '' # Maybe int
         self.ClientProfit = 0.0
         self.ClientPLReport = 0.0 # percentage
-        self.ClientIndustry = []
+        self.ClientIndustry = ''
         self.Portfolio = [] # list of Investments
         self.InvestmentHistory = [] # list of Investments bought and sold. in case we want to use this later?
         self.InvestmentExpense = '' # sum of all investments bought
@@ -206,7 +209,6 @@ class Investment:
         """ """
         self.StockID = stock.StockID
         self.TradeDate = stock.StockDate
-        self.StockVolume = stock.StockVolume
         self.PriceTraded = stock.StockPrice
 
 """ Ended up sticking with real time data only
@@ -338,7 +340,6 @@ def get_historical(symb, number_of_days = 1, interval = 900):
 #      u'Dividend': u'0.47',
 #      u'StockSymbol': u'AAPL',
 #      u'ID': u'22144'}]
-#
 def get_current(symb):
     quote = getQuotes(symb)
     # Date
@@ -436,20 +437,21 @@ def get_close_prices(symb, number_of_days = 15):
     stock_objs = get_historical(symb, number_of_days)
     for stk in stock_objs:
         close_list.append(stk.StockClose)
+    return close_list
 
-## Execution start of program, adding to protocol buffers
+## Testing functions
 #
 #
 def main():
-    symblist = {'GOOG' : 'Alphabet Inc.', 'AAPL' : 'Apple Inc.', 'NFLX' : 'Netflix, Inc.', 'AMZN' : 'Amazon.com, Inc.', 'TSLA' : 'Tesla Motors Inc'}
-    ticker_list = {'Alphabet Inc.' : 'GOOG', 'Apple Inc.' : 'AAPL', 'Netflix, Inc.' : 'NFLX', 'Amazon.com, Inc.' : 'AMZN', 'Tesla Motors Inc' : 'TSLA'}
+    #symblist = {'GOOG' : 'Alphabet Inc.', 'AAPL' : 'Apple Inc.', 'NFLX' : 'Netflix, Inc.', 'AMZN' : 'Amazon.com, Inc.', 'TSLA' : 'Tesla Motors Inc'}
+    #ticker_list = {'Alphabet Inc.' : 'GOOG', 'Apple Inc.' : 'AAPL', 'Netflix, Inc.' : 'NFLX', 'Amazon.com, Inc.' : 'AMZN', 'Tesla Motors Inc' : 'TSLA'}
 
     #histo = get_historical('GOOG', 30)
     #for s in histo:
     #    s.print_hist_stock()
 
     #Get all the closing prices
-    close_prices_list = get_close_prices('GOOG')
+    #close_prices_list = get_close_prices('GOOG')
     #print close_prices_list
 
     # get historical data on all stocks indicated in symbol list
@@ -463,6 +465,8 @@ def main():
 
     #stock = get_current('GOOG')
     #stock.print_stock()
+
+
 
 if __name__ == "__main__":
     main()
