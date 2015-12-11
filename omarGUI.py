@@ -1201,12 +1201,15 @@ def buyWindow(stock1,duration, quantity, priceVal):
 			
 			elif not float(totalPrice) == 0.0:
 				Label(root, fg='#006400',text='$'+displayBudget).grid(row=18, column=1, sticky=W)
-				buyButton = Button(root ,text='Buy').grid(row=20,column=1, sticky=W)
+				
 
 				Label(root,text='Budget after purchase:').grid(row=19, column=0, sticky=E)
 				newBudget = float(budget) - float(totalPrice)
 				newBudget = format(float(newBudget), ",.2f")
 				Label(root,text='$'+str(newBudget)).grid(row=19, column=1, sticky=W)
+
+				buyButton = Button(root ,text='Buy', command=lambda: buy(loggedInAccount,xLabel,quantityVar.get(),totalPrice)).grid(row=20,column=1, sticky=W)
+
 
 
 		
@@ -1380,7 +1383,9 @@ def buy(user, symb, quantity, total):
     # check user type to subtract from their budget
     # subtract from client's budget
     if isinstance(user, Client):
-        user.ClientBudget -= total
+        originalBudget = float(user.ClientBudget)
+        originalBudget -= total # ---------------- this is fixed
+        user.ClientBudget = originalBudget
     # subtract from broker's budget
     elif isinstance(user, Broker):
         originalBudget = float(user.BrokerTotalBudget)
@@ -2143,7 +2148,7 @@ def createPopup(popupType, message):
 			validationPopup.resizable(width=FALSE, height=FALSE)
 
 			Frame(validationPopup, height=10, width=10).grid(row=0, column=0, columnspan = 2)
-			Label(validationPopup, width=30, text=message+'\n').grid(row=1,columnspan = 2, column=1, sticky=W)
+			Label(validationPopup,  text=message+'\n').grid(row=1,columnspan = 2, column=1, sticky=W)
 			Button(validationPopup, text="Okay", command= lambda: home()).grid(row=3, columnspan=3, column=0)
 			Frame(validationPopup, height=10, width=10).grid(row=4, column=0, columnspan = 2)
 
