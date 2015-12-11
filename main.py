@@ -352,7 +352,7 @@ def get_current(symb):
 # symb: ticker symbol (e.g. 'GOOG')
 def buy(user, symb):
     # load transaction file
-    transactions = pickle.load(open("<transactionfilepath>","rb"))
+    transactions = pickle.load(open("./SMfiles/transactions.txt","rb"))
 
     # add investment into user portfolio
     inv = Investment(get_current(symb))
@@ -374,7 +374,7 @@ def buy(user, symb):
     transactions.append(trans)
 
     # save transaction file
-    pickle.dump(transactions, open("<transactionfilepath>", "wb"))
+    pickle.dump(transactions, open("./SMfiles/transactions.txt", "wb"))
 
     return user
 
@@ -383,7 +383,7 @@ def buy(user, symb):
 # inv will be index number of the investment in user portfolio maybe?
 def sell(user, inv_index): # user: Client, Broker, or Firm object
     # load transaction file
-    transactions = pickle.load(open("<transactionfilepath>","rb"))
+    transactions = pickle.load(open("./SMfiles/transactions.txt","rb"))
 
     # get investment from user portfolio
     inv_bought = user.Portfolio[inv_index]
@@ -402,7 +402,7 @@ def sell(user, inv_index): # user: Client, Broker, or Firm object
     transactions.append(trans)
 
     # save transaction file
-    pickle.dump(transactions, open("<transactionfilepath>", "wb"))
+    pickle.dump(transactions, open("./SMfiles/transactions.txt", "wb"))
 
     return user
 
