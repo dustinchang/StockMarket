@@ -1,8 +1,0 @@
-#Tools to get and run program
-  Git
-  Python2.7
-  googlefinance python module
-	- use: pip install googlefinance
-
-#Instructions to Run
-  -python SMgui.py

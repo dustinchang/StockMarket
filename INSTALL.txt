@@ -1,8 +1,13 @@
 #Tools to get and run program
   Git
   Python2.7
-  googlefinance python module
+  googlefinance python module (https://github.com/hongtaocai/googlefinance)
 	- use: pip install googlefinance
+  matplotlib python module (matplotlib.org/users/installing.html)
+	- linux
+		- sudo apt-get install python-matplotlib
+	- mac
+		- pip install matplotlib
 
 #Instructions to Run
   -python SMgui.py
