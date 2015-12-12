@@ -1,34 +1,39 @@
 import datetime, time
+
+from decimal import Decimal
+
 from googlefinance import getQuotes
+
 import cPickle as pickle
+
+import random
+
 import sys
+from sys import *
+
+import re
+
 import urllib
+
+import Tkinter
+from Tkinter import *
+
+import locale
+
+import json
+
+import matplotlib.pyplot as plt
+import matplotlib, sys
+from matplotlib import *
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from numpy import *
+
 
 """
 Implementation of a stock market exchange where stocks are continually on the rise or dropping.
 This program will assist on whether you should purchase or sell stocks.
 """
-
-"""
-# Not being used at the moment
-class Index:
-    # Investment information about an Index, which is a portion of a stock market
-    def __init__(self):
-        # Index Constructor
-        self.IndexID = ''
-        self.IndexName = ''
-        self.IndexValue = 0.0
-        self.IndexNetChange = 0.0
-        self.IndexChange = 0.0
-        self.IndexOpen  = 0.0
-        self.IndexDayRange = ''
-        self.IndexPreviousClose = 0.0
-        self.Index52WKRange = ''
-        self.Index1YRReturn = 0.0
-        self.IndexYTDReturn = 0.0
-        self.IndexTotalMembers = 0
-        self.IndexMembersUp = 0
-        self.IndexMembersDown = 0 """
 
 class Stock:
     """Details of a Stock and it's contents"""
@@ -68,12 +73,17 @@ class Stock:
     def print_stock(self):
         dt = self.StockDate.strftime('%Y-%m-%d T: %H:%M:%S')
         print 'ID: ' + self.StockID + '\nDate: ' + dt
-        print 'Last Trade Price: ' + self.StockPrice
+        print 'Last Trade Price: ' + str(self.StockPrice)
 
 class Broker:
     """Details of the identification of a Broker"""
     def __init__(self):
         """Broker Constructor"""
+        self.BrokerPhoneNumber = 0
+        self.BrokerEmailAddress = ''
+        self.BrokerAuthority = ''
+        self.BrokerIndustry = ''
+        self.BrokerLicenseIssue = 0
         self.ID = ''
         self.BrokerName = ''
         self.BrokerPassword = ''
@@ -89,15 +99,22 @@ class Broker:
         self.BrokerIndustry = ''
         self.Portfolio = [] # list of Investments
         self.InvestmentHistory = [] # list of Investments bought and sold. used for profit loss report
-        self.InvestmentExpense = '' # sum of all investments bought
-        self.InvestmentRevenue = '' # sum of all investments sold
+        self.InvestmentExpense = 0.0 # sum of all investments bought
+        self.InvestmentRevenue = 0.0 # sum of all investments sold
 
     def calculate_profit_loss(self, investment): # investment: [inv_bought, inv_sold]
         self.InvestmentHistory.append(investment)
-        self.InvestmentExpense += investment[0].PriceTraded
-        self.InvestmentRevenue += investment[1].PriceTraded
+        self.InvestmentExpense += float(investment[0].PriceTraded)
+        self.InvestmentRevenue += float(investment[1].PriceTraded)
         self.BrokerProfit = self.InvestmentRevenue - self.InvestmentExpense
+
+        self.BrokerTotalBudget = (float(investment[1].PriceTraded) * investment[0].Volume) + float(self.BrokerTotalBudget)
         self.BrokerPLReport = (self.BrokerProfit / self.InvestmentRevenue) * 100
+
+        print investment[0].PriceTraded
+        print investment[1].PriceTraded
+        print self.BrokerProfit
+        print self.BrokerPLReport
 
 class Firm:
     """Organizational details of a Firm"""
@@ -108,15 +125,17 @@ class Firm:
         self.FirmBudget = 0.0
         self.FirmType = ''
         self.FirmTotalBrokers = 0
+        self.FirmCode = ''
+        self.FirmTotalBrokers = 0
         self.Portfolio = [] # list of Investments
         self.InvestmentHistory = [] # list of Investments bought and sold. used for profit loss report
-        self.InvestmentExpense = '' # sum of all investments bought
-        self.InvestmentRevenue = '' # sum of all investments sold
+        self.InvestmentExpense = 0.0 # sum of all investments bought
+        self.InvestmentRevenue = 0.0 # sum of all investments sold
 
     def calculate_profit_loss(self, investment): # investment: [inv_bought, inv_sold]
         self.InvestmentHistory.append(investment)
-        self.InvestmentExpense += investment[0].PriceTraded
-        self.InvestmentRevenue += investment[1].PriceTraded
+        self.InvestmentExpense += float(investment[0].PriceTraded)
+        self.InvestmentRevenue += float(nvestment[1].PriceTraded)
         self.BrokerProfit = self.InvestmentRevenue - self.InvestmentExpense
         self.BrokerPLReport = (self.BrokerProfit / self.InvestmentRevenue) * 100
 
@@ -129,25 +148,45 @@ class Client:
         self.ClientPassword = ''
         self.ClientPhoneNumber = 0
         self.ClientEmailAddress = ''
-        self.ClientBudget = 0.0
+        self.ClientPassword = ''
         self.ClientShares = {} # { String : Float : String } (StockID : Quantity : Can Exercise)
-        self.ClientFirmID = '' # Maybe int
-        self.ClientBrokerID = '' # Maybe int
+        self.ClientBudget = 0.0
+        self.ClientFirmID = '' #Maybe int
+        self.ClientBrokerID = '' #Maybe int
+        self.ClientPLReport = 0.0
+        self.ClientIndustry = ''
         self.ClientProfit = 0.0
         self.ClientPLReport = 0.0 # percentage
-        self.ClientIndustry = ''
         self.Portfolio = [] # list of Investments
         self.InvestmentHistory = [] # list of Investments bought and sold. in case we want to use this later?
-        self.InvestmentExpense = '' # sum of all investments bought
-        self.InvestmentRevenue = '' # sum of all investments sold
+        self.InvestmentExpense = 0.0 # sum of all investments bought
+        self.InvestmentRevenue = 0.0 # sum of all investments sold
 
-    def calculate_profit_loss(self):
+    def calculate_profit_loss(self, investment):
         self.InvestmentHistory.append(investment)
-        self.InvestmentExpense += investment[0].PriceTraded
-        self.InvestmentRevenue += investment[1].PriceTraded
+        self.InvestmentExpense += float(investment[0].PriceTraded)
+        self.InvestmentRevenue += float(investment[1].PriceTraded)
         self.ClientProfit = self.InvestmentRevenue - self.InvestmentExpense
+        
+        self.ClientBudget = (float(investment[1].PriceTraded) * investment[0].Volume) + float(self.ClientBudget)
         self.ClientPLReport = (self.ClientProfit / self.InvestmentRevenue) * 100
- 
+
+        print investment[0].PriceTraded
+        print investment[1].PriceTraded
+        print self.ClientProfit
+        print self.ClientPLReport
+        """#originalExp = float(self.InvestmentExpense)
+        #originalExp += float(investment[0].PriceTraded)
+        print(self.InvestmentExpense)
+        print(str(investment[0].PriceTraded))
+        print(self.InvestmentRevenue)
+        print(str(investment[1].PriceTraded))
+        #originalRev = float(self.InvestmentRevenue)
+        #originalRev +=  float(investment[1].PriceTraded)
+
+        #self.ClientProfit = originalRev - originalExp
+        #self.ClientPLReport = (self.ClientProfit / originalRev) * 100"""
+
 class Exchange:
     """Contains the details of wanted market exchanges"""
     def __init__(self):
@@ -172,11 +211,11 @@ class Transaction:
     def __init__(self, user, t_type, investment): 
         """Transaction Constructor"""
         self.TransactionID = ''
-        self.TransactionStock = investment # if selling [inv_bought, inv_sold]
+        self.TransactionStock = [] # if selling [inv_bought, inv_sold]
         self.TransactionTime = investment.TradeDate #{Integer:Integer} Maybe use datetime for this
         self.TransactionBuyer = '' #(ClientID BrokerID FirmID)
         self.TransactionSeller = '' #(ClientID BrokerID FirmID)
-        self.TransactionTrader = [] #(ClientID BrokerID FirmID)
+        #self.TransactionTrader = [] #(ClientID BrokerID FirmID)
         self.TransactionType = t_type #(Sell Buy Trade)
         self.TransactionPLReport = 0 #String : Float (only when it's a sell or trade)
         self.TransactionBSVolume = {} #String : Integer : Float (StockID : Volume : Price)
@@ -184,7 +223,7 @@ class Transaction:
                                          #{String : Integer : Float <> String : Integer : Float }
                                          #StockID : Volume : Price <> StockID : Volume : Price
         self.TransactionExchange = ''
-        check_transaction_type(user, t_type)
+        self.check_transaction_type(user, t_type)
 
     # Function to assign ID values into Transaction{Buyer/Seller/Trader}
     # TransactionTrade will be a list of two user IDs
@@ -192,24 +231,35 @@ class Transaction:
         # Transaction type is 'buy'
         if t_type == "buy":
             self.TransactionBuyer = user.ID
+            self.TransactionID = investment.StockID+userID+str(investment.TradeDate)
         # Transaction type is 'sell'
         elif t_type == "sell":
             self.TransactionSeller = user.ID
+            self.TransactionID = investment.StockID+userID+str(investment.TradeDate)
         # Transaction type is 'trade'
         #else:
         #   self.TransactionTrader = [user[0].ID, user[1].ID]
 
     # Used only when t_type is 'sell'
-    def calculate_profit_loss(self):
-        self.TransactionPLReport = ((self.TransactionStock[1].PriceTraded - self.TransactionStock[0].PriceTraded) / self.TransactionStock[1].PriceTraded) * 100
+    def calculate_profit_loss(self, inves):
+        one = float(inves[1].PriceTraded)
+        two = float(inves[0].PriceTraded)
+        three = float(inves[1].PriceTraded)
+        self.TransactionPLReport = ((one - two) / three) * 100
 
 class Investment:
     """ """
-    def __init__(self, stock):
+    def __init__(self, stock, quantity):
         """ """
         self.StockID = stock.StockID
         self.TradeDate = stock.StockDate
         self.PriceTraded = stock.StockPrice
+        self.Volume = quantity
+
+    # testing purposes
+    def print_invs(self):
+        dt = self.TradeDate.strftime('%Y-%m-%d T: %H:%M:%S')
+        print "ID: " + self.StockID + "\nTrade Date: " + dt + "\nPriceTraded: " + str(self.PriceTraded) + "\nVolume: " + str(self.Volume)
 
 """ Ended up sticking with real time data only
 ##Takes a stock and a stock_list as parameters and
@@ -262,8 +312,8 @@ def fluctuate(stk):
         print 'divisible by 5'
     else:
         print 'prime'
-"""
-"""
+
+
 ## Get historical stock data
 #  - retrieves one quote a day
 #  Use for last 30 days?
@@ -344,46 +394,17 @@ def get_current(symb):
     quote = getQuotes(symb)
     # Date
     dt = datetime.datetime.strptime(quote[0][u'LastTradeDateTime'], '%Y-%m-%dT%H:%M:%SZ')
-    stock = Stock(quote[0][u'StockSymbol'], dt, quote[0][u'LastTradePrice'])
+    stock = Stock(str(quote[0][u'StockSymbol']), dt, float(quote[0][u'LastTradePrice']))
     return stock
 
-## Process buying an investment
-# user: Client, Broker, or Firm object
-# symb: ticker symbol (e.g. 'GOOG')
-def buy(user, symb):
-    # load transaction file
-    transactions = pickle.load(open("./SMfiles/transactions.txt","rb"))
-
-    # add investment into user portfolio
-    inv = Investment(get_current(symb))
-    user.Portfolio.append(inv)
-
-    # check user type to subtract from their budget
-    # subtract from client's budget
-    if isinstance(user, Client):
-        user.ClientBudget -= inv.PriceTraded
-    # subtract from broker's budget
-    elif isinstance(user, Broker):
-        user.BrokerTotalBudget -= inv.PriceTraded # ---------------- this might be wrong
-    # subtract from the buyer of the firm's budget
-    else:
-        user.FirmBudget -= inv.PriceTraded
-
-    # add investment into transaction file
-    trans = Transaction(user, 'buy', inv)
-    transactions.append(trans)
-
-    # save transaction file
-    pickle.dump(transactions, open("./SMfiles/transactions.txt", "wb"))
-
-    return user
 
 ## Process selling an investment
 # user: Client, Broker, or Firm object
 # inv will be index number of the investment in user portfolio maybe?
+'''
 def sell(user, inv_index): # user: Client, Broker, or Firm object
     # load transaction file
-    transactions = pickle.load(open("./SMfiles/transactions.txt","rb"))
+    transactions = pickle.load(open("<transactionfilepath>","rb"))
 
     # get investment from user portfolio
     inv_bought = user.Portfolio[inv_index]
@@ -402,21 +423,16 @@ def sell(user, inv_index): # user: Client, Broker, or Firm object
     transactions.append(trans)
 
     # save transaction file
-    pickle.dump(transactions, open("./SMfiles/transactions.txt", "wb"))
+    pickle.dump(transactions, open("<transactionfilepath>", "wb"))
 
     return user
-
-"""
-## Process trading an investment between two investors
-#
-#
-def trade(user1, user2, inv_index):
-    # load user profiles
-    user1 = pickle.load(open("./SMfiles/users/{}".format(user1), "rb"))
-    user2 = pickle.load(open("./SMfiles/users/{}".format(user2), "rb"))
-
-    # load transaction file
-    transactions = pickle.load(open("<transactionfilepath>", "rb"))
+'''
+def get_close_prices(symb, number_of_days = 15):
+    close_list = []
+    stock_objs = get_historical(symb, number_of_days)
+    for stk in stock_objs:
+        close_list.append(stk.StockClose)
+    return close_list
 
     #------ TODO
     #
@@ -443,8 +459,18 @@ def get_close_prices(symb, number_of_days = 15):
 #
 #
 def main():
-    #symblist = {'GOOG' : 'Alphabet Inc.', 'AAPL' : 'Apple Inc.', 'NFLX' : 'Netflix, Inc.', 'AMZN' : 'Amazon.com, Inc.', 'TSLA' : 'Tesla Motors Inc'}
-    #ticker_list = {'Alphabet Inc.' : 'GOOG', 'Apple Inc.' : 'AAPL', 'Netflix, Inc.' : 'NFLX', 'Amazon.com, Inc.' : 'AMZN', 'Tesla Motors Inc' : 'TSLA'}
+    """
+    # create initial stocklist file with 7 day sample
+    histo = get_historical('GOOG', 30)
+    stock_list = {'GOOG':histo}
+    pickle.dump(stock_list, open("stocklist.p", "wb"))
+
+
+    symblist = {'GOOG' : 'Alphabet Inc.', 'AAPL' : 'Apple Inc.', 'NFLX' : 'Netflix, Inc.', 'AMZN' : 'Amazon.com, Inc.', 'TSLA' : 'Tesla Motors Inc'}
+    ticker_list = {'Alphabet Inc.' : 'GOOG', 'Apple Inc.' : 'AAPL', 'Netflix, Inc.' : 'NFLX', 'Amazon.com, Inc.' : 'AMZN', 'Tesla Motors Inc' : 'TSLA'}
+
+    # read from stock list file
+    # stock_list = pickle.load(open('stocklist.p', 'rb'))
 
     #histo = get_historical('GOOG', 30)
     #for s in histo:
@@ -466,7 +492,9 @@ def main():
     #stock = get_current('GOOG')
     #stock.print_stock()
 
-
+    # save state of stock list into file
+    #pickle.dump(stock_list, open("stocklist.p", "wb"))
+    """
 
 if __name__ == "__main__":
     main()

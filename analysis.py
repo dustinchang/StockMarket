@@ -107,7 +107,7 @@ def stock_estimate(portfolio, symb):
     #else:
     #    print 'wrong'
     return choices(estimates, portfolio, symb)
-
+'''
 #Main for testing
 def main():
     client1 = Client()
@@ -115,7 +115,8 @@ def main():
     client1.Portfolio.append(Investment(Stock('AAPL', 'Dec 8', 117)))
 
     test = stock_estimate(client1.Portfolio, 'GOOG')
-    #print test
+    print test
 
 if __name__ == "__main__":
     main()
+'''
