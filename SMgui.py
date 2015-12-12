@@ -417,9 +417,13 @@ def validateBrokerEdit(name, number, email, username, password, password2, budge
 	''' 
 		VALIDATE email
 	'''
-	if  not email == '':
-		tempBroker.BrokerEmailAddress = email
-		
+	if not email=='':
+		if email_pattern.match(email):
+			tempBroker.BrokerEmailAddress = email
+			
+		else:
+			
+			tempBroker.BrokerEmailAddress = email
 	else:
 		errorMessage += 'Passwords do not match\n'		
 
@@ -926,7 +930,7 @@ def validateClientEdit(name, number, email, username, password, password2, budge
 		VALIDATE email
 	'''
 	if not email == '':
-		if not tempClient.ClientEmailAddress == email:
+		if email_pattern.match(email):
 
 			tempClient.ClientEmailAddress = email
 	else:
@@ -2565,7 +2569,6 @@ def windowMenus(root):
 
 	stocksMenu.add_command(label="View Portfolio", accelerator="cmd-p",command= lambda: portfolioWindow())
 	stocksMenu.add_separator()
-	stocksMenu.add_command(label="View Stock Market", accelerator="cmd-v", command="")
 	stocksMenu.add_command(label="Compare Stocks", accelerator="cmd-c", command=lambda: compareStocks('','','',''))
 	stocksMenu.add_separator()
 	stocksMenu.add_command(label="Buy", accelerator="cmd-b",command= lambda: buyWindow('','',0,0))
@@ -2812,7 +2815,7 @@ def editInfo():
 
 def hello():
 	root.wm_title("Stock Market App - Welcome")
-	root.geometry("580x260")
+	root.geometry("580x290")
 	root.resizable(width=FALSE, height=FALSE)
 
 	Frame(root,height=10, width=10).grid(column = 0, row= 0)
@@ -2825,8 +2828,9 @@ def hello():
 	Frame(root,height=10, width=10).grid(column = 0, row= 7)
 	Label(root, text="Keep in mind, our software queries data in real time to get you the latest stock infromation").grid(row=8, column=0)
 	Label(root, text="With that in mind, you might experience some delays, but nothing too frustrating.").grid(row=9, column=0)
-	Frame(root,height=10, width=10).grid(column = 0, row= 10)
-	Label(root, text="Lastly, thank you for your time and choosing our app!").grid(row=11, column=0)
+	Label(root, text="Please Note: Our software is optimized for Mac OSX use. Some Linux OSs also support.").grid(row=10, column=0)
+	Frame(root,height=10, width=10).grid(column = 0, row= 11)
+	Label(root, text="Lastly, thank you for your time and choosing our app!").grid(row=12, column=0)
 	Frame(root,height=10, width=10).grid(column = 0, row= 13)
 	Button(root, text='Launch!', command=lambda: home()).grid(row=14, column=0)
 def main():

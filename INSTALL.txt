@@ -10,4 +10,6 @@
 		- pip install matplotlib
 
 #Instructions to Run
+Note:This program has been optimized for a Mac environment. It runs on both Mac and Linux environments.
+Although the program can be ran in a Windows environment, it is not optimized. Hotkey commands seem to be detected without using a cmd key. This makes the program unusable in Windows.
   -python SMgui.py
