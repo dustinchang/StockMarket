@@ -68,7 +68,7 @@ def retrieveFirm(firmName, code):
 	
 				createPopup('errorFirmCode',firmName)
 		else:
-			print('Firm not found!')
+			pass
 	
 
 
@@ -647,7 +647,7 @@ def firmRegisterForm(firm):
 		Button(root, text="Submit", command=lambda: validateFirm(nameVar.get(), idVar.get(), typeVar.get(), codeVar.get(), budgetVar.get())).grid(row=18, column=1, sticky=E)		
 
 	elif firm ==2:
-		print('This will get an existing firm')
+		
 		clear(root)
 		clear(root)
 		root.wm_title("Stock Market App - Retrieve Firm")
@@ -693,7 +693,7 @@ def firmRegisterForm(firm):
 
 	elif firm == 3:
 		clear(root)
-		print('This will register a new Firm')
+		
 		clear(root)
 		root.wm_title("Stock Market App - Register Firm")
 		root.geometry("500x250")
@@ -1535,7 +1535,7 @@ def historyWindow():
 					canvas_id = canvas.create_text(55, y, anchor="nw")
 					canvas.itemconfig(canvas_id,text=str(element.TransactionBuyer))
 					inv = element.TransactionPLReport
-					print(inv)
+					
 				else:
 					canvas_id = canvas.create_text(125, y, anchor="nw")
 					canvas.itemconfig(canvas_id, text='Sell')
@@ -1549,7 +1549,7 @@ def historyWindow():
 					canvas.itemconfig(canvas_id, text=str(element.TransactionSeller))				
 
 					inv = element.TransactionPLReport
-					print(inv)
+					
 					
 				
 
@@ -1727,7 +1727,6 @@ def home():
 
 		for key,value in ticker_list.iteritems():
 			if key == 'Tesla Motors Inc':
-				print('Stock '+key+ ' code is '+ value)
 				yLabel = value
 
 		yTestList = get_historical(yLabel,1)
@@ -2463,7 +2462,7 @@ def createPopup(popupType, message):
 		Frame(validationPopup, height=10, width=10).grid(row=4, column=0, columnspan = 2)
 
 	elif popupType=='loginError-user':
-		print("Error! No User records found for "+message)
+		
 		errorPopup = Toplevel(root)
 		errorPopup.title("Error")
 		#errorPopup.geometry('252x97')
@@ -2477,7 +2476,7 @@ def createPopup(popupType, message):
 		Frame(errorPopup, height=10, width=10).grid(row=4, column=0, columnspan = 2)
 
 	elif popupType=='loginError-pass':
-		print("Error! Password for user "+message+' is incorrect!')
+		
 		errorPopup = Toplevel(root)
 		errorPopup.title("Error")
 		errorPopup.transient(root)
@@ -2490,7 +2489,7 @@ def createPopup(popupType, message):
 		Frame(errorPopup, height=10, width=10).grid(row=4, column=0, columnspan = 2)
 
 	elif popupType=='login-pass':
-		print("Welcome back, "+message+'! Proceed to enjoy the full functionality of the app')
+		
 		errorPopup = Toplevel(root)
 		errorPopup.title("Login Successful")
 		errorPopup.transient(root)
@@ -2518,7 +2517,7 @@ def createPopup(popupType, message):
 		Button(registerPopup, text="Broker", command=lambda: registerForm(1)).grid(row=3, column=2, sticky=E)
 	
 	elif popupType=='logout':
-		print("You have logged out")
+		
 		errorPopup = Toplevel(root)
 		errorPopup.title("Logged out")
 		errorPopup.transient(root)
@@ -2590,7 +2589,7 @@ def windowMenus(root):
 	root.bind('<Command-c>', lambda e: compareStocks('','','',''))
 	root.bind('<Command-k>', lambda e: hotkeyWindow(root))
 	root.bind('<Command-f>', lambda e: firmRegisterForm(3))
-	root.bind('<Command-b>', lambda e: buyWindow('','',0,0)) 
+	
 
 	if not loggedInAccount == '':
 		'''
@@ -2600,9 +2599,9 @@ def windowMenus(root):
 		root.bind('<Command-e>', lambda e: editInfo()) 
 		root.bind('<Command-l>', lambda e: logout())
 		root.bind('<Command-p>', lambda e: portfolioWindow()) 
+		root.bind('<Command-b>', lambda e: buyWindow('','',0,0)) 
 
 		accountMenu.entryconfig("Login", label="Log Out", command=lambda: logout())
-		stocksMenu.entryconfig("Sell", state="normal")
 		stocksMenu.entryconfig("Buy", state="normal")
 		stocksMenu.entryconfig("View Portfolio", state="normal")
 
@@ -2662,7 +2661,6 @@ def editInfo():
 		budget = format(float(budget), ",.2f")
 		
 
-		
 		industryVar.set(loggedInAccount.ClientIndustry)
 		
 
@@ -2816,16 +2814,33 @@ def editInfo():
 		Button(root, text="Submit", command=lambda: validateBrokerEdit(nameVar.get(), numberVar.get(), emailVar.get(), loggedInAccount.ID, passVar1.get(), passVar2.get(), budgetVar.get(), industryVar.get(), licenseVar.get(), authorityVar.get(), yearVar.get())).grid(row=18, column=1, sticky=E)		
 
 
+def hello():
+	root.wm_title("Stock Market App - Welcome")
+	root.geometry("580x260")
+	root.resizable(width=FALSE, height=FALSE)
+
+	Frame(root,height=10, width=10).grid(column = 0, row= 0)
+	Label(root, text="Hello and Welcome to our Stock Market App").grid(row=1, column=0)
+	Frame(root,height=10, width=10).grid(column = 0, row= 2)
+	Label(root, text="A quick reminder of the things you'll need in order to run our application").grid(row=3, column=0)
+	Label(root, text="Python Tkinter Library").grid(row=4, column=0)
+	Label(root, text="GoogleFinance Framework").grid(row=5, column=0)
+	Label(root, text="An Internet Connection").grid(row=6, column=0)
+	Frame(root,height=10, width=10).grid(column = 0, row= 7)
+	Label(root, text="Keep in mind, our software queries data in real time to get you the latest stock infromation").grid(row=8, column=0)
+	Label(root, text="With that in mind, you might experience some delays, but nothing too frustrating.").grid(row=9, column=0)
+	Frame(root,height=10, width=10).grid(column = 0, row= 10)
+	Label(root, text="Lastly, thank you for your time and choosing our app!").grid(row=11, column=0)
+	Frame(root,height=10, width=10).grid(column = 0, row= 13)
+	Button(root, text='Launch!', command=lambda: home()).grid(row=14, column=0)
 def main():
 	'''
 
 		THE MAIN! -> GUI LOOP and MENU INITIALIZATION
 	'''
 	root.tk.call('tk', 'windowingsystem') 
-	root.wm_title("Stock Market App - Home")
-	root.geometry("500x500")
-	home()
 	root.resizable(width=FALSE, height=FALSE)
+	hello()
 	windowMenus(root)
 
 	if not os.path.exists('SMfiles'):
