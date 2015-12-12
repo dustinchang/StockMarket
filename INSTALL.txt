@@ -1,9 +1,15 @@
 #Tools to get and run program
   Git
   Python2.7
-  googlefinance python module
+  googlefinance python module (https://github.com/hongtaocai/googlefinance)
 	- use: pip install googlefinance
+  matplotlib python module (matplotlib.org/users/installing.html)
+	- linux
+		- sudo apt-get install python-matplotlib
+	- mac
+		- pip install matplotlib
 
 #Instructions to Run
-  -Download or clone repository files from GitHub https://github.com/dustinchang/StockMarket
-  -run bash make.sh
+Note:This program has been optimized for a Mac environment. It runs on both Mac and Linux environments.
+Although the program can be ran in a Windows environment, it is not optimized. Hotkey commands seem to be detected without using a cmd key. This makes the program unusable in Windows.
+  -python SMgui.py
