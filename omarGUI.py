@@ -43,6 +43,9 @@ quotelist = []
 availableStocks = []
 symblist={}
 ticker_list={}
+
+email_pattern = re.compile(r"^[a-zA-Z0-9\.\-\_]+@[a-zA-Z0-9]+\.(ca|com)$")
+
 def retrieveFirm(firmName, code):
 	
 	'''
@@ -177,11 +180,11 @@ def validateClient(name, number, email, username, password, password2, budget, i
 	''' 
 		VALIDATE email
 	'''
-	if not email == '':
+	if email_pattern.match(email):
 		tempClient.ClientEmailAddress = email
 	else:
 
-		errorMessage += 'Email Address cannot be left empty\n'
+		errorMessage += 'Email Address is invalid\n'
 
 	'''
 		VALIDATE username
@@ -1569,9 +1572,6 @@ def historyWindow():
 				canvas.config(width=478,height=491)
 				canvas.config( yscrollcommand=vbar.set)
 				canvas.pack(side=LEFT,expand=True,fill=BOTH)
-		
-
-				
 	else:
 		
 		canvas_id = canvas.create_text(239, 245, anchor="center")
@@ -1588,7 +1588,6 @@ def buy(user, symb, quantity, total):
 	userpath = 'SMfiles/users/'+user.ID+'/'+user.ID+'.txt'
 	transpath = 'SMfiles/users/'+user.ID+'/transactions.txt'
 	#transactions = pickle.load(open(transpath,"rb"))
-
 
 	if not os.path.exists(transpath):
 		transactions = []       
@@ -1638,7 +1637,6 @@ def sell(user, inv_index): # user: Client, Broker, or Firm object
 	if not os.path.exists(transpath):
 		pass
 	else:
-		
 		transactions = pickle.load(open(transpath,"rb"))        
 		# get investment from user portfolio
 		inv_bought = user.Portfolio[inv_index]
