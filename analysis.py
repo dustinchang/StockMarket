@@ -1,7 +1,7 @@
-from main import get_historical
-from main import Client
-from main import Investment
-from main import Stock
+from stock_backend import get_historical
+from stock_backend import Client
+from stock_backend import Investment
+from stock_backend import Stock
 
 def change(curr_price, prev_price, avg_prices):
     avg_prices.append(round(float(curr_price)/float(prev_price), 2))
