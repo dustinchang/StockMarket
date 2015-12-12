@@ -530,6 +530,7 @@ def logout():
 	
 def login(username, password):
 	print('In Login function')
+	global loggedInAccount
 	print(username)
 	print(password)
 	
@@ -555,7 +556,7 @@ def login(username, password):
 				print('password match -> log in')
 				createPopup('login-pass', tempAccount.BrokerName)
 				
-				global loggedInAccount
+				
 				loggedInAccount = tempAccount
 			else:
 				print('password does not match -> DO NOT log in')
@@ -1274,14 +1275,13 @@ def portfolioWindow():
 				line = canvas.create_line(10, y, 490, y)
 				y+=3
 
-				canvas_id = canvas.create_text(10, y, anchor="nw")
+				canvas_id = canvas.create_text(10, y+5, anchor="nw")
 				canvas.itemconfig(canvas_id, fill='blue',text=str(element.StockID))
+				button1 = Button(canvas, text = "Sell", command = lambda j=loggedInAccount.Portfolio.index(element): sell(loggedInAccount,j), anchor ="ne")
+				button1_window = canvas.create_window(450, y-1, anchor=NE, window=button1)
 
-				button1 = Button(canvas, text = "Sell", command ="", anchor ="ne")
-
-
-				y+=20
-				line = canvas.create_line(10, y, 490, y)
+				y+=30
+				line = canvas.create_line(10, y, 497, y)
 
 				y+=3
 				canvas_id = canvas.create_text(10, y, anchor="nw")
@@ -1310,15 +1310,13 @@ def portfolioWindow():
 
 				
 				y+=40
-			#print(str(x))
-			if x*100 <500:
-				print('less than 5')
+			
+			if x*115 <500:
 				canvas.config(scrollregion=(0,0,478,0))
 				canvas.config(width=478,height=491)
 				canvas.pack(side=LEFT,expand=True,fill=BOTH)
 			else:
-				print('more than 5')
-				scrollh = (x*106)
+				scrollh = (x*115)
 				scrollh += 30
 				canvas.config(scrollregion=(0,0,478,scrollh))
 				vbar=Scrollbar(frame,orient=VERTICAL)
@@ -1329,7 +1327,7 @@ def portfolioWindow():
 				canvas.pack(side=LEFT,expand=True,fill=BOTH)
 			
 	elif isinstance(loggedInAccount,Broker) ==True:
-		print('broker port')
+		
 		if len(loggedInAccount.Portfolio) == 0:
 			canvas_id = canvas.create_text(239, 245, anchor="center")
 			canvas.itemconfig(canvas_id, text='You have no investment(s) in your current portfolio')
