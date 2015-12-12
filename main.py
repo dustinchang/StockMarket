@@ -125,7 +125,7 @@ class Broker:
         self.InvestmentRevenue += float(investment[1].PriceTraded)
         self.BrokerProfit = self.InvestmentRevenue - self.InvestmentExpense
 
-        self.BrokerTotalBudget = float(investment[1].PriceTraded) + float(self.BrokerTotalBudget)
+        self.BrokerTotalBudget = (float(investment[1].PriceTraded) * investment[0].Volume) + float(self.BrokerTotalBudget)
         self.BrokerPLReport = (self.BrokerProfit / self.InvestmentRevenue) * 100
 
         print investment[0].PriceTraded
@@ -184,7 +184,7 @@ class Client:
         self.InvestmentRevenue += float(investment[1].PriceTraded)
         self.ClientProfit = self.InvestmentRevenue - self.InvestmentExpense
         
-        self.ClientBudget = float(investment[1].PriceTraded) + float(self.ClientBudget)
+        self.ClientBudget = (float(investment[1].PriceTraded) * investment[0].Volume) + float(self.ClientBudget)
         self.ClientPLReport = (self.ClientProfit / self.InvestmentRevenue) * 100
 
         print investment[0].PriceTraded
