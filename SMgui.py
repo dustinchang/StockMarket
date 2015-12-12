@@ -286,7 +286,7 @@ def validateBroker(name, number, email, username, password, password2, budget, i
 	''' 
 		VALIDATE email
 	'''
-	if not email == '':
+	if email_pattern.match(email):
 		
 		tempBroker.BrokerEmailAddress = email
 	else:
