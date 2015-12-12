@@ -132,6 +132,7 @@ def validateFirm(name, ID, firmType, code, budget):
 		strfile = 'SMfiles/firms/'+ID+'/'+ID+'.txt'
 		with open(strfile, 'wb') as f:
 			pickle.dump(tempFirm,f)
+			
 			if not tempBroker == '':
 				clearprint('=========================================================')
 				print('tempbroker is Okay. adding firm info')
@@ -500,6 +501,17 @@ def validateBrokerEdit(name, number, email, username, password, password2, budge
 	if not errorMessage == '':
 		createPopup('validateBroker', errorMessage)
 	else:
+		tempBroker.BrokerPLReport = loggedInAccount.BrokerPLReport
+		tempBroker.BrokerProfit = loggedInAccount.BrokerProfit
+		tempBroker.Portfolio = loggedInAccount.Portfolio
+		tempBroker.InvestmentHistory = loggedInAccount.InvestmentHistory
+		tempBroker.InvestmentExpense = loggedInAccount.InvestmentExpense
+		tempBroker.InvestmentRevenue = loggedInAccount.InvestmentRevenue
+		
+
+
+
+
 		createPopup('validateBrokerEdit', 'Information Edit Successful!')
 		strfile = 'SMfiles/users/'+username+'/'+username+'.txt'
 		with open(strfile, 'wb') as f:
@@ -981,6 +993,14 @@ def validateClientEdit(name, number, email, username, password, password2, budge
 	else:
 		createPopup('validateClientEdit', 'Information Edit Successful!')
 		strfile = 'SMfiles/users/'+username+'/'+username+'.txt'
+		tempClient.ClientPLReport = loggedInAccount.ClientPLReport
+		tempClient.Portfolio = loggedInAccount.Portfolio
+		tempClient.ClientProfit = loggedInAccount.ClientProfit
+		tempClient.ClientProfit = loggedInAccount.ClientProfit
+		tempClient.InvestmentHistory = loggedInAccount.InvestmentHistory
+		tempClient.InvestmentExpense = loggedInAccount.InvestmentExpense
+		tempClient.InvestmentRevenue = loggedInAccount.InvestmentRevenue
+
 		with open(strfile, 'wb') as f:
 			pickle.dump(tempClient,f)
 		loggedInAccount = tempClient
@@ -1257,6 +1277,9 @@ def portfolioWindow():
 				canvas_id = canvas.create_text(10, y, anchor="nw")
 				canvas.itemconfig(canvas_id, fill='blue',text=str(element.StockID))
 
+				button1 = Button(canvas, text = "Sell", command ="", anchor ="ne")
+
+
 				y+=20
 				line = canvas.create_line(10, y, 490, y)
 
@@ -1287,7 +1310,7 @@ def portfolioWindow():
 
 				
 				y+=40
-			print(str(x))
+			#print(str(x))
 			if x*100 <500:
 				print('less than 5')
 				canvas.config(scrollregion=(0,0,478,0))
@@ -1331,11 +1354,13 @@ def portfolioWindow():
 				line = canvas.create_line(10, y, 490, y)
 				y+=3
 
-				canvas_id = canvas.create_text(10, y, anchor="nw")
+				canvas_id = canvas.create_text(10, y+5, anchor="nw")
 				canvas.itemconfig(canvas_id, fill='blue',text=str(element.StockID))
+				button1 = Button(canvas, text = "Sell", command = lambda j=loggedInAccount.Portfolio.index(element): sell(loggedInAccount,j), anchor ="ne")
+				button1_window = canvas.create_window(450, y-1, anchor=NE, window=button1)
 
-				y+=20
-				line = canvas.create_line(10, y, 490, y)
+				y+=30
+				line = canvas.create_line(10, y, 497, y)
 
 				y+=3
 				canvas_id = canvas.create_text(10, y, anchor="nw")
@@ -1364,15 +1389,13 @@ def portfolioWindow():
 
 				
 				y+=40
-			print(str(x))
-			if x*100 <500:
-				print('less than 5')
+			
+			if x*115 <500:
 				canvas.config(scrollregion=(0,0,478,0))
 				canvas.config(width=478,height=491)
 				canvas.pack(side=LEFT,expand=True,fill=BOTH)
 			else:
-				print('more than 5')
-				scrollh = (x*106)
+				scrollh = (x*115)
 				scrollh += 30
 				canvas.config(scrollregion=(0,0,478,scrollh))
 				vbar=Scrollbar(frame,orient=VERTICAL)
@@ -1433,9 +1456,10 @@ def buy(user, symb, quantity, total):
 # inv_index will be the index in portfolio of investment to be sold
 def sell(user, inv_index): # user: Client, Broker, or Firm object
 	# load transaction file
+	print('DAST IST INDEX: '+str(inv_index))
 	userpath = 'SMfiles/users/'+user.ID+'/'+user.ID+'.txt'
 	transpath = 'SMfiles/users/'+user.ID+'/transactions.txt'
-
+	print(str(inv_index))
 	if not os.path.exists(transpath):
 		print("No portfolio found for user '"+user.ID+"' not found. Creating File")
 	else:
@@ -1443,7 +1467,23 @@ def sell(user, inv_index): # user: Client, Broker, or Firm object
 		transactions = pickle.load(open(transpath,"rb"))        
 		# get investment from user portfolio
 		inv_bought = user.Portfolio[inv_index]
+		'''for elem in user.Portfolio:
+			print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+			print('The INDEX is: '+str(user.Portfolio.index(elem)))
+			print('The INDEX YOU WANT IS: '+str(inv_index))
+			print('The stock is: '+str(elem.StockID))
+			print('The date is: '+str(elem.TradeDate))
+			print('The price is: '+str(elem.PriceTraded))
+			print('The volume you own is: '+str(elem.Volume))	
+			print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 		# remove investment from user portfolio
+		'''
+		
+		print('The INDEX is: '+str(inv_index))
+		print('The stock is: '+str(inv_bought.StockID))
+		print('The date is: '+str(inv_bought.TradeDate))
+		print('The price is: '+str(inv_bought.PriceTraded))
+		print('The volume you own is: '+str(inv_bought.Volume))
 		del user.Portfolio[inv_index]
 
 		# get investment objects
@@ -1467,12 +1507,9 @@ def sell(user, inv_index): # user: Client, Broker, or Firm object
 		# save transaction and user files
 		pickle.dump(user, open(userpath, "wb"))
 		pickle.dump(transactions, open(transpath, "wb"))
+		portfolioWindow()
 
-def sellWindow():
-	clear(root)
-	root.wm_title('Stock Market App - Sell')
-	Button(root, text="sell", command=lambda: sell(loggedInAccount, 0)).grid(row=0, column=0)
-
+		
 def home():
 	clear(root)
 	root.wm_title("Stock Market App - Home")

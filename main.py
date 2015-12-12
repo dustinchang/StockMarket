@@ -119,12 +119,19 @@ class Broker:
         self.InvestmentExpense = 0.0 # sum of all investments bought
         self.InvestmentRevenue = 0.0 # sum of all investments sold
 
-        def calculate_profit_loss(self, investment): # investment: [inv_bought, inv_sold]
-            self.InvestmentHistory.append(investment)
-            self.InvestmentExpense += investment[0].PriceTraded
-            self.InvestmentRevenue += investment[1].PriceTraded
-            self.BrokerProfit = self.InvestmentRevenue - self.InvestmentExpense
-            self.BrokerPLReport = (self.BrokerProfit / self.InvestmentRevenue) * 100
+    def calculate_profit_loss(self, investment): # investment: [inv_bought, inv_sold]
+        self.InvestmentHistory.append(investment)
+        self.InvestmentExpense += float(investment[0].PriceTraded)
+        self.InvestmentRevenue += float(investment[1].PriceTraded)
+        self.BrokerProfit = self.InvestmentRevenue - self.InvestmentExpense
+
+        self.BrokerTotalBudget = float(investment[1].PriceTraded) + float(self.BrokerTotalBudget)
+        self.BrokerPLReport = (self.BrokerProfit / self.InvestmentRevenue) * 100
+
+        print investment[0].PriceTraded
+        print investment[1].PriceTraded
+        print self.BrokerProfit
+        print self.BrokerPLReport
 
 class Firm:
     """Organizational details of a Firm"""
@@ -176,7 +183,8 @@ class Client:
         self.InvestmentExpense += float(investment[0].PriceTraded)
         self.InvestmentRevenue += float(investment[1].PriceTraded)
         self.ClientProfit = self.InvestmentRevenue - self.InvestmentExpense
-        self.ClientBudget += investment[1].PriceTraded
+        
+        self.ClientBudget = float(investment[1].PriceTraded) + float(self.ClientBudget)
         self.ClientPLReport = (self.ClientProfit / self.InvestmentRevenue) * 100
 
         print investment[0].PriceTraded
