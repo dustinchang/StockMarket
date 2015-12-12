@@ -10,6 +10,9 @@ import locale
 import main
 from main import *
 
+import analysis
+from analysis import *
+
 import sys
 from sys import *
 
@@ -27,9 +30,7 @@ tempClient = Client()
 tempBroker = Broker()
 tempFirm = Firm()
 googleprice = []
-#print()
-'''print tempStock.StockPrice
-print tempStock.StockClose'''
+
 
 loggedin = False
 loggedInAccount = ''
@@ -44,17 +45,19 @@ symblist={}
 ticker_list={}
 def retrieveFirm(firmName, code):
 	
-	print('//////////////////////////////////////////////////////')
-	print("Validating Firm Retrieval")
+	'''
+		This will retrieve an exsiting firm based on its ID
+
+	'''
 	errorMessage = ''
 	global registeredFirms
-	print('Find -> '+firmName)
+	
 	for firm in registeredFirms:
-		print(firm.FirmName)
+	
 		if firm.FirmName == firmName:
-			print('Firm Found')
+	
 			if code == firm.FirmCode:
-				print('Code Confirmed')
+	
 				createPopup('confirmFirmCode',firmName)
 				tempBroker.BrokerFirmID = firm.ID
 				strfile = 'SMfiles/users/'+tempBroker.ID+'/'+tempBroker.ID+'.txt'
@@ -62,16 +65,17 @@ def retrieveFirm(firmName, code):
 					pickle.dump(tempBroker,f)
 
 			else:
-				print('Invalid Code')
+	
 				createPopup('errorFirmCode',firmName)
 		else:
-			print('Firm NOT found!')
-	print('//////////////////////////////////////////////////////')
+			print('Firm not found!')
+	
 
 
 def validateFirm(name, ID, firmType, code, budget):
-	print('++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-	print("Validating new Firm")
+	'''
+		This will Validate a firm being registered
+	'''
 	errorMessage = ''
 	global tempFirm
 	budget = re.sub('[,$]', '', budget)
@@ -80,7 +84,7 @@ def validateFirm(name, ID, firmType, code, budget):
 		VALIDATE Name
 	'''
 	if not name == '':
-		print('Name Validation - Clear!')
+		
 		tempFirm.FirmName= name
 	else:
 		errorMessage += 'Firm Name cannot be empty\n'	
@@ -89,7 +93,7 @@ def validateFirm(name, ID, firmType, code, budget):
 		VALIDATE ID
 	'''
 	if not ID == '':
-		print('ID Validation - Clear!')
+		
 		tempFirm.ID= ID
 	else:
 		errorMessage += 'Firm ID cannot be empty\n'	
@@ -98,7 +102,7 @@ def validateFirm(name, ID, firmType, code, budget):
 		VALIDATE Type
 	'''
 	if not firmType == '':
-		print('Type Validation - Clear!')
+		
 		tempFirm.FirmType= firmType
 	else:
 		errorMessage += 'Firm Type cannot be empty\n'	
@@ -107,20 +111,20 @@ def validateFirm(name, ID, firmType, code, budget):
 		VALIDATE code
 	'''
 	if not code == '':
-		print('Code Validation - Clear!')
+		
 		tempFirm.FirmCode= code
 	else:
 		errorMessage += 'Firm ID cannot be empty\n'	
 
 	try:
 		float(budget)
-		print('Budget Validation - Clear!')
+		
 		tempFirm.FirmBudget = budget
 	except ValueError:
-		print('Budget Validation - Error!')
+		
 		errorMessage += 'Budget is invalid\n'		
 
-	print('++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+	
 
 	if not errorMessage == '':
 		createPopup('validateFirm', errorMessage)
@@ -134,9 +138,6 @@ def validateFirm(name, ID, firmType, code, budget):
 			pickle.dump(tempFirm,f)
 			
 			if not tempBroker == '':
-				clearprint('=========================================================')
-				print('tempbroker is Okay. adding firm info')
-				print('=========================================================')
 				tempBroker.BrokerFirmID = tempFirm.ID
 
 				strfile = 'SMfiles/users/'+tempBroker.ID+'/'+tempBroker.ID+'.txt'
@@ -145,8 +146,10 @@ def validateFirm(name, ID, firmType, code, budget):
 
 	
 def validateClient(name, number, email, username, password, password2, budget, industry, broker, firm):
-	print('___________________________________________________________')
-	print("Validating new Client")
+	'''
+		This will validate a client being registered
+
+	'''
 	errorMessage = ''
 	global tempClient
 	budget = re.sub('[,$]', '', budget)
@@ -156,7 +159,7 @@ def validateClient(name, number, email, username, password, password2, budget, i
 		VALIDATE Name
 	'''
 	if not name == '':
-		print('Name Validation - Clear!')
+		
 		tempClient.ClientName = name
 	else:
 		errorMessage += 'Name cannot be empty\n'	
@@ -166,10 +169,8 @@ def validateClient(name, number, email, username, password, password2, budget, i
 	'''	
 	try:
 		int(number)
-		print('Phonenumber Validation - Clear!')
 		tempClient.ClientPhoneNumber = number
 	except ValueError:
-		print('Phonenumber Validation - Error!')
 		errorMessage += 'Phone Number is invalid\n'		
 
 
@@ -177,20 +178,17 @@ def validateClient(name, number, email, username, password, password2, budget, i
 		VALIDATE email
 	'''
 	if not email == '':
-		print('Email Validation - Clear!')
 		tempClient.ClientEmailAddress = email
 	else:
-		print('Email Validation - Error!')
+
 		errorMessage += 'Email Address cannot be left empty\n'
 
 	'''
 		VALIDATE username
 	'''
 	if not username == '':
-		print('Username Validation - Clear!')
 		tempClient.ID = username
 	else:
-		print('Username Validation - Error!')
 		errorMessage += 'Username is invalid\n'	
 
 	'''
@@ -199,13 +197,13 @@ def validateClient(name, number, email, username, password, password2, budget, i
 	if not password == '' and not password2 =='':
 		if password == password2:
 			tempClient.ClientPassword = password
-			print('Password Validation - Clear!')
+			
 		else:
-			print('Password Validation - Error!')
+			
 			errorMessage += 'Passwords do not match\n'		
 	else:
 		#createPopup('validateClient', '')
-		print('Name Validation - Error!')
+		
 		errorMessage += 'Password(s) cannot be left empty\n'		
 
 	'''
@@ -213,18 +211,18 @@ def validateClient(name, number, email, username, password, password2, budget, i
 	'''
 	try:
 		float(budget)
-		print('Budget Validation - Clear!')
+		
 		tempClient.ClientBudget = budget
 	except ValueError:
-		print('Budget Validation - Error!')
+		
 		errorMessage += 'Budget is invalid\n'		
 		
 
 	if not industry =='':
-		print('Industry Validation - Clear!')
+		
 		tempClient.ClientIndustry = industry
 	else:
-		print('Industry Validation - Error!')
+		
 		errorMessage += 'Industry is invalid\n'				
 
 
@@ -252,12 +250,13 @@ def validateClient(name, number, email, username, password, password2, budget, i
 
 		
 
-	print('___________________________________________________________')
+	
 
 
 def validateBroker(name, number, email, username, password, password2, budget, industry, license, authority, year):
-	print('==========================================================')
-	print("Validating new Broker")
+	'''
+		This will validate a broker
+	'''
 	budget = re.sub('[,$]', '', budget)
 	errorMessage = ''
 	global tempBroker
@@ -266,7 +265,7 @@ def validateBroker(name, number, email, username, password, password2, budget, i
 		VALIDATE Name
 	'''
 	if not name == '':
-		print('Name Validation - Clear!')
+		
 		tempBroker.BrokerName = name
 	else:
 		errorMessage += 'Name cannot be empty\n'	
@@ -276,10 +275,10 @@ def validateBroker(name, number, email, username, password, password2, budget, i
 	'''	
 	try:
 		int(number)
-		print('Phonenumber Validation - Clear!')
+		
 		tempBroker.BrokerPhoneNumber = number
 	except ValueError:
-		print('Phonenumber Validation - Error!')
+		
 		errorMessage += 'Phone Number is invalid\n'		
 
 
@@ -287,20 +286,20 @@ def validateBroker(name, number, email, username, password, password2, budget, i
 		VALIDATE email
 	'''
 	if not email == '':
-		print('Email Validation - Clear!')
+		
 		tempBroker.BrokerEmailAddress = email
 	else:
-		print('Email Validation - Error!')
+		
 		errorMessage += 'Email Address is invalid\n'
 
 	'''
 		VALIDATE username
 	'''
 	if not username == '':
-		print('Username Validation - Clear!')
+		
 		tempBroker.ID = username
 	else:
-		print('Username Validation - Error!')
+		
 		errorMessage += 'Username is invalid\n'	
 
 	'''
@@ -309,13 +308,13 @@ def validateBroker(name, number, email, username, password, password2, budget, i
 	if not password == '' and not password2 =='':
 		if password == password2:
 			tempBroker.BrokerPassword = password
-			print('Password Validation - Clear!')
+		
 		else:
-			print('Password Validation - Error!')
+		
 			errorMessage += 'Passwords do not match\n'			
 	else:
 		#createPopup('validateClient', '')
-		print('Password Validation - Error!')
+		
 		errorMessage += 'Password(s) is invalid\n'		
 
 	'''
@@ -323,10 +322,10 @@ def validateBroker(name, number, email, username, password, password2, budget, i
 	'''
 	try:
 		float(budget)
-		print('Budget Validation - Clear!')
+		
 		tempBroker.BrokerTotalBudget = budget
 	except ValueError:
-		print('Budget Validation - Error!')
+		
 		errorMessage += 'Budget is invalid\n'		
 		
 
@@ -334,30 +333,30 @@ def validateBroker(name, number, email, username, password, password2, budget, i
 		VALIDATE industry
 	'''
 	if not industry =='':
-		print('Industry Validation - Clear!')
+		
 		tempBroker.BrokerIndustry = industry
 	else:
-		print('Industry Validation - Error!')
+		
 		errorMessage += 'Industry is invalid\n'				
 
 	'''
 		VALIDATE Licence Type
 	'''
 	if license == 'Financial Advisor FCA' or license == 'Investment Advisor IAR' or license == 'Registered Representative':
-		print('Licence Type Validation - Clear!')
+		
 		tempBroker.BrokerLicenseType = license
 	else:
-		print('License Type Validation - Error!')
+		
 		errorMessage += 'License Type is invalid\n'
 
 	'''
 		VALIDATE issuing authority
 	'''
 	if not authority == '':
-		print('Issuing Authority Validation -  Clear!')
+		
 		tempBroker.BrokerAuthority = authority
 	else:
-		print('Issuing Authority Validation - Error!')
+		
 		errorMessage += 'Issuing Authority invalid\n'
 
 	'''
@@ -365,10 +364,10 @@ def validateBroker(name, number, email, username, password, password2, budget, i
 	'''
 	try:
 		int(year)
-		print('License Issuing Year Validation - Clear!')
+		
 		tempBroker.BrokerLicenseIssue = year
 	except ValueError:
-		print('License Issuing Year Validation - Error!')
+		
 		errorMessage += 'License Issuing Year is invalid\n'		
 
 
@@ -385,11 +384,10 @@ def validateBroker(name, number, email, username, password, password2, budget, i
 			pickle.dump(tempBroker,f)
 		
 
-	print('==========================================================')
-
 def validateBrokerEdit(name, number, email, username, password, password2, budget, industry, license, authority, year):
-	print('==========================================================')
-	print("Validating new Broker")
+	'''
+		Validate EDIT info for Broker
+	'''
 	budget = re.sub('[,$]', '', budget)
 	errorMessage = ''
 	global tempBroker
@@ -399,7 +397,7 @@ def validateBrokerEdit(name, number, email, username, password, password2, budge
 		VALIDATE Name
 	'''
 	if not name == '':
-		print('Name Validation - Clear!')
+		
 		tempBroker.BrokerName = name
 	else:
 		errorMessage += 'Name cannot be empty\n'	
@@ -409,10 +407,10 @@ def validateBrokerEdit(name, number, email, username, password, password2, budge
 	'''	
 	try:
 		int(number)
-		print('Phonenumber Validation - Clear!')
+		
 		tempBroker.BrokerPhoneNumber = number
 	except ValueError:
-		print('Phonenumber Validation - Error!')
+		
 		errorMessage += 'Phone Number is invalid\n'		
 
 	''' 
@@ -420,11 +418,8 @@ def validateBrokerEdit(name, number, email, username, password, password2, budge
 	'''
 	if  not email == '':
 		tempBroker.BrokerEmailAddress = email
-		print('Email Validation - Clear!')		
+		
 	else:
-
-		print('Email Validation - Error!')
-		print(loggedInAccount.BrokerEmailAddress)
 		errorMessage += 'Passwords do not match\n'		
 
 	''' 
@@ -435,11 +430,10 @@ def validateBrokerEdit(name, number, email, username, password, password2, budge
 		
 	elif password == password2 and not password == '':
 		tempBroker.BrokerPassword = password
-		print(password)
-		print('Password Validation - Clear!')
+		
 	else:
 
-		print('Password Validation - Error!')
+		
 		errorMessage += 'Passwords do not match\n'		
 	
 	'''
@@ -447,10 +441,10 @@ def validateBrokerEdit(name, number, email, username, password, password2, budge
 	'''
 	try:
 		float(budget)
-		print('Budget Validation - Clear!')
+		
 		tempBroker.BrokerTotalBudget = budget
 	except ValueError:
-		print('Budget Validation - Error!')
+		
 		errorMessage += 'Budget is invalid\n'		
 		
 
@@ -458,30 +452,30 @@ def validateBrokerEdit(name, number, email, username, password, password2, budge
 		VALIDATE industry
 	'''
 	if not industry =='':
-		print('Industry Validation - Clear!')
+		
 		tempBroker.BrokerIndustry = industry
 	else:
-		print('Industry Validation - Error!')
+		
 		errorMessage += 'Industry is invalid\n'				
 
 	'''
 		VALIDATE Licence Type
 	'''
 	if license == 'Financial Advisor FCA' or license == 'Investment Advisor IAR' or license == 'Registered Representative':
-		print('Licence Type Validation - Clear!')
+		
 		tempBroker.BrokerLicenseType = license
 	else:
-		print('License Type Validation - Error!')
+		
 		errorMessage += 'License Type is invalid\n'
 
 	'''
 		VALIDATE issuing authority
 	'''
 	if not authority == '':
-		print('Issuing Authority Validation -  Clear!')
+		
 		tempBroker.BrokerAuthority = authority
 	else:
-		print('Issuing Authority Validation - Error!')
+		
 		errorMessage += 'Issuing Authority invalid\n'
 
 	'''
@@ -489,10 +483,10 @@ def validateBrokerEdit(name, number, email, username, password, password2, budge
 	'''
 	try:
 		int(year)
-		print('License Issuing Year Validation - Clear!')
+		
 		tempBroker.BrokerLicenseIssue = year
 	except ValueError:
-		print('License Issuing Year Validation - Error!')
+		
 		errorMessage += 'License Issuing Year is invalid\n'		
 
 
@@ -517,53 +511,53 @@ def validateBrokerEdit(name, number, email, username, password, password2, budge
 		with open(strfile, 'wb') as f:
 			pickle.dump(tempBroker,f)
 		loggedInAccount = tempBroker
-		
-
-	print('==========================================================')
 
 
 def logout():
+	'''
+		logout by clearing the logged in variable
+	'''
 	global loggedInAccount
 	loggedInAccount = ''
 	windowMenus(root)
 	createPopup('logout','')
 	
 def login(username, password):
-	print('In Login function')
+	'''
+		login by entering the correct details of an account and initiate the logged in variable
+	'''
 	global loggedInAccount
-	print(username)
-	print(password)
 	
 	if not os.path.exists('SMfiles/users/'+username):
-		print('user not found')
+		
 		createPopup('loginError-user', username)
 	else:
-		print('User found')
 		with open('SMfiles/users/'+username+'/'+username+'.txt','rb') as f:
 			tempAccount = pickle.load(f)
 		
 		if isinstance(tempAccount, Client):
 			if password == tempAccount.ClientPassword:
-				print('password match -> log in')
+		
 				createPopup('login-pass', tempAccount.ClientName)
 				global loggedInAccount
 				loggedInAccount = tempAccount
 			else:
-				print('password does not match -> DO NOT log in')
+		
 				createPopup('loginError-pass', username)
 		elif isinstance(tempAccount, Broker):
 			if password == tempAccount.BrokerPassword:
-				print('password match -> log in')
 				createPopup('login-pass', tempAccount.BrokerName)
 				
 				
 				loggedInAccount = tempAccount
 			else:
-				print('password does not match -> DO NOT log in')
 				createPopup('loginError-pass', username)
 
 def hotkeyWindow(root):
-	print('This is the hotkeyWindow')
+	'''
+		HOTKEY WINDOW to help users make the most of the software
+		by listing command shortcuts
+	'''
 	clear(root)
 	root.wm_title("Stock Market App - Help - Hotkey List")
 	root.geometry("500x320")
@@ -594,21 +588,23 @@ def hotkeyWindow(root):
 	Label(text="Portfolio Hotkey -").grid(row=9, column=0, sticky=E)
 	Label(text="%s%s" % (u"\u2318","P"),fg="#006400").grid(row=9, column=1, sticky=W)
 
-	Label(text="Sell Stock Hotkey -").grid(row=10, column=0, sticky=E)
-	Label(text="%s%s" % (u"\u2318","S"),fg="#006400").grid(row=10, column=1, sticky=W)
-
-	Label(text="Trade Stock Hotkey -").grid(row=11, column=0, sticky=E)
-	Label(text="%s%s" % (u"\u2318","T"),fg="#006400").grid(row=11, column=1, sticky=W)
-
-	Label(text="Buy Stock Hotkey -").grid(row=12, column=0, sticky=E)
-	Label(text="%s%s" % (u"\u2318","B"),fg="#006400").grid(row=12, column=1, sticky=W)
+	Label(text="Buy Stock Hotkey -").grid(row=10, column=0, sticky=E)
+	Label(text="%s%s" % (u"\u2318","B"),fg="#006400").grid(row=10, column=1, sticky=W)
 	
 	Frame(root, height=10).grid(row=13, column=0)
 	Label(text="Hotkeys highlighted in Green are only available when Logged In").grid(row=14, column=0, columnspan=2)
 
 def firmRegisterForm(firm):
+
+	'''
+		allows you to register a firm through the different scenarious
+		1,2 -> through a broker Registration
+		3 -> manually through the menu or using command F
+
+		all variables are passed to the respective validation functions
+	'''
 	if firm == 1:
-		print('This will register a new Firm')
+		
 		clear(root)
 		root.wm_title("Stock Market App - Register Firm")
 		root.geometry("500x270")
@@ -736,9 +732,16 @@ def firmRegisterForm(firm):
 		Button(root, text="Next", command=lambda: validateFirm(nameVar.get(), idVar.get(), typeVar.get(), codeVar.get(), budgetVar.get())).grid(row=18, column=1, sticky=E)		
 			
 def registerForm(accountType):
-	print(accountType)
+	'''
+		user Regiseration form 
+		type1 -> broker
+		type2 -> client
+
+		all variables are passed to the respective validation functions
+	'''
+	
 	if accountType == 1:
-		print('This will register a Broker')
+		
 		clear(root)
 		root.wm_title("Stock Market App - Register Broker")
 		root.geometry("500x500")
@@ -807,7 +810,7 @@ def registerForm(accountType):
 		Button(root, text="Next", command=lambda: validateBroker(nameVar.get(), numberVar.get(), emailVar.get(), userVar.get(), passVar1.get(), passVar2.get(), budgetVar.get(), industryVar.get(), licenseVar.get(), authorityVar.get(), yearVar.get())).grid(row=18, column=1, sticky=E)		
 
 	elif accountType ==2:
-		print('This will register a Client')
+	
 		clear(root)
 		root.wm_title("Stock Market App - Register Client")
 		root.geometry("500x500")
@@ -889,8 +892,9 @@ def registerForm(accountType):
 			validateClient(nameVar.get(), numberVar.get(), emailVar.get(), userVar.get(), passVar1.get(), passVar2.get(), budgetVar.get(), industryVar.get(), brokerVar.get(), firmVar.get())).grid(row=16, column=1, sticky=E)		
 
 def validateClientEdit(name, number, email, username, password, password2, budget, industry, broker, firm):
-	print('___________________________________________________________')
-	print("Validating new Client")
+	'''
+		VALIDATE CLIENT EDIT
+	'''
 	errorMessage = ''
 	global tempClient
 	budget = re.sub('[,$]', '', budget)
@@ -900,7 +904,7 @@ def validateClientEdit(name, number, email, username, password, password2, budge
 		VALIDATE Name
 	'''
 	if not name == '':
-		print('Name Validation - Clear!')
+		
 		tempClient.ClientName = name
 	else:
 		errorMessage += 'Name cannot be empty\n'	
@@ -910,10 +914,10 @@ def validateClientEdit(name, number, email, username, password, password2, budge
 	'''	
 	try:
 		int(number)
-		print('Phonenumber Validation - Clear!')
+		
 		tempClient.ClientPhoneNumber = number
 	except ValueError:
-		print('Phonenumber Validation - Error!')
+		
 		errorMessage += 'Phone Number is invalid\n'		
 
 
@@ -921,25 +925,21 @@ def validateClientEdit(name, number, email, username, password, password2, budge
 		VALIDATE email
 	'''
 	if not email == '':
-		if tempClient.ClientEmailAddress == email:
-			print('Email Validation - NOT CHANGED!')
-			
-		else:
+		if not tempClient.ClientEmailAddress == email:
 
-			print('Email Validation - Clear! CHANGED!!!')
 			tempClient.ClientEmailAddress = email
 	else:
-		print('Email Validation - Error!')
+		
 		errorMessage += 'Email Address cannot be left empty\n'
 
 	'''
 		VALIDATE username
 	'''
 	if not username == '':
-		print('Username Validation - Clear!')
+		
 		tempClient.ID = username
 	else:
-		print('Username Validation - Error!')
+		
 		errorMessage += 'Username is invalid\n'	
 
 	'''
@@ -950,10 +950,8 @@ def validateClientEdit(name, number, email, username, password, password2, budge
 		
 	elif password == password2 and not password == '':
 		tempClient.ClientPassword = password
-		print('Password Validation - Clear!')
+		
 	else:
-
-		print('Password Validation - Error!')
 		errorMessage += 'Passwords do not match\n'		
 
 
@@ -962,18 +960,18 @@ def validateClientEdit(name, number, email, username, password, password2, budge
 	'''
 	try:
 		float(budget)
-		print('Budget Validation - Clear!')
+		
 		tempClient.ClientBudget = budget
 	except ValueError:
-		print('Budget Validation - Error!')
+		
 		errorMessage += 'Budget is invalid\n'		
 		
 
 	if not industry =='':
-		print('Industry Validation - Clear!')
+		
 		tempClient.ClientIndustry = industry
 	else:
-		print('Industry Validation - Error!')
+	
 		errorMessage += 'Industry is invalid\n'				
 
 
@@ -1006,16 +1004,23 @@ def validateClientEdit(name, number, email, username, password, password2, budge
 			pickle.dump(tempClient,f)
 		loggedInAccount = tempClient
 
-		
-
-	print('___________________________________________________________')
 
 def clear(yourwindow):
+	'''
+		loop through the window in the GUI and destroy all widgets
+		a quicker (newPage) function
+	'''
 	for widget in yourwindow.winfo_children():
 		widget.destroy()
 	windowMenus(yourwindow)
 
 def buyWindow(stock1,duration, quantity, priceVal):
+	'''
+		users here can view a stock, see what the algorithm recommends
+		and if logged in, they can purchase stock(s) as per their budgets
+
+	'''
+
 	clear(root)
 
 	root.wm_title("Stock Market App - Buy Stock")
@@ -1024,7 +1029,6 @@ def buyWindow(stock1,duration, quantity, priceVal):
 	if stock1 == '':
 		stockOption1 = StringVar()
 	else:
-		print('else '+str(stock1))
 		stockOption1 = StringVar()
 		stockOption1.set(stock1)
 		
@@ -1063,34 +1067,44 @@ def buyWindow(stock1,duration, quantity, priceVal):
 
 	if stock1 == '' or stock1 =='Select Stock':
 		stockOption1.set('Select Stock')
-		'''
-		for quote in quotelist:
-			for stockQuote in quote:
-				#googleprice.append(thea.StockPrice)
-				#print('COMPARISON '+str(stockQuote.StockID)+' at '+str(stockQuote.StockDate)+' is at $'+str(stockQuote.StockPrice))
-	
-		print(availableStocks)
-		'''
+		
 	else:
 		stockOption1.set(stock1)
 		plotTitle += stockOption1.get()
 		
 		for key,value in ticker_list.iteritems():
 			if key == stockOption1.get():
-				print('Stock '+key+ ' code is '+ value)
 				xLabel = value
 
 		xTestList = get_historical(xLabel, duration)
 		for element in xTestList:
 			xList.append(element.StockPrice)
-		#print(xList)
+		
 		ax.plot(xList, label=xLabel)
 
-		#print(xList)
-		#print(testList)
-
-
 		
+
+		test00 = stock_estimate(xTestList,xLabel)
+		
+		'''
+			choosing text colour based on recommendation type
+			to be more prominent
+		'''
+		colour = 'black'
+
+		if test00 == 'Sell, as stocks may be reaching peak':	
+			colour='red'
+		elif test00 == 'Buy, as stocks are at a low point':
+			colour='#006400'
+		elif test00 == 'Hold, stocks may continue to rise':
+			colour='blue'		
+		elif test00 == 'Buy, stocks rising from a low':
+			colour='#006400'
+		elif test00 == 'Sell, stocks dropping from a high':
+			colour='red'
+		elif test00 == 'Hold, stable fluctuation':
+			colour='blue'	
+
 		Label(root, fg="blue",text=stockOption1.get()).grid(row=5, column=1,sticky=W)
 		Label(root, fg="blue",text=xTestList[-1].StockDate).grid(row=6, column=1,sticky=W)
 		Label(root, fg="blue",text=xTestList[-1].StockPrice).grid(row=7, column=1,sticky=W)
@@ -1098,12 +1112,11 @@ def buyWindow(stock1,duration, quantity, priceVal):
 		Label(root, fg="blue",text=xTestList[-1].StockDayRange).grid(row=9, column=1,sticky=W)
 		Label(root, fg="blue",text=xTestList[-1].StockVolume).grid(row=10, column=1,sticky=W)
 		Label(root, fg="blue",text=xTestList[-1].StockClose).grid(row=11, column=1,sticky=W)
-		Label(root, font = "Helvetica 14 bold",fg="blue",text="Buy").grid(row=13, column=1,sticky=W)
+		Label(root, font = "Helvetica 14 bold",fg=colour,text=test00).grid(row=13, column=1,sticky=W)
 
 		quantityAvailable = int(xTestList[-1].StockVolume)
 		price = float(xTestList[-1].StockPrice)
-		print('in loop, price is: '+str(price))
-		print('in loop, quantity is: '+str(quantityAvailable))
+		
 
 
 	
@@ -1147,12 +1160,10 @@ def buyWindow(stock1,duration, quantity, priceVal):
 
 
 	if quantityAvailable == 0:
-		print('Quantity 0')
 		root.geometry("654x750")
 		Label(root, text='Purchase Unavailable. Please Select a Stock to view').grid(row = 16, column=0, columnspan=2)
 
 	else:
-		print('Quantity something')
 		root.geometry("654x840")
 
 
@@ -1171,7 +1182,10 @@ def buyWindow(stock1,duration, quantity, priceVal):
 
 		Frame(root, height=10).grid(row=20, column=0, columnspan = 2)
 		Button(root ,text='Estimate', command = lambda: buyWindow(stockOption1.get(),durationVar.get(),quantityVar.get(),price)).grid(row=20,column=0, sticky=E)
-		
+		'''
+			validate budget and calculate quote based on
+			account type and info
+		'''
 
 		if isinstance(loggedInAccount,Broker) == True:
 			budget = float(loggedInAccount.BrokerTotalBudget)
@@ -1228,11 +1242,6 @@ def buyWindow(stock1,duration, quantity, priceVal):
 
 				buyButton = Button(root ,text='Buy', command=lambda: buy(loggedInAccount,xLabel,quantityVar.get(),totalPrice)).grid(row=20,column=1, sticky=W)
 
-
-
-		
-
-
 		quantityVar.set(quantity)
 def portfolioWindow():
 	'''
@@ -1257,12 +1266,7 @@ def portfolioWindow():
 			canvas.config(width=478,height=491)
 			canvas.pack(side=LEFT,expand=True,fill=BOTH)	
 		else:
-			'''for element in loggedInAccount.Portfolio:
-				print(element.StockID)
-				print(str(element.TradeDate))
-				print(str(element.PriceTraded))
-				print(str(element.Volume))
-				'''
+		
 			x = len(loggedInAccount.Portfolio)
 
 			canvas_id = canvas.create_text(10, y, anchor="nw")
@@ -1270,7 +1274,7 @@ def portfolioWindow():
 
 			y += 30
 			for element in loggedInAccount.Portfolio:
-				
+				test00 = stock_estimate(loggedInAccount.Portfolio, element.StockID)
 				
 				line = canvas.create_line(10, y, 490, y)
 				y+=3
@@ -1308,15 +1312,49 @@ def portfolioWindow():
 				canvas_id = canvas.create_text(115, y, anchor="nw")
 				canvas.itemconfig(canvas_id,text=str(element.Volume))
 
+				y+=20
+
+				'''
+					choosing a colour based on analysis response
+					to make the recommendation more prominent
+
+				'''
+
+				colour = 'black'
+
+				if test00 == 'Sell, as stocks may be reaching peak':
+					
+					colour='red'
+				elif test00 == 'Buy, as stocks are at a low point':
+					
+					colour='#006400'
+				elif test00 == 'Hold, stocks may continue to rise':
+					
+					colour='blue'		
+				elif test00 == 'Buy, stocks rising from a low':
+					
+					colour='#006400'
+				elif test00 == 'Sell, stocks dropping from a high':
+					
+					colour='red'
+				elif test00 == 'Hold, stable fluctuation':
+					
+					colour='blue'	
+
+				canvas_id = canvas.create_text(10, y, anchor="nw")
+				canvas.itemconfig(canvas_id, text="Analysis Recommends:")
+
+				canvas_id = canvas.create_text(155, y, anchor="nw")
+				canvas.itemconfig(canvas_id,fill = colour, text=str(test00))				
 				
 				y+=40
 			
-			if x*115 <500:
+			if x*140 <500:
 				canvas.config(scrollregion=(0,0,478,0))
 				canvas.config(width=478,height=491)
 				canvas.pack(side=LEFT,expand=True,fill=BOTH)
 			else:
-				scrollh = (x*115)
+				scrollh = (x*140)
 				scrollh += 30
 				canvas.config(scrollregion=(0,0,478,scrollh))
 				vbar=Scrollbar(frame,orient=VERTICAL)
@@ -1325,7 +1363,12 @@ def portfolioWindow():
 				canvas.config(width=478,height=491)
 				canvas.config( yscrollcommand=vbar.set)
 				canvas.pack(side=LEFT,expand=True,fill=BOTH)
-			
+	
+		'''
+		Based on account type, loop through and add to the scrollable canvas
+		all the entries and data whilst incrementing the y coordinate counter
+
+		'''
 	elif isinstance(loggedInAccount,Broker) ==True:
 		
 		if len(loggedInAccount.Portfolio) == 0:
@@ -1334,12 +1377,8 @@ def portfolioWindow():
 			canvas.config(width=478,height=491)
 			canvas.pack(side=LEFT,expand=True,fill=BOTH)	
 		else:
-			'''for element in loggedInAccount.Portfolio:
-				print(element.StockID)
-				print(str(element.TradeDate))
-				print(str(element.PriceTraded))
-				print(str(element.Volume))
-				'''
+
+
 			x = len(loggedInAccount.Portfolio)
 
 			canvas_id = canvas.create_text(10, y, anchor="nw")
@@ -1347,7 +1386,7 @@ def portfolioWindow():
 
 			y += 30
 			for element in loggedInAccount.Portfolio:
-				
+				test00 = stock_estimate(loggedInAccount.Portfolio, element.StockID)
 				
 				line = canvas.create_line(10, y, 490, y)
 				y+=3
@@ -1374,6 +1413,7 @@ def portfolioWindow():
 				canvas_id = canvas.create_text(10, y, anchor="nw")
 				canvas.itemconfig(canvas_id, text="Trade Price: ")
 				
+				
 
 				canvas_id = canvas.create_text(85, y, anchor="nw")
 				canvas.itemconfig(canvas_id, text='$'+str(priceT))
@@ -1385,15 +1425,45 @@ def portfolioWindow():
 				canvas_id = canvas.create_text(115, y, anchor="nw")
 				canvas.itemconfig(canvas_id,text=str(element.Volume))
 
-				
+				y+=20
+				'''
+					choose recommendation highlight colour
+
+				'''
+				colour = 'black'
+
+				if test00 == 'Sell, as stocks may be reaching peak':
+					
+					colour='red'
+				elif test00 == 'Buy, as stocks are at a low point':
+					
+					colour='#006400'
+				elif test00 == 'Hold, stocks may continue to rise':
+					
+					colour='blue'		
+				elif test00 == 'Buy, stocks rising from a low':
+					
+					colour='#006400'
+				elif test00 == 'Sell, stocks dropping from a high':
+					
+					colour='red'
+				elif test00 == 'Hold, stable fluctuation':
+					
+					colour='blue'	
+
+				canvas_id = canvas.create_text(10, y, anchor="nw")
+				canvas.itemconfig(canvas_id, text="Analysis Recommends:")
+
+				canvas_id = canvas.create_text(155, y, anchor="nw")
+				canvas.itemconfig(canvas_id,fill = colour, text=str(test00))				
 				y+=40
 			
-			if x*115 <500:
+			if x*140 <500:
 				canvas.config(scrollregion=(0,0,478,0))
 				canvas.config(width=478,height=491)
 				canvas.pack(side=LEFT,expand=True,fill=BOTH)
 			else:
-				scrollh = (x*115)
+				scrollh = (x*140)
 				scrollh += 30
 				canvas.config(scrollregion=(0,0,478,scrollh))
 				vbar=Scrollbar(frame,orient=VERTICAL)
@@ -1404,84 +1474,174 @@ def portfolioWindow():
 				canvas.pack(side=LEFT,expand=True,fill=BOTH)
 	
 
+def historyWindow():
+	'''
+		retrieve and list all transactions a user has made
+	'''
+	clear(root)
+	root.geometry("500x500")
+	root.wm_title('Stock Market App - History')
+
+	frame=Frame(root,width=500,height=500)
+	frame.grid(row=0,column=0)
+	canvas=Canvas(frame,width=478,height=491)
+
+	y = 10
+
+
+
+	username = loggedInAccount.ID
+
+	if os.path.exists('SMfiles/users/'+username+'/transactions.txt'):
+		canvas_id = canvas.create_text(10, y, anchor="nw")
+		canvas.itemconfig(canvas_id, text='The following is a History of your transaction(s):')	
+
+		y += 30
+		with open('SMfiles/users/'+username+'/transactions.txt','rb') as f:
+			tempList = pickle.load(f)
+			x = len(tempList)
+			for element in tempList:
+					
+				line = canvas.create_line(10, y, 490, y)
+				y+=3
+
+				canvas_id = canvas.create_text(10, y+5, anchor="nw")
+				canvas.itemconfig(canvas_id, fill='blue',text=str(element.TransactionID))
+
+				y+=30
+				line = canvas.create_line(10, y, 497, y)
+
+				y+=3
+				canvas_id = canvas.create_text(10, y, anchor="nw")
+				canvas.itemconfig(canvas_id, text="Transaction Time:")
+
+
+				canvas_id = canvas.create_text(125, y, anchor="nw")
+				canvas.itemconfig(canvas_id,text=str(element.TransactionTime))
+
+
+				y+=20
+				canvas_id = canvas.create_text(10, y, anchor="nw")
+				canvas.itemconfig(canvas_id, text="Transaction Type: ")
+				
+
+				if element.TransactionType == 'buy':
+					canvas_id = canvas.create_text(125, y, anchor="nw")
+					canvas.itemconfig(canvas_id, text='Purchase')
+					y+=20
+					canvas_id = canvas.create_text(10, y, anchor="nw")
+					canvas.itemconfig(canvas_id, text="Buyer:")
+
+					canvas_id = canvas.create_text(55, y, anchor="nw")
+					canvas.itemconfig(canvas_id,text=str(element.TransactionBuyer))
+					inv = element.TransactionPLReport
+					print(inv)
+				else:
+					canvas_id = canvas.create_text(125, y, anchor="nw")
+					canvas.itemconfig(canvas_id, text='Sell')
+
+					y+=20
+
+					canvas_id = canvas.create_text(10, y, anchor="nw")
+					canvas.itemconfig(canvas_id, text="Seller:")
+
+					canvas_id = canvas.create_text(55, y, anchor="nw")
+					canvas.itemconfig(canvas_id, text=str(element.TransactionSeller))				
+
+					inv = element.TransactionPLReport
+					print(inv)
+					
+				
+
+				y+=40
+			
+			if x*117 <500:
+				canvas.config(scrollregion=(0,0,478,0))
+				canvas.config(width=478,height=491)
+				canvas.pack(side=LEFT,expand=True,fill=BOTH)
+			else:
+				scrollh = (x*117)
+				scrollh += 30
+				canvas.config(scrollregion=(0,0,478,scrollh))
+				vbar=Scrollbar(frame,orient=VERTICAL)
+				vbar.pack(side=RIGHT,fill=Y)
+				vbar.config(command=canvas.yview)
+				canvas.config(width=478,height=491)
+				canvas.config( yscrollcommand=vbar.set)
+				canvas.pack(side=LEFT,expand=True,fill=BOTH)
+		
+
+				
+	else:
+		
+		canvas_id = canvas.create_text(239, 245, anchor="center")
+		canvas.itemconfig(canvas_id, text='You have no Transaction(s) showcasing your history')
+		canvas.config(width=478,height=491)
+		canvas.pack(side=LEFT,expand=True,fill=BOTH)	
+	
+
 def buy(user, symb, quantity, total):
-    # load transaction file
-    userpath = 'SMfiles/users/'+user.ID+'/'+user.ID+'.txt'
-    transpath = 'SMfiles/users/'+user.ID+'/transactions.txt'
-    #transactions = pickle.load(open(transpath,"rb"))
-
-
-    if not os.path.exists(transpath):
-        print("Transactions Log for user '"+user.ID+"' not found. Creating File")
-        transactions = []       
-    else:
-        print("Transactions Log FOUND")
-        transactions = pickle.load(open(transpath,"rb"))        
-        
-        
-
-    # add investment into user portfolio
-    inv = Investment(get_current(symb),quantity)
-    user.Portfolio.append(inv)
-
-    # check user type to subtract from their budget
-    # subtract from client's budget
-    if isinstance(user, Client):
-        originalBudget = float(user.ClientBudget)
-        originalBudget -= total # ---------------- this is fixed
-        user.ClientBudget = originalBudget
-    # subtract from broker's budget
-    elif isinstance(user, Broker):
-        originalBudget = float(user.BrokerTotalBudget)
-        originalBudget -= total # ---------------- this is fixed
-        user.BrokerTotalBudget = originalBudget
-    # subtract from the buyer of the firm's budget
-    else:
-        user.FirmBudget -= total
-
-    # add investment into transaction file
-    trans = Transaction(user, 'buy', inv)
-    transactions.append(trans)
-
-    # save transaction and user file
-    pickle.dump(transactions, open(transpath, "wb"))
-    pickle.dump(user, open(userpath,"wb"))
-
-    createPopup('BuyPopup','Congratulations!\n You have successfully purchased '
-        +str(quantity)+' of the stock: '+symb+' for $'+str(total))
-
-    
-# inv_index will be the index in portfolio of investment to be sold
-def sell(user, inv_index): # user: Client, Broker, or Firm object
+	'''
+		Allows user to purchase a stock using its ID
+	'''
 	# load transaction file
-	print('DAST IST INDEX: '+str(inv_index))
 	userpath = 'SMfiles/users/'+user.ID+'/'+user.ID+'.txt'
 	transpath = 'SMfiles/users/'+user.ID+'/transactions.txt'
-	print(str(inv_index))
+	#transactions = pickle.load(open(transpath,"rb"))
+
+
 	if not os.path.exists(transpath):
-		print("No portfolio found for user '"+user.ID+"' not found. Creating File")
+		transactions = []       
 	else:
-		print("Transactions Log FOUND")
+		transactions = pickle.load(open(transpath,"rb"))        
+
+    # add investment into user portfolio
+	inv = Investment(get_current(symb),quantity)
+	user.Portfolio.append(inv)
+
+	# check user type to subtract from their budget
+	# subtract from client's budget
+	if isinstance(user, Client):
+		originalBudget = float(user.ClientBudget)
+		originalBudget -= total # ---------------- this is fixed
+		user.ClientBudget = originalBudget
+	# subtract from broker's budget
+	elif isinstance(user, Broker):
+		originalBudget = float(user.BrokerTotalBudget)
+		originalBudget -= total # ---------------- this is fixed
+		user.BrokerTotalBudget = originalBudget
+	# subtract from the buyer of the firm's budget
+	else:
+		user.FirmBudget -= total
+
+	# add investment into transaction file
+	trans = Transaction(user, 'buy', inv)
+	transactions.append(trans)
+
+	# save transaction and user file
+	pickle.dump(transactions, open(transpath, "wb"))
+	pickle.dump(user, open(userpath,"wb"))
+
+	createPopup('BuyPopup','Congratulations!\n You have successfully purchased '
+	+str(quantity)+' of the stock: '+symb+' for $'+str(total))
+
+
+	# inv_index will be the index in portfolio of investment to be sold
+def sell(user, inv_index): # user: Client, Broker, or Firm object
+	'''
+		Allows user to sell stocks bought as a single investment entity
+	'''
+	# load transaction file
+	userpath = 'SMfiles/users/'+user.ID+'/'+user.ID+'.txt'
+	transpath = 'SMfiles/users/'+user.ID+'/transactions.txt'
+	
+	if not os.path.exists(transpath):
+		pass
+	else:
+		
 		transactions = pickle.load(open(transpath,"rb"))        
 		# get investment from user portfolio
 		inv_bought = user.Portfolio[inv_index]
-		'''for elem in user.Portfolio:
-			print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-			print('The INDEX is: '+str(user.Portfolio.index(elem)))
-			print('The INDEX YOU WANT IS: '+str(inv_index))
-			print('The stock is: '+str(elem.StockID))
-			print('The date is: '+str(elem.TradeDate))
-			print('The price is: '+str(elem.PriceTraded))
-			print('The volume you own is: '+str(elem.Volume))	
-			print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-		# remove investment from user portfolio
-		'''
-		
-		print('The INDEX is: '+str(inv_index))
-		print('The stock is: '+str(inv_bought.StockID))
-		print('The date is: '+str(inv_bought.TradeDate))
-		print('The price is: '+str(inv_bought.PriceTraded))
-		print('The volume you own is: '+str(inv_bought.Volume))
 		del user.Portfolio[inv_index]
 
 		# get investment objects
@@ -1509,13 +1669,17 @@ def sell(user, inv_index): # user: Client, Broker, or Firm object
 
 		
 def home():
+	'''
+		HOMEPAGE -> has three states, not logged in, logged in as Client, and logged in as Broker
+
+	'''
+
 	clear(root)
 	root.wm_title("Stock Market App - Home")
-	root.geometry("500x1000")
+	root.geometry("500x720")
 	windowMenus(root)
 	
 	if not loggedInAccount == '' and isinstance(loggedInAccount,Broker) == True:
-		print('YOU ARE LOGEED IN BROKER FOOL')	
 		Frame(root, height=10, width=10).grid(row=0,column=0)
 		Label(root, text="Welcome back our Stock Market App, "+loggedInAccount.BrokerName+".").grid(row=1,column=0, columnspan=4)
 		Label(root, text="In this homepage, we are happy to catch you up").grid(row=2,column=0, columnspan=4)
@@ -1530,36 +1694,35 @@ def home():
 
 		fig = plt.Figure(facecolor='w', edgecolor='w', figsize=(6,3))
 		fig2 = plt.Figure(facecolor='w', edgecolor='w', figsize=(6,3))
-		fig3 = plt.Figure(facecolor='w', edgecolor='w', figsize=(6,3))
+		
 		
 		canvas = FigureCanvasTkAgg(fig, master=root)
 		canvas2 = FigureCanvasTkAgg(fig2, master=root)
-		canvas3 = FigureCanvasTkAgg(fig3, master=root)
+		
 		
 		canvas.get_tk_widget().grid(column=0,row=11, columnspan=4)
 		canvas2.get_tk_widget().grid(column=0,row=12, columnspan=4)
-		canvas3.get_tk_widget().grid(column=0,row=13, columnspan=4)
+		
 
 		ax = fig.add_subplot(111)
 		ax2 = fig2.add_subplot(111)
-		ax3 = fig3.add_subplot(111)
+		
 		
 		xLabel = ''
 		yLabel = ''
-		zLabel = ''
+		
 
 		xList = []
 		yList = []
-		zList =[]
+		
 		for key,value in ticker_list.iteritems():
 			if key == 'Netflix, Inc.':
-				print('Stock '+key+ ' code is '+ value)
 				xLabel = value
 
 		xTestList = get_historical(xLabel,1)
 		for element in xTestList:
 			xList.append(element.StockPrice)
-		#print(xList)
+		
 		ax.plot(xList, label=xLabel)
 
 		for key,value in ticker_list.iteritems():
@@ -1570,36 +1733,22 @@ def home():
 		yTestList = get_historical(yLabel,1)
 		for element in yTestList:
 			yList.append(element.StockPrice)
-		#print(xList)
+		
 		ax2.plot(yList, label=yLabel)
 
-		for key,value in ticker_list.iteritems():
-			if key == 'Alphabet Inc.':
-				print('Stock '+key+ ' code is '+ value)
-				zLabel = value
-
-		zTestList = get_historical(zLabel,1)
-		for element in zTestList:
-			zList.append(element.StockPrice)
-		#print(xList)
-		ax3.plot(zList, label=zLabel)
-
+		
 		ax.set_ylabel("Price $")
 		ax2.set_ylabel("Price $")
-		ax3.set_ylabel("Price $")
+		
 		ax.get_xaxis().set_ticks([])
 		ax2.get_xaxis().set_ticks([])
-		ax3.get_xaxis().set_ticks([])
-	
-	
-		#ax.plot(z, label='COOP')
-		#ax.plot(a, label='HOOP')
+		
 		ax.legend(prop={'size':12})
 		ax2.legend(prop={'size':12})
-		ax3.legend(prop={'size':12})
+	
 
 	elif not loggedInAccount == '' and isinstance(loggedInAccount,Client) == True:
-		print('YOU ARE LOGEED IN Client FOOL')	
+
 		Frame(root, height=10, width=10).grid(row=0,column=0)
 		Label(root, text="Welcome back our Stock Market App, "+loggedInAccount.ClientName+".").grid(row=1,column=0, columnspan=4)
 		Label(root, text="In this homepage, we are happy to catch you up").grid(row=2,column=0, columnspan=4)
@@ -1614,77 +1763,54 @@ def home():
 
 		fig = plt.Figure(facecolor='w', edgecolor='w', figsize=(6,3))
 		fig2 = plt.Figure(facecolor='w', edgecolor='w', figsize=(6,3))
-		fig3 = plt.Figure(facecolor='w', edgecolor='w', figsize=(6,3))
-		
+			
 		canvas = FigureCanvasTkAgg(fig, master=root)
 		canvas2 = FigureCanvasTkAgg(fig2, master=root)
-		canvas3 = FigureCanvasTkAgg(fig3, master=root)
 		
 		canvas.get_tk_widget().grid(column=0,row=11, columnspan=4)
 		canvas2.get_tk_widget().grid(column=0,row=12, columnspan=4)
-		canvas3.get_tk_widget().grid(column=0,row=13, columnspan=4)
-
+	
 		ax = fig.add_subplot(111)
 		ax2 = fig2.add_subplot(111)
-		ax3 = fig3.add_subplot(111)
 		
 		xLabel = ''
 		yLabel = ''
-		zLabel = ''
-
+		
 		xList = []
 		yList = []
-		zList =[]
+		
 		for key,value in ticker_list.iteritems():
 			if key == 'Netflix, Inc.':
-				print('Stock '+key+ ' code is '+ value)
+				
 				xLabel = value
 
 		xTestList = get_historical(xLabel,1)
 		for element in xTestList:
 			xList.append(element.StockPrice)
-		#print(xList)
+		
 		ax.plot(xList, label=xLabel)
 
 		for key,value in ticker_list.iteritems():
 			if key == 'Tesla Motors Inc':
-				print('Stock '+key+ ' code is '+ value)
 				yLabel = value
 
 		yTestList = get_historical(yLabel,1)
 		for element in yTestList:
 			yList.append(element.StockPrice)
-		#print(xList)
+		
 		ax2.plot(yList, label=yLabel)
-
-		for key,value in ticker_list.iteritems():
-			if key == 'Alphabet Inc.':
-				print('Stock '+key+ ' code is '+ value)
-				zLabel = value
-
-		zTestList = get_historical(zLabel,1)
-		for element in zTestList:
-			zList.append(element.StockPrice)
-		#print(xList)
-		ax3.plot(zList, label=zLabel)
 
 		ax.set_ylabel("Price $")
 		ax2.set_ylabel("Price $")
-		ax3.set_ylabel("Price $")
+		
 		ax.get_xaxis().set_ticks([])
 		ax2.get_xaxis().set_ticks([])
-		ax3.get_xaxis().set_ticks([])
-	
-	
-		#ax.plot(z, label='COOP')
-		#ax.plot(a, label='HOOP')
+		
 		ax.legend(prop={'size':12})
 		ax2.legend(prop={'size':12})
-		ax3.legend(prop={'size':12})
-	else:
-		print('NAWT LOGGED IN FOOL')
 		
-
+	else:
+		
 		Label(root, text="Welcome to our Stock Market App").grid(row=1,column=0, columnspan=4)
 		Label(root, text="Please Login or Register to use the App's full functionality").grid(row=2,column=0, columnspan=4)
 		Label(root, text="The following dashboard displays notable changes in the stock market").grid(row=3,column=0, columnspan=4)
@@ -1698,86 +1824,68 @@ def home():
 
 		fig = plt.Figure(facecolor='w', edgecolor='w', figsize=(6,3))
 		fig2 = plt.Figure(facecolor='w', edgecolor='w', figsize=(6,3))
-		fig3 = plt.Figure(facecolor='w', edgecolor='w', figsize=(6,3))
 		
 		canvas = FigureCanvasTkAgg(fig, master=root)
 		canvas2 = FigureCanvasTkAgg(fig2, master=root)
-		canvas3 = FigureCanvasTkAgg(fig3, master=root)
-		
+	
 		canvas.get_tk_widget().grid(column=0,row=11, columnspan=4)
 		canvas2.get_tk_widget().grid(column=0,row=12, columnspan=4)
-		canvas3.get_tk_widget().grid(column=0,row=13, columnspan=4)
-
+	
 		ax = fig.add_subplot(111)
 		ax2 = fig2.add_subplot(111)
-		ax3 = fig3.add_subplot(111)
 		
 		xLabel = ''
 		yLabel = ''
-		zLabel = ''
-
+	
 		xList = []
 		yList = []
-		zList =[]
+		
 		for key,value in ticker_list.iteritems():
 			if key == 'Netflix, Inc.':
-				print('Stock '+key+ ' code is '+ value)
 				xLabel = value
 
 		xTestList = get_historical(xLabel,1)
 		for element in xTestList:
 			xList.append(element.StockPrice)
-		#print(xList)
+	
 		ax.plot(xList, label=xLabel)
 
 		for key,value in ticker_list.iteritems():
 			if key == 'Tesla Motors Inc':
-				print('Stock '+key+ ' code is '+ value)
 				yLabel = value
 
 		yTestList = get_historical(yLabel,1)
 		for element in yTestList:
 			yList.append(element.StockPrice)
-		#print(xList)
+		
 		ax2.plot(yList, label=yLabel)
-
-		for key,value in ticker_list.iteritems():
-			if key == 'Alphabet Inc.':
-				print('Stock '+key+ ' code is '+ value)
-				zLabel = value
-
-		zTestList = get_historical(zLabel,1)
-		for element in zTestList:
-			zList.append(element.StockPrice)
-		#print(xList)
-		ax3.plot(zList, label=zLabel)
 
 		ax.set_ylabel("Price $")
 		ax2.set_ylabel("Price $")
-		ax3.set_ylabel("Price $")
+		
 		ax.get_xaxis().set_ticks([])
 		ax2.get_xaxis().set_ticks([])
-		ax3.get_xaxis().set_ticks([])
-	
-	
-		#ax.plot(z, label='COOP')
-		#ax.plot(a, label='HOOP')
+		
 		ax.legend(prop={'size':12})
 		ax2.legend(prop={'size':12})
-		ax3.legend(prop={'size':12})	
+		
 
 
 def compareStocks(stock1,stock2,stock3,duration):
+	'''
+		compare and graph stocks side by side in real time based on ID
+		get ID, populate a list with realtime selling values of that stock 
+		over the user selected period (1,2,5,7,14) days and graph them
+	'''
+
 	clear(root)
 
 	root.wm_title("Stock Market App - Stock Comparison")
-	root.geometry("654x780")
+	root.geometry("660x785")
 	
 	if stock1 == '':
-		print('if')
 		stockOption1 = StringVar()
 	else:
-		print('else '+str(stock1))
 		stockOption1 = StringVar()
 		stockOption1.set(stock1)
 		
@@ -1797,33 +1905,32 @@ def compareStocks(stock1,stock2,stock3,duration):
 		use Figure attribute figsize=(int, int) to determine size of plot
 	'''
 	fig = plt.Figure(facecolor='w', edgecolor='w')
-	
-	'''y = numpy.sqrt([81,99,100,29,10,29,19,55,53,4, 9, 100])
-	z = [10,23,39,40,29,01,11,16,8,12]
-	a = [7,8,9,10,9,8,7,6,5,4,3,2,10]'''
+
 	plotTitle = 'Compare: '
+	
 	stockVar1 = StringVar()
 	stockVar2 = StringVar()
 	stockVar3 = StringVar()
+	
 	Frame(root, height=10, width=10).grid(row=0, column=0, columnspan = 4)	
 	Button(root ,text='Compare Stocks', command = lambda: compareStocks(stockOption1.get(),stockOption2.get(),stockOption3.get(),durationVar.get())).grid(row=1,column=0)
+
 	stock1Entry = Spinbox(root, fg="blue",width = 15,textvariable=stockOption1,values=availableStocks).grid(row=1, column=1, sticky=W)	
 	stock2Entry = Spinbox(root, fg="#006400",width = 15,textvariable=stockOption2,values=availableStocks).grid(row=1, column=2, sticky=W)	
 	stock3Entry = Spinbox(root, fg="red",width = 15,textvariable=stockOption3,values=availableStocks).grid(row=1, column=3, sticky=W)	
+
 	xList = []
 	yList = []
 	zList = []
+
 	xLabel = ''
 	yLabel = ''
 	zLabel = ''
 
 	durationVar = IntVar()
 
-
-
 	canvas = FigureCanvasTkAgg(fig, master=root)
 	canvas.get_tk_widget().grid(column=0,row=3, columnspan=4)
-
 	
 	Label(root, text='Select Duration in Day(s):').grid(row=2, column=0, columnspan = 2, sticky=E)	
 	stock3Entry = Spinbox(root, width = 15,textvariable=durationVar,values=(1,2,5,7,14)).grid(row=2, column=2, columnspan=2, sticky=W)	
@@ -1832,33 +1939,47 @@ def compareStocks(stock1,stock2,stock3,duration):
 
 	if stock1 == '' or stock1 =='Select Stock':
 		stockOption1.set('Select Stock')
-		'''
-		for quote in quotelist:
-			for stockQuote in quote:
-				#googleprice.append(thea.StockPrice)
-				#print('COMPARISON '+str(stockQuote.StockID)+' at '+str(stockQuote.StockDate)+' is at $'+str(stockQuote.StockPrice))
-	
-		print(availableStocks)
-		'''
+
 	else:
 		stockOption1.set(stock1)
 		plotTitle += stockOption1.get()+'| '
 		
 		for key,value in ticker_list.iteritems():
 			if key == stockOption1.get():
-				print('Stock '+key+ ' code is '+ value)
 				xLabel = value
 
 		xTestList = get_historical(xLabel, duration)
 		for element in xTestList:
 			xList.append(element.StockPrice)
-		#print(xList)
+		
 		ax.plot(xList, label=xLabel)
 
-		#print(xList)
-		#print(testList)
+		test00 = stock_estimate(xTestList,xLabel)
+		
+		colour = 'black'
+		'''
+			choose highlight colour based on recommendation
+			to make it more prominent
 
-
+		'''
+		if test00 == 'Sell, as stocks may be reaching peak':
+			
+			colour='red'
+		elif test00 == 'Buy, as stocks are at a low point':
+			
+			colour='#006400'
+		elif test00 == 'Hold, stocks may continue to rise':
+			
+			colour='blue'		
+		elif test00 == 'Buy, stocks rising from a low':
+			
+			colour='#006400'
+		elif test00 == 'Sell, stocks dropping from a high':
+			
+			colour='red'
+		elif test00 == 'Hold, stable fluctuation':
+			
+			colour='blue'
 		
 		Label(root, fg="blue",text=stockOption1.get()).grid(row=5, column=1)
 		Label(root, fg="blue",text=xTestList[-1].StockDate).grid(row=6, column=1)
@@ -1867,7 +1988,7 @@ def compareStocks(stock1,stock2,stock3,duration):
 		Label(root, fg="blue",text=xTestList[-1].StockDayRange).grid(row=9, column=1)
 		Label(root, fg="blue",text=xTestList[-1].StockVolume).grid(row=10, column=1)
 		Label(root, fg="blue",text=xTestList[-1].StockClose).grid(row=11, column=1)
-		Label(root, font = "Helvetica 14 bold",fg="blue",text="Buy").grid(row=13, column=1)
+		Label(root, font = "Helvetica 14 bold",fg=colour,text=test00).grid(row=13, column=1)
 
 	if stock2 == '' or stock2 =='Select Stock':
 		stockOption2.set('Select Stock')
@@ -1877,14 +1998,38 @@ def compareStocks(stock1,stock2,stock3,duration):
 
 		for key,value in ticker_list.iteritems():
 			if key == stockOption2.get():
-				print('Stock '+key+ ' code is '+ value)
 				yLabel = value
 
 		yTestList = get_historical(yLabel, duration)
 		for element in yTestList:
 			yList.append(element.StockPrice)
-		#print(yList)
 		ax.plot(yList, label=yLabel)
+
+
+		test01 = stock_estimate(yTestList,yLabel)
+		
+		colour1 = 'black'
+		'''
+			choose highlight colour
+		'''
+		if test01 == 'Sell, as stocks may be reaching peak':
+			
+			colour1='red'
+		elif test01 == 'Buy, as stocks are at a low point':
+			
+			colour1='#006400'
+		elif test01 == 'Hold, stocks may continue to rise':
+			
+			colour1='blue'		
+		elif test01 == 'Buy, stocks rising from a low':
+			
+			colour1='#006400'
+		elif test01 == 'Sell, stocks dropping from a high':
+			
+			colour1='red'
+		elif test01 == 'Hold, stable fluctuation':
+			
+			colour1='blue'
 
 		Label(root, fg="#006400",text=stockOption2.get()).grid(row=5, column=2)
 		Label(root, fg="#006400",text=yTestList[-1].StockDate).grid(row=6, column=2)
@@ -1893,7 +2038,7 @@ def compareStocks(stock1,stock2,stock3,duration):
 		Label(root, fg="#006400",text=yTestList[-1].StockDayRange).grid(row=9, column=2)
 		Label(root, fg="#006400",text=yTestList[-1].StockVolume).grid(row=10, column=2)
 		Label(root, fg="#006400",text=yTestList[-1].StockClose).grid(row=11, column=2)
-		Label(root, font = "Helvetica 14 bold", fg="#006400",text="Sell").grid(row=13, column=2)
+		Label(root, font = "Helvetica 14 bold", fg=colour1,text=test01).grid(row=13, column=2)
 
 	if stock3 == '' or stock3 =='Select Stock':
 		stockOption3.set('Select Stock')
@@ -1903,13 +2048,35 @@ def compareStocks(stock1,stock2,stock3,duration):
 
 		for key,value in ticker_list.iteritems():
 			if key == stockOption3.get():
-				print('Stock '+key+ ' code is '+ value)
 				zLabel = value
 
 		zTestList = get_historical(zLabel, duration)
 		for element in zTestList:
 			zList.append(element.StockPrice)
-		#print(zList)
+
+		test02 = stock_estimate(zTestList,zLabel)
+		
+		colour2 = 'black'
+
+		if test02 == 'Sell, as stocks may be reaching peak':
+			
+			colour2='red'
+		elif test02 == 'Buy, as stocks are at a low point':
+			
+			colour2='#006400'
+		elif test02 == 'Hold, stocks may continue to rise':
+			
+			colour2='blue'		
+		elif test02 == 'Buy, stocks rising from a low':
+			
+			colour2='#006400'
+		elif test02 == 'Sell, stocks dropping from a high':
+			
+			colour2='red'
+		elif test02 == 'Hold, stable fluctuation':
+			
+			colour2='blue'
+
 		ax.plot(zList, label=zLabel)
 		Label(root, fg="red",text=stockOption3.get()).grid(row=5, column=3)
 		Label(root, fg="red",text=zTestList[-1].StockDate).grid(row=6, column=3)
@@ -1918,13 +2085,11 @@ def compareStocks(stock1,stock2,stock3,duration):
 		Label(root, fg="red",text=zTestList[-1].StockDayRange).grid(row=9, column=3)
 		Label(root, fg="red",text=zTestList[-1].StockVolume).grid(row=10, column=3)
 		Label(root, fg="red",text=zTestList[-1].StockClose).grid(row=11, column=3)
-		Label(root, font = "Helvetica 14 bold",fg="red",text="Hold").grid(row=13, column=3)
+		Label(root, font = "Helvetica 14 bold",fg=colour2,text=test02).grid(row=13, column=3)
 
-
-
-
-
-	#plt.plot(x, x)
+	'''
+		change X-axis label based on the number of days selected
+	'''
 	if duration == 1:
 		ax.set_xlabel("Fluctuation over the past day")
 	elif duration == 2:
@@ -1939,8 +2104,6 @@ def compareStocks(stock1,stock2,stock3,duration):
 	ax.get_xaxis().set_ticks([])
 	fig.suptitle(plotTitle)
 	
-	#ax.plot(z, label='COOP')
-	#ax.plot(a, label='HOOP')
 	ax.legend(prop={'size':12})
 
 	if not duration == '':
@@ -1958,10 +2121,14 @@ def compareStocks(stock1,stock2,stock3,duration):
 	Label(root,text="________________________________________________________________________________________________").grid(row = 12, columnspan=4, column=0)
 
 	Label(root, width = 20, text="Analysis Recommends: ").grid(row=13, column=0)
-	#plt.show()
 
 
 def viewRegisteredFirmsWindow():
+	'''
+		this window will loop through the registered firms and show the ones available
+		if none are registered, the user will be prompted
+	'''
+
 	clear(root)
 	root.geometry("500x500")
 	root.wm_title('Stock Market App - Registered Firms')
@@ -1970,25 +2137,11 @@ def viewRegisteredFirmsWindow():
 	frame=Frame(root,width=500,height=500)
 	frame.grid(row=0,column=0)
 	canvas=Canvas(frame,width=478,height=491)
-	'''	
-	for x in range(100):
-		label = Label(canvas, text='line #'+str(x))
-		label.pack()
-	'''
 
-	'''
-		ID
-		TradeDate
-		Volume
-		pricetraded
-
-
-	'''
 	y = 10
 	
 
 	if len(registeredFirms) == 0:
-		print('this is an error')
 		canvas_id = canvas.create_text(239, 245, anchor="center")
 		canvas.itemconfig(canvas_id, text='There are no registered Firms')
 		canvas.config(width=478,height=491)
@@ -2039,7 +2192,12 @@ def viewRegisteredFirmsWindow():
 
 			
 			y+=40
-
+		'''
+			decide whether to make the window scrollable based on the number
+			of entries, their average height, and the total space they require
+			and whether that's larger or smaller than the set window size
+			which is 500x500
+		'''
 		if x*100 <500:
 
 			canvas.config(scrollregion=(0,0,478,0))
@@ -2056,30 +2214,16 @@ def viewRegisteredFirmsWindow():
 			canvas.config(width=478,height=491)
 			canvas.config( yscrollcommand=vbar.set)
 			canvas.pack(side=LEFT,expand=True,fill=BOTH)
-		#Label(canvas, text="Rodney Test").grid(row=0, column=0)
-		
 
-
-
-	'''
-	scrollbar = Scrollbar(root)
-	scrollbar.pack(side=RIGHT, fill=Y)
-	
-	listbox = Listbox(root)
-
-	listbox.pack()
-
-	for i in range(500):
-		listbox.insert(END, i)
-
-# attach listbox to scrollbar
-	listbox.config(yscrollcommand=scrollbar.set)
-	scrollbar.config(command=listbox.yview)
-	'''
 
 
 def createPopup(popupType, message):
+	'''
+		Here we have a popup creation method, it's similar to a switch statment
+		two arguments are passed from any function denoting the popup type, and the message
+		it should relay to the user. This is fairly lengthy.
 
+	'''
 	if popupType == "login":
 		loginPopup = Toplevel(root)
 		loginPopup.title("Login")
@@ -2099,9 +2243,8 @@ def createPopup(popupType, message):
 		Button(loginPopup, text="Login", command=lambda: login(username.get(), password.get())).grid(row=3, column=1, sticky=E)
 
 		return
+	
 	elif popupType =='register':
-		'''realstock = json.dumps(getQuotes('AAPL'), indent=2)
-		print(realstock)'''
 		registerPopup = Toplevel(root)
 		registerPopup.title("Registeration")
 		registerPopup.geometry('250x80')
@@ -2113,9 +2256,9 @@ def createPopup(popupType, message):
 		Frame(registerPopup, height=10, width=10).grid(row=2, column=0, columnspan = 3)
 		Button(registerPopup, text="Client", command=lambda: registerForm(2)).grid(row=3, column=1, sticky=E)
 		Button(registerPopup, text="Broker", command=lambda: registerForm(1)).grid(row=3, column=2, sticky=E)
+	
 	elif popupType =='register':
-		'''realstock = json.dumps(getQuotes('AAPL'), indent=2)
-		print(realstock)'''
+		
 		registerPopup = Toplevel(root)
 		registerPopup.title("Registeration")
 		registerPopup.geometry('250x80')
@@ -2127,8 +2270,8 @@ def createPopup(popupType, message):
 		Frame(registerPopup, height=10, width=10).grid(row=2, column=0, columnspan = 3)
 		Button(registerPopup, text="Client", command=lambda: registerForm(2)).grid(row=3, column=1, sticky=E)
 		Button(registerPopup, text="Broker", command=lambda: registerForm(1)).grid(row=3, column=2, sticky=E)
+	
 	elif popupType=='login-pass':
-		print("Welcome back, "+message+'! Proceed to enjoy the full functionality of the app')
 		errorPopup = Toplevel(root)
 		errorPopup.title("Login Successful")
 		errorPopup.transient(root)
@@ -2143,8 +2286,6 @@ def createPopup(popupType, message):
 		Frame(errorPopup, height=10, width=10).grid(row=4, column=0, columnspan = 3)
 
 	elif popupType =='firm':
-		'''realstock = json.dumps(getQuotes('AAPL'), indent=2)
-		print(realstock)'''
 		firmPopup = Toplevel(root)
 		firmPopup.title("Firm")
 		firmPopup.geometry('250x80')
@@ -2184,7 +2325,6 @@ def createPopup(popupType, message):
 		else:
 			validationPopup = Toplevel(root)
 			validationPopup.title("Validation")
-			#validationPopup.geometry('250x80')
 			validationPopup.transient(root)
 			validationPopup.resizable(width=FALSE, height=FALSE)
 
@@ -2207,7 +2347,6 @@ def createPopup(popupType, message):
 		else:
 			validationPopup = Toplevel(root)
 			validationPopup.title("Validation")
-			#validationPopup.geometry('250x80')
 			validationPopup.transient(root)
 			validationPopup.resizable(width=FALSE, height=FALSE)
 
@@ -2231,7 +2370,6 @@ def createPopup(popupType, message):
 		else:
 			validationPopup = Toplevel(root)
 			validationPopup.title("Validation")
-			#validationPopup.geometry('250x80')
 			validationPopup.transient(root)
 			validationPopup.resizable(width=FALSE, height=FALSE)
 
@@ -2269,7 +2407,6 @@ def createPopup(popupType, message):
 		else:
 			validationPopup = Toplevel(root)
 			validationPopup.title("Validation")
-			#validationPopup.geometry('250x80')
 			validationPopup.transient(root)
 			validationPopup.resizable(width=FALSE, height=FALSE)
 
@@ -2293,7 +2430,6 @@ def createPopup(popupType, message):
 		else:
 			validationPopup = Toplevel(root)
 			validationPopup.title("Validation")
-			#validationPopup.geometry('250x80')
 			validationPopup.transient(root)
 			validationPopup.resizable(width=FALSE, height=FALSE)
 
@@ -2344,7 +2480,6 @@ def createPopup(popupType, message):
 		print("Error! Password for user "+message+' is incorrect!')
 		errorPopup = Toplevel(root)
 		errorPopup.title("Error")
-		#errorPopup.geometry('252x97')
 		errorPopup.transient(root)
 		errorPopup.resizable(width=FALSE, height=FALSE)
 
@@ -2369,8 +2504,7 @@ def createPopup(popupType, message):
 		Button(errorPopup, text="Okay", command= lambda: home()).grid(row=3, columnspan=3, column=0)
 		Frame(errorPopup, height=10, width=10).grid(row=4, column=0, columnspan = 3)
 	elif popupType =='register':
-		'''realstock = json.dumps(getQuotes('AAPL'), indent=2)
-		print(realstock)'''
+		
 		registerPopup = Toplevel(root)
 		registerPopup.title("Registeration")
 		registerPopup.geometry('250x80')
@@ -2401,30 +2535,15 @@ def createPopup(popupType, message):
 
 
 def windowMenus(root):
-	menubar = Menu(root)
 	'''
-	filemenu = Menu(menubar, tearoff=1)
-	root.config(menu=menubar)
-	'''
-	#menubar = Menu(win)
-	#appmenu = Menu(menubar, name='apple')
-	#menubar.add_cascade(menu=appmenu)
-	#appmenu.add_command(label='About My Application')
-	#appmenu.add_separator()
+		define and setup menus for the main menu bar and hotkeys
+		changing hotkey and menu item availability based on whether
+		the user is logged in or not
 
-	root['menu'] = menubar
-	'''frame1 = Frame(root, width = 100, height = 300)
-	frame1.configure(background="red")
-	frame1.pack(side = LEFT, expand = YES, fill=Y)
-	frame2 = Frame(root, width = 50, height = 150)
-	frame2.configure(background="blue")
-	frame2.pack(side = LEFT, expand = YES, fill=Y)
-	
-	mylabel = Label(root,text="Test Label Widget")    
-	mybutton = Button(root,text="Test Button Widget")
-	mylabel.pack()
-	mybutton.pack()
 	'''
+	menubar = Menu(root)
+	
+	root['menu'] = menubar
 
 	windowmenu = Menu(menubar, name='window')
 	omarMenu = Menu(menubar)
@@ -2437,7 +2556,6 @@ def windowMenus(root):
 	menubar.add_cascade(menu=accountMenu, label='Account')
 	menubar.add_cascade(menu=stocksMenu, label="Stocks")
 	menubar.add_cascade(menu=firmMenu, label="Firm")
-	menubar.add_cascade(menu=omarMenu, label="Omar's Tool")
 	menubar.add_cascade(menu=helpMenu, label="Help")
 	
 
@@ -2445,7 +2563,7 @@ def windowMenus(root):
 	registerMenu=accountMenu.add_command(label="Register", accelerator = 'cmd-r',command=lambda :createPopup('register',''))
 	accountMenu.add_separator()
 	accountMenu.add_command(label="Edit Info",accelerator="cmd-e", command= lambda: editInfo())
-	accountMenu.add_command(label="View History", command="")
+	accountMenu.add_command(label="View History", command= lambda:  historyWindow())
 	accountMenu.add_separator()
 	accountMenu.add_command(label="Home", command= lambda: home())
 
@@ -2455,7 +2573,6 @@ def windowMenus(root):
 	stocksMenu.add_command(label="View Stock Market", accelerator="cmd-v", command="")
 	stocksMenu.add_command(label="Compare Stocks", accelerator="cmd-c", command=lambda: compareStocks('','','',''))
 	stocksMenu.add_separator()
-	stocksMenu.add_command(label="Sell", accelerator="cmd-s",command= lambda: sellWindow())
 	stocksMenu.add_command(label="Buy", accelerator="cmd-b",command= lambda: buyWindow('','',0,0))
 
 	firmMenu.add_command(label="Register Firm",accelerator="cmd-f",command= lambda: firmRegisterForm(3))
@@ -2473,7 +2590,6 @@ def windowMenus(root):
 	root.bind('<Command-c>', lambda e: compareStocks('','','',''))
 	root.bind('<Command-k>', lambda e: hotkeyWindow(root))
 	root.bind('<Command-f>', lambda e: firmRegisterForm(3))
-	root.bind('<Command-p>', lambda e: portfolioWindow()) 
 	root.bind('<Command-b>', lambda e: buyWindow('','',0,0)) 
 
 	if not loggedInAccount == '':
@@ -2483,7 +2599,7 @@ def windowMenus(root):
 		
 		root.bind('<Command-e>', lambda e: editInfo()) 
 		root.bind('<Command-l>', lambda e: logout())
-		root.bind('<Command-s>', lambda e: sellWindow())
+		root.bind('<Command-p>', lambda e: portfolioWindow()) 
 
 		accountMenu.entryconfig("Login", label="Log Out", command=lambda: logout())
 		stocksMenu.entryconfig("Sell", state="normal")
@@ -2492,40 +2608,39 @@ def windowMenus(root):
 
 		accountMenu.entryconfig("Edit Info", state="normal")
 		accountMenu.entryconfig("View History", state="normal")
-
 	
 	else:
 		'''
 		if NOT logged in disable additional hotkeys and menu options
 		'''
-		stocksMenu.entryconfig("Sell", state="disabled")
 		stocksMenu.entryconfig("Buy", state="disabled")
 		stocksMenu.entryconfig("View Portfolio", state="disabled")
 
-		root.bind('<Command-l>', lambda e: createPopup('login', ''))
-		#root.bind('<Command-p>',"") 
-		root.bind('<Command-e>',"") 
+		root.bind('<Command-l>', lambda e: createPopup('login', '')) 
 
 		accountMenu.entryconfig("Edit Info", state="disabled")
 		accountMenu.entryconfig("View History", state="disabled")
 
 
 
-
 def editInfo():
+	'''
+		This function allows a user to edit their personal information.
+		Changing the fields needed based on account type (Broker vs Client)
+
+	'''
 	global loggedInAccount
 	if isinstance(loggedInAccount, Client) == True:
 		username = loggedInAccount.ID
-		print(loggedInAccount.ID)
 		f = open('SMfiles/users/'+username+'/'+username+'.txt','rb')
 		loggedInAccount = pickle.load(f)
-		print("This will edit a Client's info")
+		
 		clear(root)
 		root.wm_title("Stock Market App - Edit Information")
 		root.geometry("500x460")
-		Frame(root, height=10).grid(row=0, column=0)
 		
-		#Frame(root, height=10).grid(row=2, column=0)
+		Frame(root, height=10).grid(row=0, column=0)
+	
 		Label(root,height=2,text="Edit Information __________________________________________________").grid(row=2, column=0, sticky=E, columnspan=2)
 
 		nameVar = StringVar()
@@ -2606,13 +2721,10 @@ def editInfo():
 		firmVar.set(loggedInAccount.ClientFirmID)
 		budgetVar.set(str('$'+budget))
 		
-		#Frame(root, height=10).grid(row=15, column=0)
-		# def register(name, number, email, username, password, budget, industry):
 		Button(root, text="Cancel", command=lambda: editInfo()).grid(row=16, column=1, sticky=W)		
 		Button(root, text="Submit", command=lambda: 
 			validateClientEdit(nameVar.get(), numberVar.get(), emailVar.get(), userVar.get(), passVar1.get(),passVar2.get(), budgetVar.get(), industryVar.get(), brokerVar.get(), firmVar.get())).grid(row=16, column=1, sticky=E)		
 	elif isinstance(loggedInAccount, Broker) == True:
-		print('This will edit a Broker')
 		username = loggedInAccount.ID
 		f = open('SMfiles/users/'+username+'/'+username+'.txt','rb')
 		loggedInAccount = pickle.load(f)
@@ -2626,7 +2738,6 @@ def editInfo():
 		budget = float(loggedInAccount.BrokerTotalBudget)
 		budget = format(float(budget), ",.2f")
 		
-		#Frame(root, height=10).grid(row=2, column=0)
 		Label(root,height=2,text="Edit Information ___________________________________________________").grid(row=2, column=0, sticky=E, columnspan=2)
 
 		nameVar = StringVar()
@@ -2646,10 +2757,6 @@ def editInfo():
 				firmVar = tempFirm.FirmName
 		else:
 			firmVar = 'No firm affiliation found'
-
-		
-
-		
 
 		nameVar.set(loggedInAccount.BrokerName)
 		numberVar.set(loggedInAccount.BrokerPhoneNumber)
@@ -2710,7 +2817,10 @@ def editInfo():
 
 
 def main():
-	
+	'''
+
+		THE MAIN! -> GUI LOOP and MENU INITIALIZATION
+	'''
 	root.tk.call('tk', 'windowingsystem') 
 	root.wm_title("Stock Market App - Home")
 	root.geometry("500x500")
@@ -2734,11 +2844,11 @@ def main():
 		if not not directory:
 			if directory[0] == '.DS_Store':
 				del directory[0]
-		print(directory)
+	
 		for element in directory:
 			with open('SMfiles/firms/'+element+'/'+element+'.txt','rb') as f:
 				tempFirm = pickle.load(f)
-				print('Firm Name '+tempFirm.FirmName+'\n'+'Firm ID '+ tempFirm.ID +'\n'+'Firm Budget '+tempFirm.FirmBudget+'\n'+'Firm Code: '+tempFirm.FirmCode+'\n')
+			
 				registeredFirms.append(tempFirm)
 
 			tempFirm = Firm()
@@ -2750,20 +2860,20 @@ def main():
 		if not not directory:
 			if directory[0] == '.DS_Store':
 				del directory[0]
-		print(directory)
+		
 		for element in directory:
 			with open('SMfiles/users/'+element+'/'+element+'.txt','rb') as f:
 				temp = pickle.load(f)
 				if isinstance(temp, Client):
-					#print(temp.ID +' is a Client')
+					
 					registeredClients.append(temp)
 					registeredUsers.append(temp)
-					#print('registeredClients '+ temp.ClientName)
+					
 				elif isinstance(temp, Broker):
-					#print(temp.ID +' is a Broker')
+					
 					registeredBrokers.append(temp)
 					registeredUsers.append(temp)
-					#print('registeredBrokers '+ temp.BrokerName)
+					
 
 
 	'''
@@ -2771,43 +2881,21 @@ def main():
 	'''
 	global symblist
 	symblist = {'GOOG' : 'Alphabet Inc.', 'AAPL' : 'Apple Inc.', 'NFLX' : 'Netflix, Inc.', 'AMZN' : 'Amazon.com, Inc.', 'TSLA' : 'Tesla Motors Inc', 'JNJ':'Johnson & Johnson', 'LNKD': 'LinkedIn Corp', 'FB': 'Facebook Inc', 'TWTR':'Twitter Inc', 'AIZ':'Assurant Inc.','ISRG':'Intuitive Surgical Inc.'}
-	#symblist = {'GOOG' : 'Alphabet Inc.'}
+	
 	global ticker_list
 	ticker_list = {'Alphabet Inc.' : 'GOOG', 'Apple Inc.' : 'AAPL', 'Netflix, Inc.' : 'NFLX', 'Amazon.com, Inc.' : 'AMZN', 'Tesla Motors Inc' : 'TSLA','Johnson & Johnson':'JNJ', 'LinkedIn Corp':'LNKD', 'Facebook Inc':'FB', 'Twitter Inc':'TWTR', 'Assurant Inc.':'AIZ','Intuitive Surgical Inc.':'ISRG'}
-	#ticker_list = {'Alphabet Inc.' : 'GOOG'}
-	# read from stock list file
-	# stock_list = pickle.load(open('stocklist.p', 'rb'))
-
-	#histo = get_historical('GOOG', 30)
-	#for s in histo:
-	#    s.print_hist_stock()
-
-	#Get all the closing prices
+	
 	close_prices_list = close_prices(symblist)
-	#print close_prices_list
-
-	# get historical data on all stocks indicated in symbol list
+	
 	availableStocks.append('Select Stock')
-	print('-----------------------------------------------------')
-	print('Getting historical')
+	
 	for key,value in symblist.iteritems():
 		availableStocks.append(value)
 		quotelist.append(get_historical(key, 1))
-	print('-----------------------------------------------------')
-	'''
-	for quote in quotelist:
-		for stockQuote in quote:
-			#googleprice.append(thea.StockPrice)
-			#print('Stock '+str(stockQuote.StockID)+' at '+str(stockQuote.StockDate)+' is at $'+str(stockQuote.StockPrice))
-	'''
-
-	print(availableStocks)
+	
 
 
-	if not os.listdir('SMfiles/notifications'): 
-		print "Notifications Empty"
-	else:
-		createPopup('notification',root)
+	
 
 	root.mainloop()
 if __name__ == "__main__":

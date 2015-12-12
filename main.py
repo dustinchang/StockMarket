@@ -226,7 +226,7 @@ class Transaction:
     """Specifics of a trading Transaction"""
     def __init__(self, user, t_type, investment): 
         """Transaction Constructor"""
-        self.TransactionID = investment.StockID+str(investment.TradeDate)
+        self.TransactionID = ''
         self.TransactionStock = [] # if selling [inv_bought, inv_sold]
         self.TransactionTime = investment.TradeDate #{Integer:Integer} Maybe use datetime for this
         self.TransactionBuyer = '' #(ClientID BrokerID FirmID)
@@ -247,9 +247,11 @@ class Transaction:
         # Transaction type is 'buy'
         if t_type == "buy":
             self.TransactionBuyer = user.ID
+            self.TransactionID = investment.StockID+userID+str(investment.TradeDate)
         # Transaction type is 'sell'
         elif t_type == "sell":
             self.TransactionSeller = user.ID
+            self.TransactionID = investment.StockID+userID+str(investment.TradeDate)
         # Transaction type is 'trade'
         #else:
         #   self.TransactionTrader = [user[0].ID, user[1].ID]
