@@ -43,6 +43,9 @@ quotelist = []
 availableStocks = []
 symblist={}
 ticker_list={}
+
+email_pattern = re.compile(r"^[a-zA-Z0-9\.\-\_]+@[a-zA-Z0-9]+\.(ca|com)$")
+
 def retrieveFirm(firmName, code):
 	
 	'''
@@ -177,11 +180,11 @@ def validateClient(name, number, email, username, password, password2, budget, i
 	''' 
 		VALIDATE email
 	'''
-	if not email == '':
+	if email_pattern.match(email):
 		tempClient.ClientEmailAddress = email
 	else:
 
-		errorMessage += 'Email Address cannot be left empty\n'
+		errorMessage += 'Email Address is invalid\n'
 
 	'''
 		VALIDATE username
