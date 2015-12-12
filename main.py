@@ -34,59 +34,26 @@ from numpy import *
 Implementation of a stock market exchange where stocks are continually on the rise or dropping.
 This program will assist on whether you should purchase or sell stocks.
 """
-"""
-class Index:
-    '''Investment information about an Index, which is a portion of a stock market'''
-    def __init__(self):
-        '''Index Constructor'''
-        self.IndexID = ''
-        self.IndexName = ''
-        self.IndexValue = 0.0
-        self.IndexNetChange = 0.0
-        self.IndexChange = 0.0
-        self.IndexOpen  = 0.0
-        self.IndexDayRange = ''
-        self.IndexPreviousClose = 0.0
-        self.Index52WKRange = ''
-        self.Index1YRReturn = 0.0
-        self.IndexYTDReturn = 0.0
-        self.IndexTotalMembers = 0
-        self.IndexMembersUp = 0
-        self.IndexMembersDown = 0
 
-"""
 class Stock:
     """Details of a Stock and it's contents"""
     def __init__(self, symb, day, price, open_ = 0.0, high = 0.0, low = 0.0, close = 0.0, volume = 0.0):
         """Stock Constructor"""
         self.StockID = symb
-        #self.StockName = ''
         self.StockDate = day
         self.StockOpen = open_
-        #self.StockNetChange = 0.0
-        #self.StockChange = 0.0
         self.StockDayRange = str(low) + ' - ' + str(high)
         self.StockVolume = volume
         self.StockClose = close
-        #self.StockPreviousClose = 0.0
-        #self.Stock52WKRange = ''
-        #self.Stock1YRReturn = 0.0
-        #self.StockYTDReturn = 0.0
-        #self.StockPERatio = 0.0
-        #self.StockEarningsPS = 0.0
-        #self.StockMarketCap = 0.0
-        #self.StockSharesOutdanding = 0.0
         self.StockPrice = price
-        #self.StockDividend = 0.0
-        #self.StockSector = ''
-        #self.StockIndustry = ''
-        #self.StockSubIndustry = ''
 
+    # Testing purposes
     def print_hist_stock(self):
         dt = self.StockDate.strftime('%Y-%m-%d T: %H:%M:%S')
         print 'ID: ' + self.StockID + '\nDate: ' + dt + '\nOpen: ' + str(self.StockOpen)
         print 'Day Range: ' + self.StockDayRange + '\nClose: ' + str(self.StockClose) + '\nVolume: ' + str(self.StockVolume)
 
+    # Testing purposes
     def print_stock(self):
         dt = self.StockDate.strftime('%Y-%m-%d T: %H:%M:%S')
         print 'ID: ' + self.StockID + '\nDate: ' + dt
@@ -145,16 +112,6 @@ class Firm:
         self.FirmCode = ''
         self.FirmTotalBrokers = 0
         self.Portfolio = [] # list of Investments
-        self.InvestmentHistory = [] # list of Investments bought and sold. used for profit loss report
-        self.InvestmentExpense = 0.0 # sum of all investments bought
-        self.InvestmentRevenue = 0.0 # sum of all investments sold
-
-    def calculate_profit_loss(self, investment): # investment: [inv_bought, inv_sold]
-        self.InvestmentHistory.append(investment)
-        self.InvestmentExpense += float(investment[0].PriceTraded)
-        self.InvestmentRevenue += float(nvestment[1].PriceTraded)
-        self.BrokerProfit = self.InvestmentRevenue - self.InvestmentExpense
-        self.BrokerPLReport = (self.BrokerProfit / self.InvestmentRevenue) * 100
 
 class Client:
     """Personal details of an investing Client"""
@@ -183,44 +140,8 @@ class Client:
         self.InvestmentExpense += float(investment[0].PriceTraded)
         self.InvestmentRevenue += float(investment[1].PriceTraded)
         self.ClientProfit = self.InvestmentRevenue - self.InvestmentExpense
-        
         self.ClientBudget = (float(investment[1].PriceTraded) * investment[0].Volume) + float(self.ClientBudget)
         self.ClientPLReport = (self.ClientProfit / self.InvestmentRevenue) * 100
-
-        print investment[0].PriceTraded
-        print investment[1].PriceTraded
-        print self.ClientProfit
-        print self.ClientPLReport
-        """#originalExp = float(self.InvestmentExpense)
-        #originalExp += float(investment[0].PriceTraded)
-        print(self.InvestmentExpense)
-        print(str(investment[0].PriceTraded))
-        print(self.InvestmentRevenue)
-        print(str(investment[1].PriceTraded))
-        #originalRev = float(self.InvestmentRevenue)
-        #originalRev +=  float(investment[1].PriceTraded)
-
-        #self.ClientProfit = originalRev - originalExp
-        #self.ClientPLReport = (self.ClientProfit / originalRev) * 100"""
-
-class Exchange:
-    """Contains the details of wanted market exchanges"""
-    def __init__(self):
-        """Exchange Constructor"""
-        self.ExchangeID = ''
-        self.ExchangeName = ''
-        self.ExchangeHQ = ''
-        self.ExchangeEconomy = ''
-        self.ExchangeTimeZone = ''
-        self.ExchangeVolume = 0
-        self.ExchangeNetChange = 0.0
-        self.ExchangeChange = 0.0
-        self.ExchangeOpen = 0.0
-        self.ExchangeDayRange = ''
-        self.ExchangePreviousClose = 0.0
-        self.Exchange52WKRange = ''
-        self.Exchange1YRReturn = 0.0
-        self.ExchangeYTDReturn = 0.0
 
 class Transaction:
     """Specifics of a trading Transaction"""
@@ -275,82 +196,9 @@ class Investment:
         dt = self.TradeDate.strftime('%Y-%m-%d T: %H:%M:%S')
         print "ID: " + self.StockID + "\nTrade Date: " + dt + "\nPriceTraded: " + str(self.PriceTraded) + "\nVolume: " + str(self.Volume)
 
-""" Ended up sticking with real time data only
-##Takes a stock and a stock_list as parameters and
-# implements a rise in the stock
+## Get historical data
 #
-def rise(stk):
-   percent_rise = round(random.uniform(0.01, 0.1), 2)
-   print 'percent_rise: ' + str(percent_rise)
-   print 'Stock Price: ' + str(stk.StockPrice)
-   stk.StockPrice += round(stk.StockPrice * percent_rise, 2)
-   print 'Stock Price Increased to: ' + str(stk.StockPrice)
-
-
-##Takes a stock and a stock_list as parameters and
-# implements a drop in the stock
 #
-def drop(stk):
-   percent_drop = round(random.uniform(0.01, 0.1), 2)
-   print 'percent_drop: ' + str(percent_drop)
-   print 'Stock Price: ' + str(stk.StockPrice)
-   stk.StockPrice -= round(stk.StockPrice * percent_drop, 2)
-   print 'Stock Price Decreased to:' + str(stk.StockPrice)
-
-##To calculate the frequency that the stock should fluctuate
-# and determine the status of what the stock should do at each fluctuation stage
-#
-def fluctuate(stk):
-    print '~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!~~~~~~~~~~~~~~~~~~~~~~'
-    stat = random.randint(0, 100)
-    print 'Current Stock Status: ' + str(stat)
-    if stat < 10:
-        print 'Stock should be sold or buy more'
-    elif stat % 2 == 0 and stat % 3 == 0 and stat % 5 == 0:
-        print 'divisible by 2 and 3 and 5'
-    elif stat % 2 == 0 and stat % 3 == 0:
-        print 'divisible by 2 and 3'
-    elif stat % 2 == 0 and stat % 5 == 0:
-        print 'divisible by 2 and 5'
-    elif stat % 3 == 0 and stat % 5 == 0:
-        print 'divisible by 3 and 5'
-    elif stat % 2 == 0:
-        print 'divisible by 2'
-        rise(stk)
-    elif stat % 3 == 0:
-        print 'divisible by 3'
-        drop(stk)
-    elif stat % 5 == 0:
-        print 'divisible by 5'
-    else:
-        print 'prime'
-
-
-## Get historical stock data
-#  - retrieves one quote a day
-#  Use for last 30 days?
-def get_historical(symb, number_of_days):
-    today = datetime.date.today()
-    start = (today - datetime.timedelta(days=number_of_days))
-    # Outputs historical data into csv format (only output available)
-    url_string = "http://www.google.com/finance/historical?q={0}".format(symb)
-    url_string += "&startdate={0}&enddate={1}&output=csv".format(
-        start.strftime('%b %d, %Y'),today.strftime('%b %d, %Y'))
-    csv = urllib.urlopen(url_string).readlines()
-    # Put header information at end; dont need it
-    csv.reverse()
-
-    # Put stocks into a list called 'histo'
-    histo = []
-    for day in xrange(0, len(csv) - 1): # -1 because last element is header
-      ds,open_,high,low,close,volume = csv[day].rstrip().split(',')
-      open_,high,low,close = [float(x) for x in [open_,high,low,close]]
-      dt = datetime.datetime.strptime(ds, '%d-%b-%y')
-      histo.append(Stock(symb, dt, open_, open_, high, low, close, volume))
-
-    return histo
-"""
-
 def get_historical(symb, number_of_days):
     today = datetime.date.today()
     start = (today - datetime.timedelta(days=number_of_days)).strftime('%Y%m%d')
@@ -399,36 +247,9 @@ def get_current(symb):
     stock = Stock(str(quote[0][u'StockSymbol']), dt, float(quote[0][u'LastTradePrice']))
     return stock
 
-
-## Process selling an investment
-# user: Client, Broker, or Firm object
-# inv will be index number of the investment in user portfolio maybe?
-'''
-def sell(user, inv_index): # user: Client, Broker, or Firm object
-    # load transaction file
-    transactions = pickle.load(open("<transactionfilepath>","rb"))
-
-    # get investment from user portfolio
-    inv_bought = user.Portfolio[inv_index]
-    inv_now = Investment(get_current(symb))
-
-    # add investment to investment history
-    user.InvestmentHistory.append([inv_bought, inv_now])
-
-    # calculate profit lost report
-    # and adds to user profit
-    user.calculate_profit_loss()
-
-    # add investment in transaction file
-    trans = Transaction(user, 'sell', inv_now)
-    trans.calculate_profit_loss()
-    transactions.append(trans)
-
-    # save transaction file
-    pickle.dump(transactions, open("<transactionfilepath>", "wb"))
-
-    return user
-'''
+## Get close prices
+#
+#
 def get_close_prices(symb, number_of_days = 15):
     close_list = []
     stock_objs = get_historical(symb, number_of_days)
@@ -436,27 +257,11 @@ def get_close_prices(symb, number_of_days = 15):
         close_list.append(stk.StockClose)
     return close_list
 
-
-def close_prices(symblist):
-    stock_objs = []
-    close_list = []
-    stk_tracker = 0
-    for ticker in symblist:
-        stock_objs.append(get_historical(ticker, 1))
-    for stk_list in stock_objs:
-        close_list.append([stk_list[0].StockID])
-        for stk in stk_list:
-            close_list[stk_tracker].append(stk.StockClose)
-        stk_tracker += 1
-    close_list[0].append('hellow')
-    #print close_list
-    return close_list
-
-##Execution start of program, adding to protocol buffers
+"""
+## Used for testing purposes
 #
 #
 def main():
-    """
     # create initial stocklist file with 7 day sample
     histo = get_historical('GOOG', 30)
     stock_list = {'GOOG':histo}
@@ -493,7 +298,6 @@ def main():
 
     # save state of stock list into file
     #pickle.dump(stock_list, open("stocklist.p", "wb"))
-    """
-
+ 
 if __name__ == "__main__":
-    main()
+    main() """

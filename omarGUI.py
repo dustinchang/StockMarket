@@ -1402,14 +1402,11 @@ def portfolioWindow():
 				canvas.config(width=478,height=491)
 				canvas.config( yscrollcommand=vbar.set)
 				canvas.pack(side=LEFT,expand=True,fill=BOTH)
-	
 
 def buy(user, symb, quantity, total):
     # load transaction file
     userpath = 'SMfiles/users/'+user.ID+'/'+user.ID+'.txt'
     transpath = 'SMfiles/users/'+user.ID+'/transactions.txt'
-    #transactions = pickle.load(open(transpath,"rb"))
-
 
     if not os.path.exists(transpath):
         print("Transactions Log for user '"+user.ID+"' not found. Creating File")
@@ -1417,8 +1414,6 @@ def buy(user, symb, quantity, total):
     else:
         print("Transactions Log FOUND")
         transactions = pickle.load(open(transpath,"rb"))        
-        
-        
 
     # add investment into user portfolio
     inv = Investment(get_current(symb),quantity)
@@ -1453,16 +1448,16 @@ def buy(user, symb, quantity, total):
     
 # inv_index will be the index in portfolio of investment to be sold
 def sell(user, inv_index): # user: Client, Broker, or Firm object
-	# load transaction file
-	print('DAST IST INDEX: '+str(inv_index))
 	userpath = 'SMfiles/users/'+user.ID+'/'+user.ID+'.txt'
 	transpath = 'SMfiles/users/'+user.ID+'/transactions.txt'
-	print(str(inv_index))
+
 	if not os.path.exists(transpath):
 		print("No portfolio found for user '"+user.ID+"' not found. Creating File")
 	else:
+		# load transaction file
 		print("Transactions Log FOUND")
-		transactions = pickle.load(open(transpath,"rb"))        
+		transactions = pickle.load(open(transpath,"rb")) 
+
 		# get investment from user portfolio
 		inv_bought = user.Portfolio[inv_index]
 		'''for elem in user.Portfolio:
@@ -1474,7 +1469,6 @@ def sell(user, inv_index): # user: Client, Broker, or Firm object
 			print('The price is: '+str(elem.PriceTraded))
 			print('The volume you own is: '+str(elem.Volume))	
 			print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-		# remove investment from user portfolio
 		'''
 		
 		print('The INDEX is: '+str(inv_index))
@@ -1482,6 +1476,8 @@ def sell(user, inv_index): # user: Client, Broker, or Firm object
 		print('The date is: '+str(inv_bought.TradeDate))
 		print('The price is: '+str(inv_bought.PriceTraded))
 		print('The volume you own is: '+str(inv_bought.Volume))
+
+		# remove investment for user's portfolio
 		del user.Portfolio[inv_index]
 
 		# get investment objects
