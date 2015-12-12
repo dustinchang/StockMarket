@@ -7,8 +7,8 @@ import re
 
 import locale
 
-import main
-from main import *
+import stock_backend
+from stock_backend import *
 
 import analysis
 from analysis import *
@@ -16,15 +16,13 @@ from analysis import *
 import sys
 from sys import *
 
-from googlefinance import getQuotes
-import json
-
 import matplotlib.pyplot as plt
 import matplotlib, sys
 from matplotlib import *
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from numpy import *
+
 root = Tk()
 tempClient = Client()
 tempBroker = Broker()

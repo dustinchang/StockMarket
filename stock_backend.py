@@ -1,40 +1,13 @@
 import datetime, time
-
-from decimal import Decimal
-
 from googlefinance import getQuotes
-
 import cPickle as pickle
-
-import random
-
-import sys
 from sys import *
-
-import re
-
 import urllib
-
-import Tkinter
-from Tkinter import *
-
-import locale
-
-import json
-
-import matplotlib.pyplot as plt
-import matplotlib, sys
-from matplotlib import *
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
-from numpy import *
-
 
 """
 Implementation of a stock market exchange where stocks are continually on the rise or dropping.
 This program will assist on whether you should purchase or sell stocks.
 """
-
 class Stock:
     """Details of a Stock and it's contents"""
     def __init__(self, symb, day, close, open_ = 0.0, high = 0.0, low = 0.0, volume = 0.0):
@@ -45,7 +18,7 @@ class Stock:
         self.StockDayRange = str(low) + ' - ' + str(high)
         self.StockVolume = volume
         self.StockClose = close
-        self.StockPrice = price
+        self.StockPrice = close
 
     # Testing purposes
     def print_hist_stock(self):
@@ -91,14 +64,8 @@ class Broker:
         self.InvestmentExpense += float(investment[0].PriceTraded)
         self.InvestmentRevenue += float(investment[1].PriceTraded)
         self.BrokerProfit = self.InvestmentRevenue - self.InvestmentExpense
-
         self.BrokerTotalBudget = (float(investment[1].PriceTraded) * investment[0].Volume) + float(self.BrokerTotalBudget)
         self.BrokerPLReport = (self.BrokerProfit / self.InvestmentRevenue) * 100
-
-        print investment[0].PriceTraded
-        print investment[1].PriceTraded
-        print self.BrokerProfit
-        print self.BrokerPLReport
 
 class Firm:
     """Organizational details of a Firm"""
@@ -161,19 +128,19 @@ class Transaction:
                                          #{String : Integer : Float <> String : Integer : Float }
                                          #StockID : Volume : Price <> StockID : Volume : Price
         self.TransactionExchange = ''
-        self.check_transaction_type(user, t_type)
+        self.check_transaction_type(user, t_type, investment)
 
     # Function to assign ID values into Transaction{Buyer/Seller/Trader}
     # TransactionTrade will be a list of two user IDs
-    def check_transaction_type(self, user, t_type):
+    def check_transaction_type(self, user, t_type, investment):
         # Transaction type is 'buy'
         if t_type == "buy":
             self.TransactionBuyer = user.ID
-            self.TransactionID = investment.StockID+userID+str(investment.TradeDate)
+            self.TransactionID = investment.StockID+user.ID+str(investment.TradeDate)
         # Transaction type is 'sell'
         elif t_type == "sell":
             self.TransactionSeller = user.ID
-            self.TransactionID = investment.StockID+userID+str(investment.TradeDate)
+            self.TransactionID = investment.StockID+user.ID+str(investment.TradeDate)
         # Transaction type is 'trade'
         #else:
         #   self.TransactionTrader = [user[0].ID, user[1].ID]
@@ -202,11 +169,13 @@ class Investment:
 ## Get historical data
 #
 #
+
 def get_historical(symb, number_of_days):
     today = datetime.date.today()
     start = (today - datetime.timedelta(days=number_of_days)).strftime('%Y%m%d')
     today = int(time.mktime(datetime.datetime.strptime(start, '%Y%m%d').timetuple()))
     period = number_of_days
+    interval = 60;
     url_string = "http://www.google.com/finance/getprices?q={0}&i={1}&p={2}d&ts={3}".format(symb, interval + 1, period, today)
 
     # First seven lines are parameter information for the url request. Not needed.

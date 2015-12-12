@@ -1,8 +1,0 @@
-Historical data :D
-Real time quote :D
-Transactions	:\
-Storing data	:)
-Calling data	:)
-Threading?	:(
-Design Patterns	:|
-Portfolios	:?
