@@ -252,7 +252,7 @@ def get_current(symb):
 ## Get close prices
 #
 #
-def get_close_prices(symb, number_of_days = 15):
+def close_prices(symb, number_of_days = 15):
     close_list = []
     stock_objs = get_historical(symb, number_of_days)
     for stk in stock_objs:
